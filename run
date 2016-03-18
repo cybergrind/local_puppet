@@ -1,0 +1,1 @@
+sudo puppet apply --modulepath `pwd`/modules manifests/user.pp
