@@ -1,5 +1,5 @@
 class kpi::packages::system () {
-  $system = [ 'yaourt', 'sudo', 'base-devel' ]
+  $system = [ 'yaourt', 'sudo' ]
   package { $system:
     require => [ Class[kpi::repos] ]
   }
@@ -18,6 +18,7 @@ class kpi::packages::system () {
   file { '/etc/makepkg.conf':
     content => epp('kpi/makepkg.conf.epp', {}),
   }
+  include kpi::system
 }
 
 class kpi::packages () {
@@ -34,7 +35,9 @@ class kpi::packages () {
   $pkgs = [
     'ttf-droid', 'ttf-ms-fonts', 'ttf-freefont', 'ttf-bitstream-vera',
     'ttf-liberation', 'ttf-ubuntu-font-family', 'xkb-switch-git',
-    'xorg-xev', 'xterm',
+    'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev', 'xf86-input-keyboard',
+    'xf86-input-mouse',
+    'xorg-xev', 'xterm', 'sakura',
     'awesome',
     'virtualbox',
     'dropbox', 'skype', 'viber', 'pidgin', 'hipchat',
