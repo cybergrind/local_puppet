@@ -1,1 +1,5 @@
-sudo puppet apply --modulepath `pwd`/modules manifests/user.pp
+if [ -e /bin/sudo ]; then
+   sudo puppet apply --modulepath `pwd`/modules manifests/user.pp
+else
+   puppet apply --modulepath `pwd`/modules manifests/user.pp
+fi

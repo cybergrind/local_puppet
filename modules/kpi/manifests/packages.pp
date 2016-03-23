@@ -1,5 +1,5 @@
 class kpi::packages::system () {
-  $system = [ 'yaourt', 'sudo' ]
+  $system = [ 'yaourt', 'sudo', 'base-devel' ]
   package { $system:
     require => [ Class[kpi::repos] ]
   }
