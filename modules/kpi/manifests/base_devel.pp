@@ -1,12 +1,10 @@
-
-
 class kpi::base_devel () {
   include kpi::packages
 
   $python2 = [ 'python2', 'python2-numpy', 'ipython2', 'python2-virtualenv' ]
   kpi::install { $python2: }
 
-  $scala = [ 'jdk', 'scala', 'sbt', 'java-jline' ]
+  $scala = [ 'jdk', 'scala', 'scala-docs', 'sbt', 'java-jline' ]
   kpi::install { $scala: }
 
   $other = [ 'go', 'nodejs', 'npm', ]
