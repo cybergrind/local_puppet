@@ -1,0 +1,27 @@
+[user]
+    email = cybergrind@gmail.com
+    name = Kirill Pinchuk
+[alias]
+    st = status
+    ci = commit
+    co = checkout
+    hist = log --pretty=format:\"%Cred%h %Creset%ad %Cred| [%an] | %Cgreen%s%d\" --graph --date=short --color
+    type = cat-file -t
+    dump = cat-file -p
+    br = branch
+    lc = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    lcp = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -p
+    lca = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all
+    lcafp = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all --first-parent
+    daydiff = diff '@{1 day ago}'..
+    desc = describe
+[color]
+    ui = auto
+[credential]
+    helper = cache --timeout=3600000
+[http]
+    sslVerify = false
+[push]
+    default = tracking
+[rebase]
+    autostash = true
