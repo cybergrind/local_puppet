@@ -1,5 +1,5 @@
 if [ -e /bin/sudo ]; then
-   sudo puppet apply --modulepath `pwd`/modules manifests/user.pp
+   sudo puppet apply --modulepath `pwd`/modules manifests/hosts.pp $@
 else
-   puppet apply --modulepath `pwd`/modules manifests/user.pp
+   puppet apply --modulepath `pwd`/modules manifests/hosts.pp $@
 fi

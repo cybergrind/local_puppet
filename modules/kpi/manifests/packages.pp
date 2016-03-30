@@ -38,7 +38,7 @@ class kpi::packages () {
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev', 'xf86-input-keyboard',
     'xf86-input-mouse',
     'xorg-xev', 'xterm', 'sakura',
-    'awesome',
+    'awesome', 'vicious',
     'virtualbox',
     'dropbox', 'skype', 'viber', 'pidgin', 'hipchat',
     'mplayer', 'mupdf', 'xpdf',
