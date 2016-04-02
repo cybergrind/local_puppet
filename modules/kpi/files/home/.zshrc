@@ -42,6 +42,9 @@ export EDITOR='emacsclient --alternate-editor="" -nw -c'
 export PYMACS_PYTHON='python2'
 export BROWSER="firefox-nightly"
 export DIA_DIR=.
+
+export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+export JDK_HOME=/usr/lib/jvm/java-8-jdk
 #export LC_CTYPE=en_US.UTF-8
 alias em='emacs -nw'
 
