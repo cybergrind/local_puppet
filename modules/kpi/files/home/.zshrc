@@ -126,6 +126,17 @@ alias whome="ssh kpi@192.168.88.33"
 alias vhome="ssh kpi@192.168.88.41"
 alias new_screen="screen -c ~/.screenrc2 $@"
 
+function am {
+    case $# in
+        0)
+            ssh kb -t 'sudo su - ec2-user'
+            ;;
+        *)
+            ssh $@ -t 'sudo su - ec2-user'
+            ;;
+    esac;
+}
+
 alias make_bw_tgz='tar czf bw.tgz bw && mv bw.tgz ../fabric_common/binary/.'
 alias e='emacsclient --alternate-editor="" -nw -c "$@"'
 
