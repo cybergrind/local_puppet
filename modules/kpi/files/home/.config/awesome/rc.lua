@@ -134,9 +134,10 @@ myawesomemenu = {
    { "quit", awesome.quit }
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal }
-                                  }
+mymainmenu = awful.menu({ items = {
+                             { "ff-noremote", "/bin/firefox-nightly --noremote -P" },
+                             { "awesome", myawesomemenu, beautiful.awesome_icon },
+                             { "open terminal", terminal }}
                         })
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
