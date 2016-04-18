@@ -43,7 +43,8 @@ class kpi::packages () {
     'dropbox', 'skype', 'viber', 'pidgin', 'hipchat',
     'mplayer', 'mupdf', 'xpdf',
     'qbittorrent',  'shutter',
-    'firefox-nightly', 'google-chrome', 'flashplugin', 'lib32-flashplugin', 'chromium-pepper-flash',
+    'firefox-nightly', 'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
+    'chromium-pepper-flash',
   ]
   kpi::install { $pkgs: }
 }
