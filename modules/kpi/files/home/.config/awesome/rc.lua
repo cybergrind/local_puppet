@@ -135,7 +135,8 @@ myawesomemenu = {
 }
 
 mymainmenu = awful.menu({ items = {
-                             { "ff-noremote", "/bin/firefox-nightly --noremote -P" },
+                             { "ff-nightly-noremote", "/bin/firefox-nightly --noremote -P" },
+                             { "ff-noremote", "/bin/firefox --noremote -P" },
                              { "awesome", myawesomemenu, beautiful.awesome_icon },
                              { "open terminal", terminal }}
                         })
