@@ -1,0 +1,52 @@
+# "activity in window #%n title: %t~"
+activity "%C -> %n%f %t activity!"
+# pass on the "beep" (CTRL-G) by adding a '~':
+bell "%C -> %n%f %t bell!~"
+# set colors for "messages" and "text marking"
+sorendition    Yk
+# console-screensave, (!)doesn't lock(!)
+# idle 180 eval "screen cmatrix" "idle 0"
+# [hostname ][windowlist][month and day][time]
+#caption always "%{bB}%H | %{kB}%?%-Lw%?%{kB}%n*%f %t%?(%u)%?%{kB}%?%+Lw%? %88=%{Yr}%M%d %94=%{RY}%c%="
+#caption always "%{Bb} %H %{bB} %{kB} %?%-Lw%?%{kY} %n*%f %t%?(%u)%?%{kB}%?%+Lw%? %90=%{bB}%M%d %94=%{kB}%c%="
+caption always "%{Bb} %H %{bB} %{kB} %?%-Lw%?%{kY} %n*%f %t%?(%u)%?%{kB}%?%+Lw%? %90=%{bB}%M%d %94=%{kB}%c%="
+#caption always "%{WB} %H %{bB} %{kB}%? %-Lw%?%{Bb} %n %f %t %?(%u)%?%{kB}%?%+Lw%?"
+
+# key bindings
+bind t screen -t top    0 top
+bind c screen -t zsh	1 zsh -l
+bind e screen -t email  2 mutt
+#bind p screen -t proveout 3 ssh hm@192.168.0.200
+#bind m screen -t music  4
+#bind w screen -t web    5
+#bind r screen -t radio  6 mplayer http://thinknerd.org:10050
+#bind i screen -t idps   7 /usr/local/sbin/idpsinfo
+#bind b screen -t xbiff  8 ssh h07.org -X /usr/bin/X11/xbiff
+# use F7 and F8 to cycle trough the windows
+#bindkey -k k7 prev
+#bindkey -k k8 next
+# unbind some keys
+bind .
+bind ^\
+bind \\
+bind K
+# termcap stuff
+termcapinfo xterm     ti@:te@
+# make the cursor show up in red:
+termcapinfo linux "ve=\E[?25h\E[?17;0;64c"
+# this makes screen work within rxvt on cygwin:
+# termcapinfo rxvt-cygwin-native ti@:te@
+# scrollback buffer in lines
+defscrollback 500
+# my shell
+shell `whereis zsh`
+# no copyright message
+startup_message off
+# show messages for 2 seconds
+msgwait 2
+# visual bell
+vbell on
+vbell_msg " *beep* "
+# don't remember what these do
+deflogin off
+silencewait 15
