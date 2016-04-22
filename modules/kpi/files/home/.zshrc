@@ -192,6 +192,13 @@ function dck_bash_tmp {
     docker run  $2 $3 $4 $5 $6 --rm=true -it $1 /bin/bash
 }
 
+function dcup {
+    C=/home/kpi/ssd/tipsi/tipsi_util/scripts/compose-cmd.sh
+    NAME=$1
+    shift
+    $C $NAME up $@
+}
+
 function dcrup {
     C=/home/kpi/ssd/tipsi/tipsi_util/scripts/compose-cmd.sh
     NAME=$1
