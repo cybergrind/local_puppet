@@ -14,4 +14,5 @@ node 'cbr_l' {
 
 node 'dm4' {
   include kpi::base_devel
+  kpi::home { 'kpi': }
 }
