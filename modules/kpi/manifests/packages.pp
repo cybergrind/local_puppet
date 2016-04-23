@@ -1,5 +1,5 @@
 class kpi::packages::system () {
-  $system = [ 'yaourt', 'sudo' ]
+  $system = [ 'yaourt', 'sudo', 'openssh' ]
   package { $system:
     require => [ Class[kpi::repos] ]
   }
@@ -17,6 +17,11 @@ class kpi::packages::system () {
 
   file { '/etc/makepkg.conf':
     content => epp('kpi/makepkg.conf.epp', {}),
+  }
+
+  service { 'sshd':
+    ensure => running,
+    require => [ Package['openssh'] ],
   }
   include kpi::system
 }
