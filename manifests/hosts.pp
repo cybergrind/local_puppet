@@ -7,7 +7,7 @@ node 'home' {
   kpi::home { 'kpi': }
 }
 
-node 'cbr_l' {
+node 'tpad' {
   include kpi::base_devel
   kpi::home { 'kpi': }
 }
