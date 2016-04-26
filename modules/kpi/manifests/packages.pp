@@ -32,7 +32,7 @@ class kpi::packages () {
     'pv', 'pwgen', 'rsync', 'strace',
     'netctl', 'dialog', 'wpa_supplicant',
     'alsa-firmware', 'alsa-plugins', 'alsa-tools', 'alsa-utils',
-    'net-tools', 'mtr', 'nmap', 'openbsd-netcat', 'bwm-ng',
+    'net-tools', 'mtr', 'nmap', 'openbsd-netcat', 'bwm-ng', 'ipset',
     'powertop',
   ]
   kpi::install { $pkgs_nox: }
