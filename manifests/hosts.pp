@@ -1,4 +1,4 @@
-node 'cbr_home' {
+node 'home' {
   notice('host cbr_home')
   $user = 'kpi'
   $id_rsa = str2bool($facts["${user}_id_rsa"])
