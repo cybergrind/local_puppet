@@ -51,5 +51,23 @@ define kpi::home {
     timeout => 1800,
     require => [ File[$home] ],
   }
+
+  emacs {$user: }
   
+}
+
+define emacs {
+  $user = $title
+  $home = "/home/$user"
+  case $facts["${user}_id_rsa"] {
+    "True": {
+      exec { "git clone http://github.com/cybergrind/emacs_config.git $home/.emacs.d":
+        provider => shell,
+        cwd => $home,
+        creates => "$home/.emacs.d/.git/config",
+        timeout => 1800,
+        require => [ File[$home], Kpi::Install['git'] ],
+      }
+    }
+  }
 }
