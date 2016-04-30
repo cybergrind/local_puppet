@@ -52,22 +52,18 @@ define kpi::home {
     require => [ File[$home] ],
   }
 
-  emacs {$user: }
-  
+  home_repo {"$user-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
+  home_repo {"$user-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
 }
 
-define emacs {
-  $user = $title
-  $home = "/home/$user"
-  case $facts["${user}_id_rsa"] {
-    "True": {
-      exec { "git clone http://github.com/cybergrind/emacs_config.git $home/.emacs.d":
-        provider => shell,
-        cwd => $home,
-        creates => "$home/.emacs.d/.git/config",
-        timeout => 1800,
-        require => [ File[$home], Kpi::Install['git'] ],
-      }
-    }
+
+define home_repo($user, $dir, $repo){
+  $home_dir = "/home/$user/$dir"
+  exec { "git clone http://github.com/$repo.git $home_dir":
+    provider => shell,
+    cwd => "/home/$user",
+    creates => "$home_dir/.git/config",
+    timeout => 1800,
+    require => [ File["/home/$user"], Kpi::Install['git'] ],
   }
 }
