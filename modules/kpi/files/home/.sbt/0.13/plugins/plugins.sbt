@@ -1,1 +1,3 @@
-addSbtPlugin("org.ensime" % "ensime-sbt" % "0.1.6")
+addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-M11")
+addSbtPlugin("org.ensime" % "sbt-ensime" % "0.5.1")
+
