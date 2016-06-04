@@ -62,6 +62,7 @@ define home_repo($user, $dir, $repo){
   exec { "git clone http://github.com/$repo.git $home_dir":
     provider => shell,
     cwd => "/home/$user",
+    user => $user,
     creates => "$home_dir/.git/config",
     timeout => 1800,
     require => [ File["/home/$user"], Kpi::Install['git'] ],
