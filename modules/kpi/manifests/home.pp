@@ -62,7 +62,7 @@ define home_symlinks($user){
   $keys = str2bool($facts["${user}_keys"])
   $dropbox = str2bool($facts["${user}_dropbox"])
 
-  file { "/home/$user/.ssh/":
+  file { "/home/$user/.ssh":
     ensure => directory,
     owner => $user,
     mode => "0600",
@@ -99,7 +99,9 @@ define keys_links {
             'tipsikey_prod_v2.pem']
 
   $files.each |String $fileName| {
-    keys_ssh_link {"$user:$fileName": require => [File["/home/$user/.ssh"]] }
+    keys_ssh_link {"$user:$fileName":
+      require => [File["/home/$user/.ssh"]],
+    }
   }
 }
 
