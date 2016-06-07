@@ -1,4 +1,5 @@
 if [ -e /bin/sudo ]; then
+   sudo puppet module install puppetlabs-stdlib
    sudo puppet apply --modulepath `pwd`/modules manifests/hosts.pp $@
 else
    puppet apply --modulepath `pwd`/modules manifests/hosts.pp $@
