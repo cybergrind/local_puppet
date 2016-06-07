@@ -1,5 +1,5 @@
 class kpi::home::repos {
-  
+
 }
 
 
@@ -54,8 +54,72 @@ define kpi::home {
 
   home_repo {"$user-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
   home_repo {"$user-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
+  home_symlinks {"$user-symlinks": user=>$user}
 }
 
+define home_symlinks($user){
+  $id_rsa = str2bool($facts["${user}_id_rsa"])
+  $keys = str2bool($facts["${user}_keys"])
+  $dropbox = str2bool($facts["${user}_dropbox"])
+
+  file { "/home/$user/.ssh/":
+    ensure => directory,
+    owner => $user,
+    mode => "0600",
+  }
+
+  if $keys {
+    keys_links {$user: }
+  }
+
+  if $dropbox {
+    dropbox_links {$user: }
+  }
+}
+
+define dropbox_links {
+  $user = $name
+  dropbox_link { "$user:.ssh/config": }
+  dropbox_link { "$user:start_work": }
+}
+
+define dropbox_link {
+  $i = split($name, ":")
+  $user = $i[0]
+  $path = $i[1]
+  home_link {"$user:$path":
+    target=>"Dropbox/home/$path",
+    require => [File["/home/$user/.ssh"]]
+  }
+}
+
+define keys_links {
+  $user = $name
+  $files = ['.ssh/id_rsa', '.ssh/id_rsa.pub', 'tipsikey_test_v2.pem',
+            'tipsikey_prod_v2.pem']
+
+  $files.each |String $fileName| {
+    keys_ssh_link {"$user:$fileName": require => [File["/home/$user/.ssh"]] }
+  }
+}
+
+define keys_ssh_link {
+  $i = split($name, ":")
+  $user = $i[0]
+  $path = $i[1]
+  home_link {"$user:$path": target=>".keys/$path"}
+}
+
+define home_link ($target){
+  $i = split($name, ":")
+  $user = $i[0]
+  $src = $i[1]
+  file { "/home/${user}/${src}":
+    ensure => link,
+    owner => $user,
+    target=>"/home/${user}/${target}",
+  }
+}
 
 define home_repo($user, $dir, $repo){
   $home_dir = "/home/$user/$dir"
