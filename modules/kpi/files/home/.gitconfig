@@ -2,6 +2,7 @@
     email = cybergrind@gmail.com
     name = Kirill Pinchuk
 [alias]
+    d = diff HEAD
     st = status
     ci = commit
     co = checkout
