@@ -29,7 +29,7 @@ class kpi::packages::system () {
 class kpi::packages () {
   $pkgs_nox = [
     'zsh', 'screen', 'encfs', 'iotop', 'htop', 'atop',
-    'pv', 'pwgen', 'rsync', 'strace',
+    'pv', 'pwgen', 'rsync', 'strace', 'the_silver_searcher',
     'netctl', 'dialog', 'wpa_supplicant',
     'alsa-firmware', 'alsa-plugins', 'alsa-tools', 'alsa-utils',
     'net-tools', 'mtr', 'nmap', 'openbsd-netcat', 'bwm-ng', 'ipset',
