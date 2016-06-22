@@ -55,6 +55,7 @@ define kpi::home {
   home_repo {"$user-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
   home_repo {"$user-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
   home_symlinks {"$user-symlinks": user=>$user}
+  kpi::home::vim_setup {"$user-vim": user=>$user}
 }
 
 define home_symlinks($user){
@@ -135,4 +136,26 @@ define home_repo($user, $dir, $repo){
     timeout => 1800,
     require => [ File["/home/$user"], Kpi::Install['git'] ],
   }
+}
+
+define kpi::home::vim_setup($user, $dir=undef){
+  $home = $dir ? {
+    undef => "/home/$user",
+    default => $dir,
+  }
+
+  file {"$home/.vimrc":
+    source => 'puppet:///modules/kpi/home/.vimrc',
+    owner => $user,
+  } ->
+
+  exec { "git clone https://github.com/VundleVim/Vundle.vim.git $home/.vim/bundle/Vundle.vim":
+    provider => shell,
+    cwd => "${home}",
+    user => $user,
+    creates => "${home}/.vim/bundle/Vundle.vim",
+    require => [ File[$home], Kpi::Install['git'] ],
+  }
+  # "[$user] please run vim +PluginInstall +qall"
+
 }
