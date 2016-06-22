@@ -97,6 +97,7 @@ define keys_links {
   $user = $name
   $files = ['id_rsa', 'id_rsa.pub',
             'tipsikey_test_v2.pem',
+            'tipsikey_test_v3.pem',
             'tipsikey_prod_v2.pem']
 
   $files.each |String $fileName| {
