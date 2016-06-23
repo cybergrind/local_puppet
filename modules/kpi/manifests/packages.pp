@@ -35,7 +35,7 @@ class kpi::packages () {
     'net-tools', 'mtr', 'nmap', 'openbsd-netcat', 'bwm-ng', 'ipset',
     'unzip', 'pigz',
     'powertop',
-    'universal-ctags-git',
+    'universal-ctags-git', 'vim-plug-git',
   ]
   kpi::install { $pkgs_nox: }
 

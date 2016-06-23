@@ -149,13 +149,14 @@ define kpi::home::vim_setup($user, $dir=undef){
     owner => $user,
   } ->
 
-  exec { "git clone https://github.com/VundleVim/Vundle.vim.git $home/.vim/bundle/Vundle.vim":
+  exec { "git clone https://github.com/junegunn/fzf.git ${home}/.fzf":
     provider => shell,
     cwd => "${home}",
     user => $user,
-    creates => "${home}/.vim/bundle/Vundle.vim",
+    creates => "${home}/.fzf",
     require => [ File[$home], Kpi::Install['git'] ],
   }
+
   # "[$user] please run vim +PluginInstall +qall"
 
 }
