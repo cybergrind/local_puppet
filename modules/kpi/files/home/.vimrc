@@ -1,57 +1,53 @@
 set nocompatible
 filetype off
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
 
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
+call plug#begin()
 
 " common
-Plugin 'scrooloose/nerdtree'
-"Plugin 'valloric/youcompleteme'
-"Plugin 'xolox/vim-easytags'
-Plugin 'majutsushi/tagbar'
-"Plugin 'tpope/vim-fugitive'
-Plugin 'easymotion/vim-easymotion'
-"Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'junegunn/fzf.vim'
-Plugin 'terryma/vim-multiple-cursors'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'matze/vim-move'
-Plugin 'raimondi/delimitmate'
-Plugin 'mattn/emmet-vim'
-Plugin 'scrooloose/syntastic'
-Plugin 'tpope/vim-surround'
-Plugin 'sirver/ultisnips'
-Plugin 'honza/vim-snippets'
-Plugin 'xolox/vim-session'
-Plugin 'xolox/vim-misc'
-Plugin 'SyntaxAttr.vim'
-Plugin 'dyng/ctrlsf.vim'
-Plugin 'rking/ag.vim'
-Plugin 'godlygeek/tabular'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+" Plug 'valloric/youcompleteme'
+" Plug 'xolox/vim-easytags'
+Plug 'majutsushi/tagbar'
+Plug 'easymotion/vim-easymotion'
+
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+Plug 'terryma/vim-multiple-cursors'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/nerdcommenter'
+Plug 'matze/vim-move'
+Plug 'raimondi/delimitmate'
+Plug 'mattn/emmet-vim'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-surround'
+Plug 'sirver/ultisnips' | Plug 'honza/vim-snippets'
+Plug 'xolox/vim-session'
+Plug 'xolox/vim-misc'
+Plug 'SyntaxAttr.vim'
+Plug 'dyng/ctrlsf.vim'
+Plug 'rking/ag.vim'
+Plug 'godlygeek/tabular'
 
 " javascript
-Plugin 'pangloss/vim-javascript'
+Plug 'pangloss/vim-javascript'
 
 " html
-Plugin 'othree/html5.vim'
+Plug 'othree/html5.vim'
 
 " twig
-Plugin 'evidens/vim-twig'
+Plug 'evidens/vim-twig'
 
 " css
-Plugin 'mtscout6/vim-tagbar-css'
+Plug 'mtscout6/vim-tagbar-css'
 
 " colors
-Plugin 'damage220/solas.vim'
-Plugin 'nanotech/jellybeans.vim'
-Plugin 'mhartington/oceanic-next'
+Plug 'damage220/solas.vim'
+Plug 'nanotech/jellybeans.vim'
+Plug 'mhartington/oceanic-next'
 
-call vundle#end()
+call plug#end()
+
 filetype plugin indent on
 
 " settings
@@ -82,7 +78,7 @@ set hlsearch
 set incsearch
 set cursorline
 set pumheight=10
-set fillchars+=vert:\ 
+set fillchars+=vert:\
 let mapleader=","
 filetype off
 filetype plugin on
@@ -114,7 +110,7 @@ nnoremap fb :CtrlPBuffer<CR>
 nmap fs <Plug>(easymotion-s)
 nmap fl <Plug>(easymotion-sl)
 nnoremap fc :NERDTreeFind<CR>
-nnoremap fp :CtrlSF 
+nnoremap fp :CtrlSF
 nnoremap <C-h> :noh<CR>
 map <C-?> <plug>NERDCommenterComment
 map <C-_> <plug>NERDCommenterToggle
@@ -130,11 +126,11 @@ nnoremap <F5> :w<CR>:so $MYVIMRC<CR>
 
 " map <alt+n> to navigate through tabs
 for c in range(1, 9)
-	exec "set <A-".c.">=\e".c
-	exec "map \e".c." <A-".c.">"
+    exec "set <A-".c.">=\e".c
+    exec "map \e".c." <A-".c.">"
 
-	let n = c - '0'
-	exec "map <M-". n ."> ". n ."gt"
+    let n = c - '0'
+    exec "map <M-". n ."> ". n ."gt"
 endfor
 
 " nerdtree
@@ -200,12 +196,12 @@ let g:tagbar_iconchars = ['+', '-']
 let g:tagbar_map_close = '<C-m>'
 let g:tagbar_type_javascript = {
 \'ctagstype':'JavaScript',
-	\'kinds' : [
-		\'f:functions',
-		\'c:classes',
-		\'m:methods',
-		\'p:properties'
-	\]
+    \'kinds' : [
+        \'f:functions',
+        \'c:classes',
+        \'m:methods',
+        \'p:properties'
+    \]
 \}
 
 " delimitmate
@@ -222,7 +218,7 @@ let g:ctrlp_by_filename = 1
 let g:ctrlp_working_path_mode = 'wr'
 let g:ctrlp_map = ''
 let g:ctrlp_buftag_types = {
-	\'php': '--php-kinds=icdf'
+    \'php': '--php-kinds=icdf'
 \}
 
 " ctrlsf
