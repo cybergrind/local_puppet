@@ -227,3 +227,6 @@ function my_track_organize {
     mkdir -p $1
     mv $1*png $1/.
 }
+
+export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -f -g ""'
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
