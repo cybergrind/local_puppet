@@ -33,7 +33,7 @@ ZSH_THEME="jonathan"
 
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git archlinux ssh-agent fabric python postgres rsync svn extract docker golang go lein mvn pip sbt scala sudo systemd zsh_reload z)
+plugins=(git archlinux ssh-agent fabric python postgres rsync svn extract docker golang go lein mvn pip scala sudo systemd zsh_reload z)
 
 source $ZSH/oh-my-zsh.sh
 
