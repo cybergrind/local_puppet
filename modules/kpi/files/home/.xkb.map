@@ -1175,7 +1175,7 @@ xkb_compatibility "complete+ledscroll(group_lock)" {
     };
 };
 
-xkb_symbols "pc+us+ru(winkeys):2+inet(evdev)+group(toggle)+group(alt_shift_toggle)+ctrl(nocaps)" {
+xkb_symbols "pc+us+ru(winkeys):2+inet(evdev)+group(toggle)+group(shifts_toggle)+ctrl(nocaps)" {
 
     name[group1]="English (US)";
     name[group2]="Russian";
@@ -1338,7 +1338,7 @@ xkb_symbols "pc+us+ru(winkeys):2+inet(evdev)+group(toggle)+group(alt_shift_toggl
     };
     key <LFSH> {
         type= "PC_ALT_LEVEL2",
-        symbols[Group1]= [         Shift_L,  ISO_Next_Group ]
+        symbols[Group1]= [         Shift_L,  Alt_L ]
     };
     key <BKSL> {
         symbols[Group1]= [       backslash,             bar ],
@@ -1395,13 +1395,13 @@ xkb_symbols "pc+us+ru(winkeys):2+inet(evdev)+group(toggle)+group(alt_shift_toggl
     };
     key <RTSH> {
         type= "PC_ALT_LEVEL2",
-        symbols[Group1]= [         Shift_R,  ISO_Next_Group ]
+        symbols[Group1]= [         Shift_R,  Alt_L ]
     };
     key <KPMU> {
         type= "CTRL+ALT",
         symbols[Group1]= [     KP_Multiply,     KP_Multiply,     KP_Multiply,     KP_Multiply,   XF86ClearGrab ]
     };
-    key <LALT> {         [           Alt_L,  ISO_Next_Group ] };
+    key <LALT> {         [           Alt_L,  Alt_L ] };
     key <SPCE> {         [           space ] };
     key <CAPS> {         [       Control_L,       Control_L ] };
     key <FK01> {

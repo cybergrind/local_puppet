@@ -1,6 +1,6 @@
 export LC_ALL='en_US.UTF-8'
 export LANG='en_US.UTF-8'
-#setxkbmap 'us,ru(winkeys)' -option grp:alt_shift_toggle,grp_led:scroll,ctrl:nocaps
+#setxkbmap 'us,ru(winkeys)' -option grp:shifts_toggle,grp_led:scroll,ctrl:nocaps
 #setxkbmap 'us,ru(winkeys)' -option grp:toggle,grp_led:scroll,ctrl:nocaps
 xkbcomp -w 0 .xkb.map $DISPLAY
 xmodmap -e 'keycode 105 = Super_R'
