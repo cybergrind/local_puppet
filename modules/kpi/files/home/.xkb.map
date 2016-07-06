@@ -1493,7 +1493,7 @@ xkb_symbols "pc+us+ru(winkeys):2+inet(evdev)+group(toggle)+group(shifts_toggle)+
     key <HKTG> {         [ Hiragana_Katakana ] };
     key <MUHE> {         [        Muhenkan ] };
     key <KPEN> {         [        KP_Enter ] };
-    key <RCTL> {         [       Control_R ] };
+    key <RCTL> {         [       Super_L ] };
     key <KPDV> {
         type= "CTRL+ALT",
         symbols[Group1]= [       KP_Divide,       KP_Divide,       KP_Divide,       KP_Divide,      XF86Ungrab ]
@@ -1641,9 +1641,10 @@ xkb_symbols "pc+us+ru(winkeys):2+inet(evdev)+group(toggle)+group(shifts_toggle)+
     modifier_map Control { <CAPS> };
     modifier_map Mod2 { <NMLK> };
     modifier_map Mod5 { <LVL3> };
-    modifier_map Control { <RCTL> };
+    # modifier_map Control { <RCTL> };
     modifier_map Mod4 { <LWIN> };
     modifier_map Mod4 { <RWIN> };
+    modifier_map Mod4 { <RCTL> };
     modifier_map Mod5 { <MDSW> };
     modifier_map Mod1 { <META> };
     modifier_map Mod4 { <SUPR> };
