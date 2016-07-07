@@ -141,7 +141,7 @@ alias make_bw_tgz='tar czf bw.tgz bw && mv bw.tgz ../fabric_common/binary/.'
 alias e='emacsclient --alternate-editor="" -nw -c "$@"'
 
 
-export PATH=`echo ~`/bin:`echo ~/.local/bin`:$PATH
+export PATH=`echo ~`/bin:`echo ~/.local/bin`:/opt/android-sdk/platform-tools/:$PATH
 # Customize to your needs...
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
 
