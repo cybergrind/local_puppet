@@ -181,8 +181,8 @@ compctl -K _pip_completion pip
 
 export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
-export GELF_HOST=192.0.2.4
-export LOGSTASH_HOST=192.0.2.4
+export GELF_HOST=192.0.2.3
+export LOGSTASH_HOST=192.0.2.3
 
 function dck_tmp {
     docker run --rm=true $3 $4 $5 $6 -it $1 $2
