@@ -82,6 +82,7 @@ define dropbox_links {
   $user = $name
   dropbox_link { "$user:.ssh/config": }
   dropbox_link { "$user:start_work": }
+  dropbox_link { "$user:.pypirc": }
 }
 
 define dropbox_link {
