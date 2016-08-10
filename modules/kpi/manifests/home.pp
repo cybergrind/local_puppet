@@ -113,16 +113,17 @@ define keys_ssh_link {
   $i = split($name, ":")
   $user = $i[0]
   $path = $i[1]
-  home_link {"$user:$path": target=>".keys/$path"}
+  home_link {"$user:$path": target=>".keys/$path", mode=>0600}
 }
 
-define home_link ($target){
+define home_link ($target, $mode=0755){
   $i = split($name, ":")
   $user = $i[0]
   $src = $i[1]
   file { "/home/${user}/${src}":
     ensure => link,
     owner => $user,
+    mode => $permission,
     target=>"/home/${user}/${target}",
   }
 }
