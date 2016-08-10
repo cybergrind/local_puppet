@@ -6,7 +6,14 @@ class kpi::packages::system () {
 
   user { 'yaourt':
     ensure => present,
+    managehome => true,
     require => [ Package[$system] ],
+  } ->
+  exec { "gpg --keyserver pgp.mit.edu --recv-keys 14F26682D0916CDD81E37B6D61B7B526D98F0353 && touch .ff.key":
+    user => 'yaourt',
+    cwd => '/home/yaourt',
+    provider => shell,
+    creates => '/home/yaourt/.ff.key'
   }
 
   file { '/etc/sudoers.d/yaourt':
