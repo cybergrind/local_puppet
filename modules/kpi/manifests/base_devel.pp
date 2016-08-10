@@ -1,5 +1,6 @@
 class kpi::base_devel () {
   include kpi::packages
+  include kpi::packages::optional
 
   $python2 = [ 'python2', 'python2-numpy', 'ipython2', 'python2-virtualenv' ]
   kpi::install { $python2: }

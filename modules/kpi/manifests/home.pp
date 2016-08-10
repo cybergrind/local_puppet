@@ -31,7 +31,7 @@ define kpi::home {
     managehome => true,
     groups => [ 'wheel', 'audio', 'docker' ],
     shell => '/bin/zsh',
-    require => [ Class[kpi::packages], ]
+    require => [ Class[kpi::packages::system] ]
   }
 
 
@@ -157,7 +157,6 @@ define kpi::home::vim_setup($user, $dir=undef){
     creates => "${home}/.fzf",
     require => [ File[$home], Kpi::Install['git'] ],
   }
-
   # "[$user] please run vim +PluginInstall +qall"
 
 }

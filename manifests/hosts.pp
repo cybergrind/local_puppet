@@ -12,3 +12,8 @@ node 'dm4' {
   include kpi::base_devel
   kpi::home { 'kpi': }
 }
+
+node 'zz' {
+  include kpi::base_devel
+  kpi::home { 'kpi': }
+}

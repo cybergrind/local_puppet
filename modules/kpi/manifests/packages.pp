@@ -21,6 +21,7 @@ class kpi::packages::system () {
 
   service { 'sshd':
     ensure => running,
+    enable => true,
     require => [ Package['openssh'] ],
   }
   include kpi::system
@@ -38,21 +39,34 @@ class kpi::packages () {
     'yapf',
     'universal-ctags-git', 'vim-plug-git',
   ]
-  kpi::install { $pkgs_nox: }
+  kpi::install { $pkgs_nox:
+    require => [Class[kpi::packages::system]],
+  }
 
   $pkgs = [
     'ttf-droid', 'ttf-ms-fonts', 'ttf-freefont', 'ttf-bitstream-vera',
     'ttf-liberation', 'ttf-ubuntu-font-family', 'xkb-switch-git',
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev', 'xf86-input-keyboard',
     'xf86-input-mouse',
-    'xorg-xev', 'xterm', 'sakura',
+    'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
     'awesome', 'vicious',
     'virtualbox',
-    'dropbox', 'skype', 'viber', 'pidgin', 'hipchat',
+    'dropbox', 'pidgin',
     'mplayer', 'mupdf', 'xpdf',
     'qbittorrent',  'shutter',
-    'firefox-nightly', 'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
+    'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
     'chromium-pepper-flash',
   ]
-  kpi::install { $pkgs: }
+  kpi::install { $pkgs:
+    require => [Class[kpi::packages::system]],
+  }
+}
+
+class kpi::packages::optional () {
+  $pkgs = [
+    'firefox-nightly', 'skype', 'viber',  'hipchat',
+  ]
+  kpi::install { $pkgs:
+    require => [Class[kpi::packages::system]],
+  }
 }
