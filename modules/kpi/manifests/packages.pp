@@ -72,12 +72,13 @@ class kpi::packages () {
 class kpi::packages::optional () {
   $pkgs = [
     'firefox-nightly', 'skype', 'viber',  'hipchat',
-    'lm_sensors', 'lshw',
+    'lm_sensors', 'lshw', 'hdparm', 'tk',
     'pavucontrol', 'pulseaudio-alsa', 'pulseaudio',
-    'xscreensaver',
+    'xscreensaver', 'teamviewer',
     # development
     'python-virtualenv', 'whois', 'bind-tools', # dig
-    'fabric', 'python-pip', 'python2-pip',
+    'fabric', 'python-pip', 'python2-pip', 'flake8',
+    'selenium-server-standalone', 'phantomjs',
   ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
