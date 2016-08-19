@@ -56,7 +56,7 @@ class kpi::packages () {
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev', 'xf86-input-keyboard',
     'xf86-input-mouse',
     'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
-    'awesome', 'vicious',
+    'awesome', 'vicious', 'xorg-xrandr', 'arandr',
     'virtualbox',
     'dropbox', 'pidgin',
     'mplayer', 'mupdf', 'xpdf',
@@ -75,10 +75,13 @@ class kpi::packages::optional () {
     'lm_sensors', 'lshw', 'hdparm', 'tk',
     'pavucontrol', 'pulseaudio-alsa', 'pulseaudio',
     'xscreensaver', 'teamviewer',
+    'emacs-python-mode',
     # development
     'python-virtualenv', 'whois', 'bind-tools', # dig
     'fabric', 'python-pip', 'python2-pip', 'flake8',
     'selenium-server-standalone', 'phantomjs',
+    'erlang', 'elixir',
+    'postgresql-libs',
   ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
