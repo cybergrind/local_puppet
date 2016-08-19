@@ -37,6 +37,8 @@ plugins=(git archlinux ssh-agent fabric python postgres rsync svn extract docker
 
 source $ZSH/oh-my-zsh.sh
 
+export HISTSIZE=9999999
+
 export PYTHONPATH=.
 export EDITOR='emacsclient --alternate-editor="" -nw -c'
 export PYMACS_PYTHON='python2'
