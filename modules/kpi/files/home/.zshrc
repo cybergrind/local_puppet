@@ -230,5 +230,16 @@ function my_track_organize {
     mv $1*png $1/.
 }
 
+# docker exec autocompletion
+function _de_completion {
+    containers=( $(docker ps | awk 'NR>1{print $NF}') )
+    reply=( $containers )
+}
+function de {
+    docker exec -it $1 /bin/bash
+}
+compctl -K _de_completion de
+# docker exec completion end
+
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -f -g ""'
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
