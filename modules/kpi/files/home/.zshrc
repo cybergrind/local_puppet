@@ -185,6 +185,7 @@ export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
 export GELF_HOST=192.168.88.26
 export LOGSTASH_HOST=192.168.88.26
+export DOCKER_NETWORK_DRIVER=overlay
 
 function dck_tmp {
     docker run --rm=true $3 $4 $5 $6 -it $1 $2
@@ -240,6 +241,11 @@ function de {
 }
 compctl -K _de_completion de
 # docker exec completion end
+
+
+function tcp_ports {
+    sudo lsof -i -n -P | grep TCP
+}
 
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -f -g ""'
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

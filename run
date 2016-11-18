@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 git pull
 if [ -e /bin/sudo ]; then
    sudo puppet module install puppetlabs-stdlib
