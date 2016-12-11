@@ -249,3 +249,13 @@ function tcp_ports {
 
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -f -g ""'
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+if [ -f /usr/share/nvm/nvm.sh ]; then
+    [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
+    source /usr/share/nvm/nvm.sh
+    source /usr/share/nvm/bash_completion
+    source /usr/share/nvm/install-nvm-exec
+fi
+
+CUSTOM_CONFIG="$HOME/.config/$(hostname).sh"
+[ -f "$CUSTOM_CONFIG" ] && source "$CUSTOM_CONFIG" || echo 'no custom config'
