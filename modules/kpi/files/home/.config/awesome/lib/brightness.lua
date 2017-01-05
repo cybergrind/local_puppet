@@ -10,3 +10,16 @@ function dec_brightness()
    change('dec')
 end
 
+
+function change_vol(op)
+   os.execute('pactl set-sink-volume 0 '..op..'5%')
+end
+
+function inc_volume()
+   change_vol('+')
+end
+
+function dec_volume()
+   change_vol('-')
+end
+

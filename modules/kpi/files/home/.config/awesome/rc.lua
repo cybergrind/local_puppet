@@ -396,7 +396,9 @@ loadrc('brightness')
 globalkeys = awful.util.table.join(
    globalkeys,
    awful.key({}, 'XF86MonBrightnessDown', dec_brightness),
-   awful.key({}, 'XF86MonBrightnessUp', inc_brightness)
+   awful.key({}, 'XF86MonBrightnessUp', inc_brightness),
+   awful.key({}, 'XF86AudioLowerVolume', dec_volume),
+   awful.key({}, 'XF86AudioRaiseVolume', inc_volume)
 )
 
 
@@ -421,6 +423,8 @@ awful.rules.rules = {
       properties = { floating = true } },
     -- Set Firefox to always map on tags number 2 of screen 1.
     { rule = { class = "Firefox" },
+      properties = { tag = tags[1][1] } },
+    { rule = { class = "KSP.x86_64" },
       properties = { tag = tags[1][1] } },
 }
 -- }}}
