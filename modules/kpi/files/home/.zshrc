@@ -118,14 +118,10 @@ function findi {
 }
 
 
-alias s11='mk_chroot_ssh_screen server11 s11'
+alias hz1="mk_ssh_screen hz1 gitlab"
 alias 9p='mk_ssh_screen_pf 9p proj 9090:localhost:9090'
 alias h1='mk_ssh_screen_pf h1 proj 9090:localhost:9090'
-alias rush='mk_ssh_screen rush_server@h1 dev'
-alias vdev='mk_ssh_screen vhome proj'
 alias pk="pid_kill_rm_nohup"
-alias whome="ssh kpi@192.168.88.33"
-alias vhome="ssh kpi@192.168.88.41"
 alias new_screen="screen -c ~/.screenrc2 $@"
 
 function am {
@@ -246,6 +242,21 @@ compctl -K _de_completion de
 function tcp_ports {
     sudo lsof -i -n -P | grep TCP
 }
+
+function leftmode {
+    xmodmap -e 'pointer = 3 2 1'
+    synclient TapButton1=3 TapButton2=1 TapButton3=2
+}
+
+function rightmode {
+    xmodmap -e 'pointer = 1 2 3'
+    synclient TapButton1=1 TapButton2=3 TapButton3=2
+}
+
+
+# C-u to kill line from cursor to beginning
+bindkey \^U backward-kill-line
+
 
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -f -g ""'
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
