@@ -608,9 +608,11 @@ end)
 client.connect_signal("unfocus", function(c)
                          local f = io.popen("xkb-switch | head -n1")
                          local lang = f:read()
-                         langs[c.pid] = lang
+                         if c.pid and lang then
+                            langs[c.pid] = lang
+                         end
                          -- os.execute("logger 'data is: "..lang.."'")
-                         os.execute("logger store '"..langs[c.pid].."'")
+                         -- os.execute("logger store '"..langs[c.pid].."'")
 end)
 
 -- }}}
