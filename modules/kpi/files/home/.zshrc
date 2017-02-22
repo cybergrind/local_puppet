@@ -259,6 +259,41 @@ function rightmode {
     lang_setup
 }
 
+function _exists {
+    whence $1 > /dev/null
+}
+
+function aws_setup {
+    if [[ $AWS_READY == 1 ]]; then
+        exit 0
+    fi
+    if [[ -f ~/.keys/env ]]; then
+        source ~/.keys/env
+    else
+        echo 'There is no env files'
+        exit 1
+    fi
+
+    if _exists awless; then
+        source <(awless completion zsh)
+    fi
+    export AWS_READY=1
+}
+
+function awless_instances {
+    prev=$(awless config get region)
+    echo 'Region: ' $1
+    awless config set region $1
+    awless list instances
+    awless config set region $prev
+}
+
+function aws_status {
+    aws_setup
+    awless_instances us-east-1
+    awless_instances eu-central-1
+}
+
 # C-u to kill line from cursor to beginning
 bindkey \^U backward-kill-line
 
