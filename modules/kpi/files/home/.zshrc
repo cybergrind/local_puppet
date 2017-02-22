@@ -243,16 +243,21 @@ function tcp_ports {
     sudo lsof -i -n -P | grep TCP
 }
 
+function lang_setup {
+    setxkbmap 'us,ru(winkeys)' -option grp:toggle,grp_led:scroll,ctrl:nocaps
+}
+
 function leftmode {
     xmodmap -e 'pointer = 3 2 1'
     synclient TapButton1=3 TapButton2=1 TapButton3=2
+    lang_setup
 }
 
 function rightmode {
     xmodmap -e 'pointer = 1 2 3'
     synclient TapButton1=1 TapButton2=3 TapButton3=2
+    lang_setup
 }
-
 
 # C-u to kill line from cursor to beginning
 bindkey \^U backward-kill-line
