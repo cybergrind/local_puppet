@@ -265,13 +265,13 @@ function _exists {
 
 function aws_setup {
     if [[ $AWS_READY == 1 ]]; then
-        exit 0
+        return 0
     fi
     if [[ -f ~/.keys/env ]]; then
         source ~/.keys/env
     else
         echo 'There is no env files'
-        exit 1
+        return 1
     fi
 
     if _exists awless; then
