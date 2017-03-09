@@ -53,7 +53,7 @@ class kpi::packages () {
   $pkgs = [
     'ttf-droid', 'ttf-ms-fonts', 'ttf-freefont', 'ttf-bitstream-vera',
     'ttf-droid-sans-mono-slashed-powerline-git',
-    'ttf-liberation', 'ttf-ubuntu-font-family', 'xkb-switch-git',
+    'ttf-liberation', 'ttf-ubuntu-font-family',
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev', 'xf86-input-keyboard',
     'xf86-input-mouse',
     'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
@@ -64,6 +64,8 @@ class kpi::packages () {
     'qbittorrent',  'shutter',
     'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
     'chromium-pepper-flash',
+    # X related
+     'xkb-switch-git', 'xsel',
   ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
