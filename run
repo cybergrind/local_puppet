@@ -1,8 +1,34 @@
 #!/usr/bin/env bash
-git pull
+
+PULL='.pull'
+SUB='.submodules'
+
+case $1 in
+    clean)
+        echo pull and update submodules
+        rm $PULL $SUB
+        ;;
+    *)
+        ;;
+esac
+
+
+find $DUMP_DIR -name $PULL -mtime +1 -delete
+if [ ! -f $PULL ]; then
+    echo pull latest changes
+    git pull
+    touch $PULL
+fi
+
+find $DUMP_DIR -name $SUB -mtime +7 -delete
+
 if [ -e /bin/sudo ]; then
-   sudo puppet module install puppetlabs-stdlib
-   sudo puppet apply --modulepath `pwd`/modules manifests/hosts.pp $@
+    if [ ! -f $SUB ]; then
+        echo update submodules
+        sudo puppet module install puppetlabs-stdlib
+        touch $SUB
+    fi
+    sudo puppet apply --modulepath `pwd`/modules manifests/hosts.pp $@
 else
-   puppet apply --modulepath `pwd`/modules manifests/hosts.pp $@
+    puppet apply --modulepath `pwd`/modules manifests/hosts.pp $@
 fi
