@@ -521,10 +521,14 @@ awful.rules.rules = {
     { rule_any = {type = { "normal", "dialog" }
       }, properties = { titlebars_enabled = false }
     },
+    { rule = { class = "TeamViewer" },
+      properties = { screen = 1, tag = "4" }},
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
-    -- { rule = { class = "Firefox" },
-    --   properties = { screen = 1, tag = "2" } },
+    { rule = { class = "Firefox" },
+      properties = { screen = 1, tag = "1" } },
+    { rule = { class = "google-chrome" },
+      properties = { screen = 1, tag = "9" } },
 }
 -- }}}
 
