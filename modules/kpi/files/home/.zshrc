@@ -85,6 +85,7 @@ function rmtmp {
     find . -name \*.pyc -delete
     find . -name \*~ -delete
     find . -name "\#*" -delete
+    find . -iname '__pycache__' -type d | xargs rm -rf
     true
 }
 
