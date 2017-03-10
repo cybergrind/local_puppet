@@ -74,7 +74,7 @@ class kpi::packages () {
 
 class kpi::packages::optional () {
   $pkgs = [
-    'firefox-nightly', 'skype', 'viber',  'hipchat',
+    'firefox-nightly', 'viber',
     'lm_sensors', 'lshw', 'hdparm', 'tk',
     'pavucontrol', 'pulseaudio-alsa', 'pulseaudio',
     'xscreensaver', 'teamviewer',
