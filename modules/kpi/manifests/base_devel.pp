@@ -8,7 +8,7 @@ class kpi::base_devel () {
   $scala = [ 'jdk', 'scala', 'scala-docs', 'sbt', 'java-jline' ]
   kpi::install { $scala: }
 
-  $other = [ 'go', 'nodejs', 'npm', ]
+  $other = [ 'go', 'nodejs', 'npm', 'yarn',]
   kpi::install { $other: }
 
   $editors = ['emacs-nox', 'vim']
