@@ -79,6 +79,7 @@ class kpi::packages::optional () {
     'pavucontrol', 'pulseaudio-alsa', 'pulseaudio',
     'xscreensaver', 'teamviewer',
     'emacs-python-mode',
+    'inotify-tools',
     # development
     'python-virtualenv', 'whois', 'bind-tools', # dig
     'fabric', 'python-pip', 'python2-pip', 'flake8',
