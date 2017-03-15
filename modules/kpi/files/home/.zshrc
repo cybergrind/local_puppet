@@ -182,7 +182,7 @@ export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 
 export GELF_HOST=192.168.88.26
 export LOGSTASH_HOST=192.168.88.26
-export DOCKER_NETWORK_DRIVER=overlay
+# export DOCKER_NETWORK_DRIVER=overlay
 
 function dck_tmp {
     docker run --rm=true $3 $4 $5 $6 -it $1 $2
