@@ -620,4 +620,13 @@ client.connect_signal("unfocus", function(c)
 end)
 
 -- }}}
--- awful.util.spawn_with_shell("xscreensaver")
+awful.util.spawn_with_shell("xscreensaver")
+
+gears.timer {
+   timeout   = 120,
+   autostart = true,
+   callback  = function()
+      awful.util.spawn_with_shell("python ~/.local/bin/video_heartbeat.py once")
+   end
+}
+
