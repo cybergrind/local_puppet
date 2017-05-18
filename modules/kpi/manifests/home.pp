@@ -41,7 +41,9 @@ define kpi::home {
     ensure => directory,
     recurse => remote,
     source => 'puppet:///modules/kpi/home',
+    source_permissions => use,
     owner => $user,
+    group => $user,
     require => [ User[$user] ],
   }
 
