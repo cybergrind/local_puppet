@@ -71,6 +71,11 @@ def tags_push():
     commit_cmd('git push --tags')
 
 
+def npm_publish():
+    if exists('.npmignore'):
+        commit_cmd('npm publish')
+
+
 def main():
     tag = get_tag()
 
@@ -82,6 +87,7 @@ def main():
     push()
     tag_create(tag)
     tags_push()
+    npm_publish()
 
 
 if __name__ == '__main__':
