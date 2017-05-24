@@ -5,6 +5,7 @@
 if [ ! -z "$Apple_PubSub_Socket_Render" ]; then
     declare -x PATH="/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 fi
+
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
@@ -36,6 +37,11 @@ ZSH_THEME="jonathan"
 plugins=(git archlinux ssh-agent fabric python postgres rsync svn extract docker golang go lein mvn pip scala sudo systemd zsh_reload z)
 
 source $ZSH/oh-my-zsh.sh
+
+if [ ! -z "$SSH_CLIENT" ]; then
+    declare -x PR_CYAN=$PR_LIGHT_RED
+fi
+
 
 export HISTSIZE=9999999
 
