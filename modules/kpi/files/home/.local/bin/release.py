@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import argparse
-import sys
+import re
 import json
 from os.path import exists
 from subprocess import run, PIPE
@@ -8,6 +8,8 @@ from subprocess import run, PIPE
 
 parser = argparse.ArgumentParser(description='release tool')
 parser.add_argument('-c', '--commit', action='store_true')
+parser.add_argument('-n', '--no-upload', action='store_true', default=False)
+parser.add_argument('-v', '--version')
 parser.add_argument('branch')
 args = parser.parse_args()
 
@@ -23,7 +25,19 @@ def git_file(branch, name):
 
 
 def parse_version(branch):
-    return json.loads(git_file(branch, 'package.json'))['version']
+    if args.version:
+        return args.version
+    elif exists('package.json'):
+        return json.loads(git_file(branch, 'package.json'))['version']
+    elif exists('setup.py'):
+        rex = re.compile('version=.(\d+.\d+.\d+).')
+        r = rex.findall(git_file(branch, 'setup.py'))
+        if r:
+            return r[0]
+        else:
+            print('Cannot determine version. Please pass it with `-v` option')
+            exit(1)
+    raise NotImplementedError
 
 
 def prompt(question):
@@ -76,6 +90,17 @@ def npm_publish():
         commit_cmd('npm publish')
 
 
+def pypi_publish():
+    commit_cmd('python setup.py sdist upload')
+
+
+def publish():
+    if exists('package.json'):
+        npm_publish()
+    elif exists('setup.py'):
+        pypi_publish()
+
+
 def main():
     tag = get_tag()
 
@@ -87,7 +112,8 @@ def main():
     push()
     tag_create(tag)
     tags_push()
-    npm_publish()
+    if not args.no_upload:
+        publish()
 
 
 if __name__ == '__main__':
@@ -100,8 +126,8 @@ if __name__ == '__main__':
         if not prompt('Do you want go with {!r}'.format(curr_branch)):
             exit(0)
 
-    if not exists('package.json'):
-        print('We support only node libraries releases for now')
+    if not exists('package.json') and not exists('setup.py'):
+        print('We support only node/pypi libraries releases for now')
         exit(1)
 
     main()
