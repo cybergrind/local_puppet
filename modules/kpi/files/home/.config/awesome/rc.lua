@@ -602,9 +602,18 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 langs = {}
+
+-- Class: Screenshot Monitor Type: utility Name: BACK-812: check integration tests (Tipsi Backend) Instance: Screenshot Monitor Role: nil
+
 client.connect_signal("focus", function(c)
                          if langs[c.pid] then
                             os.execute('xkb-switch -s "'..langs[c.pid]..'"')
+
+                            if c.class == 'Screenshot Monitor' and c.type == 'utility' then
+                               awful.client.focus.byidx( 1)
+                            end
+
+                            -- os.execute(string.format("logger 'AW Client: %s Class: %s Type: %s Name: %s Instance: %s Role: %s'", c, c.class, c.type, c.name, c.instance, c.role))
                             -- os.execute('logger switch to: "'..langs[c.pid].." "..c.pid..'"')
                          end
 end)
@@ -629,4 +638,3 @@ gears.timer {
       awful.util.spawn_with_shell("python ~/.local/bin/video_heartbeat.py once")
    end
 }
-
