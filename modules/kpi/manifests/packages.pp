@@ -65,7 +65,7 @@ class kpi::packages () {
     'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
     'chromium-pepper-flash',
     # X related
-     'xkb-switch-git', 'xsel',
+     'xsel',
   ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
