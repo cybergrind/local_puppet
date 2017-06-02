@@ -606,26 +606,21 @@ langs = {}
 -- Class: Screenshot Monitor Type: utility Name: BACK-812: check integration tests (Tipsi Backend) Instance: Screenshot Monitor Role: nil
 
 client.connect_signal("focus", function(c)
+                         if c.class == 'Screenshot Monitor' and c.type == 'utility' then
+                            awful.client.focus.byidx(1)
+                            return
+                         end
+                         -- os.execute(string.format("logger 'AW Client: %s Class: %s Type: %s Name: %s Instance: %s Role: %s'", c, c.class, c.type, c.name, c.instance, c.role))
                          if langs[c.pid] then
-                            os.execute('xkb-switch -s "'..langs[c.pid]..'"')
-
-                            if c.class == 'Screenshot Monitor' and c.type == 'utility' then
-                               awful.client.focus.byidx( 1)
-                            end
-
-                            -- os.execute(string.format("logger 'AW Client: %s Class: %s Type: %s Name: %s Instance: %s Role: %s'", c, c.class, c.type, c.name, c.instance, c.role))
-                            -- os.execute('logger switch to: "'..langs[c.pid].." "..c.pid..'"')
+                            awesome.xkb_set_layout_group(langs[c.pid])
                          end
 end)
 
 client.connect_signal("unfocus", function(c)
-                         local f = io.popen("xkb-switch | head -n1")
-                         local lang = f:read()
-                         if c.pid and lang then
-                            langs[c.pid] = lang
+                         local g = awesome.xkb_get_layout_group()
+                         if c.pid then
+                            langs[c.pid] = g
                          end
-                         -- os.execute("logger 'data is: "..lang.."'")
-                         -- os.execute("logger store '"..langs[c.pid].."'")
 end)
 
 -- }}}
