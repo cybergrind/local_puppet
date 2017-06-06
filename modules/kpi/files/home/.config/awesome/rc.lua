@@ -529,6 +529,8 @@ awful.rules.rules = {
       properties = { screen = 1, tag = "1" } },
     { rule = { class = "google-chrome" },
       properties = { screen = 1, tag = "9" } },
+    { rule = { class = 'Screenshot Monitor', type = 'utility' },
+      properties = { focusable = false, } },
 }
 -- }}}
 
@@ -606,10 +608,6 @@ langs = {}
 -- Class: Screenshot Monitor Type: utility Name: BACK-812: check integration tests (Tipsi Backend) Instance: Screenshot Monitor Role: nil
 
 client.connect_signal("focus", function(c)
-                         if c.class == 'Screenshot Monitor' and c.type == 'utility' then
-                            awful.client.focus.byidx(1)
-                            return
-                         end
                          -- os.execute(string.format("logger 'AW Client: %s Class: %s Type: %s Name: %s Instance: %s Role: %s'", c, c.class, c.type, c.name, c.instance, c.role))
                          if langs[c.pid] then
                             awesome.xkb_set_layout_group(langs[c.pid])
