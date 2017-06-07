@@ -1,5 +1,13 @@
 # tramp fix
-[[ $TERM == "dumb" ]] && unsetopt zle && PS1='$ ' && return
+if [[ $TERM == "dumb" ]]; then
+    unsetopt zle
+    unsetopt prompt_cr
+    unsetopt prompt_subst
+    unfunction precmd
+    unfunction preexec
+    PS1='$ '
+    return
+fi
 
 # ITERM fix
 if [ ! -z "$Apple_PubSub_Socket_Render" ]; then
@@ -36,7 +44,9 @@ ZSH_THEME="jonathan"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(git archlinux ssh-agent fabric python postgres rsync svn extract docker golang go lein mvn pip scala sudo systemd zsh_reload z)
 
-source $ZSH/oh-my-zsh.sh
+if [ ! -z $ZSH/oh-my-zsh.sh ]; then
+    source $ZSH/oh-my-zsh.sh
+fi
 
 if [ ! -z "$SSH_CLIENT" ]; then
     declare -x PR_CYAN=$PR_LIGHT_RED
@@ -44,7 +54,6 @@ fi
 
 
 export HISTSIZE=9999999
-
 export PYTHONPATH=.
 export EDITOR='emacsclient --alternate-editor="" -nw -c'
 export PYMACS_PYTHON='python2'
@@ -53,50 +62,45 @@ export DIA_DIR=.
 
 export JAVA_HOME=/usr/lib/jvm/java-8-jdk
 export JDK_HOME=/usr/lib/jvm/java-8-jdk
+
+export LC_ALL=en_US.UTF-8
+export LANG=en_US.UTF-8
+export TERM=xterm-256color
+
 #export LC_CTYPE=en_US.UTF-8
-alias em='emacs -nw'
 
-alias aenv='. ./venv/bin/activate || . ./bin/activate'
-
-
-if [ -f /usr/share/nvm/init-nvm.sh ]; then
-   source /usr/share/nvm/init-nvm.sh
-fi
 
 function jobskill {
     kill -9 `jobs -p | awk '{print $3}'`
 }
 
-alias lsg='ls -lah | grep -i $1'
-
-function mk_chroot_ssh_screen {
-    ssh -t $1 "sudo cp `tty` /lxc/kpi_chmod/dev/pts; sudo chroot /lxc/kpi_chmod /usr/bin/screen -D -RR " $2
-}
 function mk_ssh_screen {
-    ssh -t $1 "/usr/bin/screen -D -RR " $2
+    case $# in
+        1) SCREEN_NAME=default ;;
+        2) SCREEN_NAME=$2;;
+    esac
+    ssh -t $1 "/usr/bin/screen -D -RR " $SCREEN_NAME
 }
 
 function mk_ssh_screen_pf {
     ssh -L $3 -t $1 "/usr/bin/screen -D -RR " $2
 }
+
 function pid_kill_rm_nohup {
     pid_kill $%
     rm nohup.out
 }
+
 function rmpyc {
     find . -name \*.pyc -exec rm {} \;
 }
 
 function rmtmp {
-    find . -name \*.pyc -delete
+    rmpyc
     find . -name \*~ -delete
     find . -name "\#*" -delete
     find . -iname '__pycache__' -type d | xargs rm -rf
     true
-}
-
-function do_tgz {
-    rm $1; tar --exclude-vcs -czf $1 *
 }
 
 function h {
@@ -125,51 +129,28 @@ function findi {
 }
 
 
+alias em='emacs -nw'
+alias aenv='. ./venv/bin/activate || . ./bin/activate'
+alias lsg='ls -lah | grep -i $1'
+alias psg='pa aux | grep -i $1'
+
 alias hz1="mk_ssh_screen hz1 gitlab"
 alias 9p='mk_ssh_screen_pf 9p proj 9090:localhost:9090'
-alias h1='mk_ssh_screen_pf h1 proj 9090:localhost:9090'
 alias pk="pid_kill_rm_nohup"
 alias new_screen="screen -c ~/.screenrc2 $@"
 
-function am {
-    case $# in
-        0)
-            ssh kb -t 'sudo su - ec2-user'
-            ;;
-        *)
-            ssh $@ -t 'sudo su - ec2-user'
-            ;;
-    esac;
-}
-
-alias make_bw_tgz='tar czf bw.tgz bw && mv bw.tgz ../fabric_common/binary/.'
 alias e='emacsclient --alternate-editor="" -nw -c "$@"'
+alias ccd=/home/kpi/devel/tipsi/tipsi_util/scripts/compose-cmd.sh
 
 
 export PATH=`echo ~`/bin:`echo ~/.local/bin`:/opt/android-sdk/platform-tools/:$PATH
 # Customize to your needs...
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm" # Load RVM function
-
-if [[ "$TERM" == "dumb" ]]
-then
-  unsetopt zle
-  unsetopt prompt_cr
-  unsetopt prompt_subst
-  unfunction precmd
-  unfunction preexec
-  PS1='$ '
-fi
-export LC_ALL=en_US.UTF-8
-export LANG=en_US.UTF-8
 
 function active-window-id {
-if [ ! -n "$SSH_CLIENT" ] || [ ! -n "$SSH_TTY" ]; then
-echo `xprop -root | awk '/_NET_ACTIVE_WINDOW\(WINDOW\)/{print $NF}'`
-fi
+    if [ ! -n "$SSH_CLIENT" ] || [ ! -n "$SSH_TTY" ]; then
+        echo `xprop -root | awk '/_NET_ACTIVE_WINDOW\(WINDOW\)/{print $NF}'`
+    fi
 }
-
-
-export TERM=xterm-256color
 
 # pip zsh completion start
 function _pip_completion {
@@ -183,11 +164,6 @@ function _pip_completion {
 compctl -K _pip_completion pip
 # pip zsh completion end
 
-
-export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-
-export GELF_HOST=192.168.88.26
-export LOGSTASH_HOST=192.168.88.26
 # export DOCKER_NETWORK_DRIVER=overlay
 
 function dck_tmp {
@@ -198,27 +174,7 @@ function dck_bash_tmp {
     docker run  $2 $3 $4 $5 $6 --rm=true -it $1 /bin/bash
 }
 
-function dcup {
-    C=/home/kpi/ssd/tipsi/tipsi_util/scripts/compose-cmd.sh
-    NAME=$1
-    shift
-    $C $NAME up $@
-}
 
-function dcrup {
-    C=/home/kpi/ssd/tipsi/tipsi_util/scripts/compose-cmd.sh
-    NAME=$1
-    shift
-    $C $NAME build &&  $C $NAME up $@
-}
-
-function vpn_connect {
-    /opt/cisco/anyconnect/bin/vpn connect https://by1-vpn.wargaming.net
-}
-
-function vpn_disconnect {
-    /opt/cisco/anyconnect/bin/vpn disconnect
-}
 
 function dpms {
   case $1 in
@@ -227,11 +183,6 @@ function dpms {
    f) xset dpms 6400 6400 6400;;
    off) xset dpms force off;;
   esac;
-}
-
-function my_track_organize {
-    mkdir -p $1
-    mv $1*png $1/.
 }
 
 # docker exec autocompletion
@@ -304,9 +255,10 @@ function aws_status {
 # C-u to kill line from cursor to beginning
 bindkey \^U backward-kill-line
 
-
-export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -f -g ""'
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if [ -f ~/.fzf.zsh ]; then
+    source ~/.fzf.zsh
+    export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -f -g ""'
+fi
 
 if [ -f /usr/share/nvm/nvm.sh ]; then
     [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
@@ -315,5 +267,15 @@ if [ -f /usr/share/nvm/nvm.sh ]; then
     source /usr/share/nvm/install-nvm-exec
 fi
 
+if [ -s "$HOME/.rvm/scripts/rvm" ]; then
+    . "$HOME/.rvm/scripts/rvm" # Load RVM function
+    export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+fi
+
+
 CUSTOM_CONFIG="$HOME/.config/$(hostname).sh"
-[ -f "$CUSTOM_CONFIG" ] && source "$CUSTOM_CONFIG" || echo 'no custom config'
+if [ -f "$CUSTOM_CONFIG" ]; then
+    source "$CUSTOM_CONFIG"
+else
+    echo 'no custom config'
+fi
