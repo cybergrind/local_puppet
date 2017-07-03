@@ -15,7 +15,7 @@ class kpi::base_devel () {
   kpi::install { $editors: }
 
   $tools = ['git', 'mercurial', 'subversion',
-            'docker', 'docker-compose', 'docker-machine', 'python2-docker-py']
+            'docker', 'docker-compose', 'docker-machine']
   kpi::install { $tools: }
 
   file {"/root": ensure => directory}
