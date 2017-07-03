@@ -526,11 +526,13 @@ awful.rules.rules = {
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
     { rule = { class = "Firefox" },
-      properties = { screen = 1, tag = "1" } },
-    { rule = { class = "google-chrome" },
-      properties = { screen = 1, tag = "9" } },
+      properties = { tag = "1" } },
+    { rule = { class = "Google-chrome" },
+      properties = { tag = "9" } },
     { rule = { class = 'Screenshot Monitor', type = 'utility' },
       properties = { focusable = false, } },
+    { rule = { class = 'Screenshot Monitor', type = 'normal'},
+      properties = { y = 700, screen = 1, tag = "2", floating = true, ontop = true } },
 }
 -- }}}
 
