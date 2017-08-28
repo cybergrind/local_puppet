@@ -96,6 +96,10 @@ function rmpyc {
 }
 
 function rmtmp {
+    case $@ in
+        sudo) sudo chown `whoami` -R . ;;
+    esac;
+
     rmpyc
     find . -name \*~ -delete
     find . -name "\#*" -delete
