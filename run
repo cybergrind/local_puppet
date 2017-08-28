@@ -28,7 +28,7 @@ if [ -e /bin/sudo ]; then
         sudo puppet module install puppetlabs-stdlib
         touch $SUB
     fi
-    sudo puppet apply --modulepath `pwd`/modules manifests/hosts.pp $@
+    sudo puppet apply --modulepath `pwd`/modules:/etc/puppetlabs/code/modules/ manifests/hosts.pp $@
 else
-    puppet apply --modulepath `pwd`/modules manifests/hosts.pp $@
+    puppet apply --modulepath `pwd`/modules:/etc/puppetlabs/code/modules/ manifests/hosts.pp $@
 fi
