@@ -1,0 +1,58 @@
+{
+    "shell": "zsh",
+    "nest_shells": false,
+    "pypaths": {},
+    "semver": {
+        "pre": "",
+        "build": ""
+    },
+    "pypi_username": "cybergrind",
+    "name": "cybergrind",
+    "email": "cybergrind@gmail.com",
+    "basic": true,
+    "pyversions": [
+        "3.5",
+        "3.6",
+        "3.7"
+    ],
+    "licenses": [
+        "mit"
+    ],
+    "readme": {
+        "format": "rst",
+        "badges": [
+            {
+                "image": "https://img.shields.io/pypi/v/{}.svg",
+                "target": "https://pypi.org/project/{}",
+                "alt": "Latest PyPI version"
+            },
+            {
+                "image": "https://img.shields.io/travis/_/{}/master.svg",
+                "target": "https://travis-ci.org/_/{}",
+                "alt": "Travis CI"
+            },
+            {
+                "image": "https://img.shields.io/codecov/c/github/_/{}/master.svg",
+                "target": "https://codecov.io/gh/_/{}",
+                "alt": "Codecov"
+            },
+            {
+                "image": "https://img.shields.io/pypi/pyversions/{}.svg",
+                "target": "https://pypi.org/project/{}",
+                "alt": "Supported Python versions"
+            },
+            {
+                "image": "https://img.shields.io/pypi/l/{}.svg",
+                "target": "https://choosealicense.com/licenses",
+                "alt": "License"
+            }
+        ]
+    },
+    "vc": "git",
+    "vc_url": "https://github.com/_",
+    "ci": [
+        "travis"
+    ],
+    "coverage": "codecov",
+    "extras": []
+}
