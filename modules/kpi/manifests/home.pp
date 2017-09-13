@@ -58,6 +58,16 @@ define kpi::home {
   home_repo {"$user-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
   home_symlinks {"$user-symlinks": user=>$user}
   kpi::home::vim_setup {"$user-vim": user=>$user}
+
+  exec { "${home} flake8-string-format":
+    command => "pip3 install --user flake8-string-format",
+    provider => shell,
+    cwd => "${home}",
+    user => $user,
+    creates => "${home}/.local/lib/python3.6/site-packages/flake8_string_format.py",
+  }
+
+
 }
 
 define home_symlinks($user){
@@ -160,6 +170,7 @@ define kpi::home::vim_setup($user, $dir=undef){
     creates => "${home}/.fzf",
     require => [ File[$home], Kpi::Install['git'] ],
   }
+
   # "[$user] please run vim +PluginInstall +qall"
 
 }
