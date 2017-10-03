@@ -140,6 +140,7 @@ alias psg='pa aux | grep -i $1'
 
 alias hz1="mk_ssh_screen hz1 gitlab"
 alias 9p='mk_ssh_screen_pf 9p proj 9090:localhost:9090'
+alias tpad_gitlab='mk_ssh_screen gitlab@tpad gitlab'
 alias pk="pid_kill_rm_nohup"
 alias new_screen="screen -c ~/.screenrc2 $@"
 
