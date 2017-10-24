@@ -257,6 +257,17 @@ function aws_status {
     awless_instances eu-central-1
 }
 
+function bcc_tools {
+    docker run -it --rm \
+           --privileged \
+           -v /lib/modules:/lib/modules:ro \
+           -v /usr/src:/usr/src:ro \
+           -v /etc/localtime:/etc/localtime:ro \
+           --workdir /usr/share/bcc/tools \
+           --pid host \
+           zlim/bcc
+}
+
 # C-u to kill line from cursor to beginning
 bindkey \^U backward-kill-line
 
