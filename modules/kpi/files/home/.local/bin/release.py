@@ -2,6 +2,7 @@
 import argparse
 import json
 import re
+from glob import glob
 from os.path import exists
 from subprocess import run, PIPE
 
@@ -24,16 +25,27 @@ def git_file(branch, name):
     return '\n'.join(cmd('git show {}:{}'.format(branch, name)))
 
 
+def parse_python_version(branch):
+    rex = re.compile('version=.(\d+.\d+.\d+).')
+    r = rex.findall(git_file(branch, 'setup.py'))
+    if r:
+        return r[0]
+    rex = re.compile('__version__ = .(\d+.\d+.\d+).')
+    for f in glob('*/__init__.py'):
+        r = rex.findall(git_file(branch, f))
+        if r:
+            return r[0]
+
+
 def parse_version(branch):
     if args.version:
         return args.version
     elif exists('package.json'):
         return json.loads(git_file(branch, 'package.json'))['version']
     elif exists('setup.py'):
-        rex = re.compile('version=.(\d+.\d+.\d+).')
-        r = rex.findall(git_file(branch, 'setup.py'))
-        if r:
-            return r[0]
+        version = parse_python_version(branch)
+        if version:
+            return version
         else:
             print('Cannot determine version. Please pass it with `-v` option')
             exit(1)
