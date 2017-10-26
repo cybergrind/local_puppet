@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
-import re
 import json
+import re
 from os.path import exists
 from subprocess import run, PIPE
 
@@ -86,7 +86,7 @@ def tags_push():
 
 
 def npm_publish():
-    if exists('.npmignore'):
+    if exists('.npmignore') and not exists('.npmnotpublic'):
         commit_cmd('npm publish')
 
 
