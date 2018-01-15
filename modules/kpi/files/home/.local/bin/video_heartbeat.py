@@ -8,7 +8,7 @@ import time
 
 
 STOPWORDS = [
-    'twitch', 'youtube', 'mplayer',
+    'twitch', 'youtube', 'mplayer', 'stepmania'
 ]
 
 wname = "xprop -id $(xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5) _NET_WM_NAME"
