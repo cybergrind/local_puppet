@@ -16,6 +16,8 @@
     lcafp = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --all --first-parent
     daydiff = diff '@{1 day ago}'..
     desc = describe
+    yapf = ! git diff --cached --name-only | grep -E '.py$' | xargs -- yapf -i
+
 [color]
     ui = auto
 [credential]
