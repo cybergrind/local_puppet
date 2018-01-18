@@ -61,7 +61,7 @@ class kpi::packages () {
     'virtualbox',
     'dropbox', 'pidgin',
     'mplayer', 'mupdf', 'xpdf',
-    'qbittorrent',  'shutter',
+    'qbittorrent',
     'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
     'chromium-pepper-flash',
     # X related
