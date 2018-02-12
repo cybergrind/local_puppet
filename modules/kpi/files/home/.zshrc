@@ -202,7 +202,12 @@ function _de_completion {
     reply=( $containers )
 }
 function de {
-    docker exec -it $1 /bin/bash
+    case $# in
+        1)
+            docker exec -it $1 /bin/bash;;
+        *)
+            docker exec -it $@ ;;
+    esac
 }
 compctl -K _de_completion de
 # docker exec completion end
