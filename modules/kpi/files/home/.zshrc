@@ -204,9 +204,9 @@ function _de_completion {
 function de {
     case $# in
         1)
-            docker exec -it $1 /bin/bash;;
+            docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) $1 /bin/bash;;
         *)
-            docker exec -it $@ ;;
+            docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) $@ ;;
     esac
 }
 compctl -K _de_completion de
