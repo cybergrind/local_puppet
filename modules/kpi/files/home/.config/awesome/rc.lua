@@ -526,7 +526,7 @@ awful.rules.rules = {
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
     { rule = { class = "Firefox", role = "browser" },
-      properties = { tag = "1" } },
+      properties = { tag = "9" } },
     { rule = { class = "Google-chrome" },
       properties = { tag = "9" } },
     { rule = { class = 'Screenshot Monitor', type = 'utility' },
