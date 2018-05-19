@@ -300,6 +300,9 @@ if [ -s "$HOME/.rvm/scripts/rvm" ]; then
     export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
 fi
 
+if [ -e "/usr/bin/direnv" ]; then
+    eval "$(direnv hook zsh)"
+fi
 
 CUSTOM_CONFIG="$HOME/.config/$(hostname).sh"
 if [ -f "$CUSTOM_CONFIG" ]; then
