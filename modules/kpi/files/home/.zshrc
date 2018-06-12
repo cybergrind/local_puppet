@@ -197,6 +197,13 @@ function dpms {
   esac;
 }
 
+function mon_sleep {
+    sleep 0.1
+    xset s activate
+    sleep 0.1
+    xset dpms force suspend
+}
+
 # docker exec autocompletion
 function _de_completion {
     containers=( $(docker ps | awk 'NR>1{print $NF}') )
