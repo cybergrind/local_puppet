@@ -532,7 +532,7 @@ awful.rules.rules = {
     { rule = { class = 'Screenshot Monitor', type = 'utility' },
       properties = { focusable = false, } },
     { rule = { class = 'Screenshot Monitor', type = 'normal'},
-      properties = { y = 700, screen = 1, tag = "2", floating = true, ontop = true } },
+      properties = { y = 700, screen = 2, tag = "2", floating = true, ontop = true } },
 }
 -- }}}
 
