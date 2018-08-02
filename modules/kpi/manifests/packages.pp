@@ -82,7 +82,7 @@ class kpi::packages::optional () {
     'inotify-tools',
     # development
     'python-virtualenv', 'whois', 'bind-tools', # dig
-    'fabric', 'python-pip', 'python2-pip', 'flake8',
+    'python-pip', 'python2-pip', 'flake8',
     'selenium-server-standalone', 'phantomjs',
     'erlang', 'elixir',
     'postgresql-libs',
