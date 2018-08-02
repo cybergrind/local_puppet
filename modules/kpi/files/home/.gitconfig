@@ -17,7 +17,7 @@
     daydiff = diff '@{1 day ago}'..
     desc = describe
     yapf = ! git diff --cached --name-only | grep -E '.py$' | xargs -- yapf -i
-
+    black = ! git diff --cached --name-only | grep -E '.py$' | xargs -n1 -I_file -- sh -c 'black _file && isort _file'
 [color]
     ui = auto
 [credential]
