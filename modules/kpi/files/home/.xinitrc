@@ -23,6 +23,25 @@ function tpad_trackpoint {
     tpset "Device Accel Constant Deceleration" 0.95
 }
 
+function setup_wacom {
+    #Wacom Intuos5 touch S Pen stylus
+    #Wacom Intuos5 touch S Pad pad
+    #Wacom Intuos5 touch S Pen eraser
+    #Wacom Intuos5 touch S Pen cursor
+    xsetwacom set "Wacom Intuos5 touch S Pen stylus" MapToOutput HEAD-0
+    xsetwacom set "Wacom Intuos5 touch S Pen eraser" MapToOutput HEAD-0
+    xsetwacom set "Wacom Intuos5 touch S Pen cursor" MapToOutput HEAD-0
+    xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 1 "key ctrl" # in whell
+
+    xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 2 "key x"
+    xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 3 "key v"
+    xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 8 "key ctrl z"
+    xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 9 "key ["
+    xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 10 ""
+    xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 11 "key ]"
+}
+
+
 case "$(hostname)" in
     tpad)
         xrandr --newmode "1920x1080"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync
