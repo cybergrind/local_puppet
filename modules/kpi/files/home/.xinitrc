@@ -37,7 +37,7 @@ function setup_wacom {
     xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 3 "key v"
     xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 8 "key ctrl z"
     xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 9 "key ["
-    xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 10 ""
+    xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 10 "key alt ctrl 1"
     xsetwacom set "Wacom Intuos5 touch S Pad pad" Button 11 "key ]"
 }
 
