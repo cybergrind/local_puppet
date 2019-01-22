@@ -59,7 +59,7 @@ class kpi::packages () {
     'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
     'awesome', 'vicious', 'xorg-xrandr', 'arandr',
     'virtualbox',
-    'dropbox', 'pidgin',
+    'dropbox',
     'mplayer', 'mupdf', 'xpdf',
     'qbittorrent',
     'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
@@ -83,8 +83,7 @@ class kpi::packages::optional () {
     # development
     'python-virtualenv', 'whois', 'bind-tools', # dig
     'python-pip', 'python2-pip', 'flake8',
-    'selenium-server-standalone', 'phantomjs',
-    'erlang', 'elixir',
+    'selenium-server-standalone',
     'postgresql-libs',
   ]
   kpi::install { $pkgs:
