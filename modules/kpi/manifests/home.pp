@@ -3,7 +3,7 @@ class kpi::home::repos {
 }
 
 
-define rdir ($user) {
+define kpi::home::rdir ($user) {
   exec { $name:
     creates => $user,
     user => $user,
@@ -11,9 +11,9 @@ define rdir ($user) {
   } -> file { $name: }
 }
 
-define rfile ($user, $source) {
+define kpi::home::rfile ($user, $source) {
   $dname = dirname($name)
-  rfile { dname:
+  kpi::home::rfile { dname:
     user => $user
   }
   file { $name:
@@ -54,9 +54,9 @@ define kpi::home {
     require => [ File[$home] ],
   }
 
-  home_repo {"$user-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
-  home_repo {"$user-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
-  home_symlinks {"$user-symlinks": user=>$user}
+  kpi::home_repo {"$user-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
+  kpi::home_repo {"$user-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
+  kpi::home_symlinks {"$user-symlinks": user=>$user}
   kpi::home::vim_setup {"$user-vim": user=>$user}
 
   exec { "${home} flake8-string-format":
@@ -70,7 +70,7 @@ define kpi::home {
 
 }
 
-define home_symlinks($user){
+define kpi::home_symlinks($user){
   $id_rsa = str2bool($facts["${user}_id_rsa"])
   $keys = str2bool($facts["${user}_keys"])
   $dropbox = str2bool($facts["${user}_dropbox"])
@@ -82,32 +82,32 @@ define home_symlinks($user){
   }
 
   if $keys {
-    keys_links {$user: }
+    kpi::home::keys_links {$user: }
   }
 
   if $dropbox {
-    dropbox_links {$user: }
+    kpi::home::dropbox_links {$user: }
   }
 }
 
-define dropbox_links {
+define kpi::home::dropbox_links {
   $user = $name
-  dropbox_link { "$user:.ssh/config": }
-  dropbox_link { "$user:start_work": }
-  dropbox_link { "$user:.pypirc": }
+  kpi::home::dropbox_link { "$user:.ssh/config": }
+  kpi::home::dropbox_link { "$user:start_work": }
+  kpi::home::dropbox_link { "$user:.pypirc": }
 }
 
-define dropbox_link {
+define kpi::home::dropbox_link {
   $i = split($name, ":")
   $user = $i[0]
   $path = $i[1]
-  home_link {"$user:$path":
+  kpi::home_link {"$user:$path":
     target=>"Dropbox/home/$path",
     require => [File["/home/$user/.ssh"]]
   }
 }
 
-define keys_links {
+define kpi::home::keys_links {
   $user = $name
   $files = ['id_rsa', 'id_rsa.pub',
             'tipsikey_test_v2.pem',
@@ -115,20 +115,20 @@ define keys_links {
             'tipsikey_prod_v2.pem']
 
   $files.each |String $fileName| {
-    keys_ssh_link {"$user:.ssh/$fileName":
+    kpi::home::keys_ssh_link {"$user:.ssh/$fileName":
       require => [File["/home/$user/.ssh"]],
     }
   }
 }
 
-define keys_ssh_link {
+define kpi::home::keys_ssh_link {
   $i = split($name, ":")
   $user = $i[0]
   $path = $i[1]
-  home_link {"$user:$path": target=>".keys/$path", mode=>'0600'}
+  kpi::home_link {"$user:$path": target=>".keys/$path", mode=>'0600'}
 }
 
-define home_link ($target, $mode='0755'){
+define kpi::home_link ($target, $mode='0755'){
   $i = split($name, ":")
   $user = $i[0]
   $src = $i[1]
@@ -140,7 +140,7 @@ define home_link ($target, $mode='0755'){
   }
 }
 
-define home_repo($user, $dir, $repo){
+define kpi::home_repo($user, $dir, $repo){
   $home_dir = "/home/$user/$dir"
   exec { "git clone http://github.com/$repo.git $home_dir":
     provider => shell,
