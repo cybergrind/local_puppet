@@ -459,6 +459,10 @@ function loadrc(name)
    pcall(function() return dofile(path) end)
 end
 
+function screenshot()
+   os.execute('flameshot gui')
+end
+
 loadrc('brightness')
 
 globalkeys = awful.util.table.join(
@@ -466,7 +470,8 @@ globalkeys = awful.util.table.join(
    awful.key({}, 'XF86MonBrightnessDown', dec_brightness),
    awful.key({}, 'XF86MonBrightnessUp', inc_brightness),
    awful.key({}, 'XF86AudioLowerVolume', dec_volume),
-   awful.key({}, 'XF86AudioRaiseVolume', inc_volume)
+   awful.key({}, 'XF86AudioRaiseVolume', inc_volume),
+   awful.key({}, 'Pause', screenshot)
 )
 
 
