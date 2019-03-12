@@ -311,6 +311,10 @@ if [ -e "/usr/bin/direnv" ]; then
     eval "$(direnv hook zsh)"
 fi
 
+if (( $+commands[heroku] )); then
+    HEROKU_AC_ZSH_SETUP_PATH=/home/kpi/.cache/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH || eval "$(heroku autocomplete:script zsh)"
+fi
+
 CUSTOM_CONFIG="$HOME/.config/$(hostname).sh"
 if [ -f "$CUSTOM_CONFIG" ]; then
     source "$CUSTOM_CONFIG"
