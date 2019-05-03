@@ -112,7 +112,8 @@ define kpi::home::keys_links {
   $files = ['id_rsa', 'id_rsa.pub',
             'tipsikey_test_v2.pem',
             'tipsikey_test_v3.pem',
-            'tipsikey_prod_v2.pem']
+            'tipsikey_prod_v2.pem',
+            'perfect_label.pem']
 
   $files.each |String $fileName| {
     kpi::home::keys_ssh_link {"$user:.ssh/$fileName":
