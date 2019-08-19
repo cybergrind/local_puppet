@@ -51,7 +51,7 @@ class kpi::packages () {
   }
 
   $pkgs = [
-    'ttf-droid', 'ttf-ms-fonts', 'ttf-freefont', 'ttf-bitstream-vera',
+    'ttf-droid', 'ttf-ms-fonts', 'ttf-bitstream-vera',
     'ttf-droid-sans-mono-slashed-powerline-git',
     'ttf-liberation', 'ttf-ubuntu-font-family',
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev', 'xf86-input-keyboard',
@@ -63,7 +63,6 @@ class kpi::packages () {
     'mplayer', 'mupdf', 'xpdf',
     'qbittorrent',
     'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
-    'chromium-pepper-flash',
     # X related
      'xsel', 'flameshot',
   ]
