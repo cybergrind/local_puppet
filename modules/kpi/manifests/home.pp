@@ -73,7 +73,7 @@ define kpi::home {
 define kpi::home_symlinks($user){
   $id_rsa = str2bool($facts["${user}_id_rsa"])
   $keys = str2bool($facts["${user}_keys"])
-  $dropbox = str2bool($facts["${user}_dropbox"])
+  $yad = str2bool($facts["${user}_yad"])
 
   file { "/home/$user/.ssh":
     ensure => directory,
@@ -85,24 +85,24 @@ define kpi::home_symlinks($user){
     kpi::home::keys_links {$user: }
   }
 
-  if $dropbox {
-    kpi::home::dropbox_links {$user: }
+  if $yad {
+    kpi::home::shared_links {$user: }
   }
 }
 
-define kpi::home::dropbox_links {
+define kpi::home::shared_links {
   $user = $name
-  kpi::home::dropbox_link { "$user:.ssh/config": }
-  kpi::home::dropbox_link { "$user:start_work": }
-  kpi::home::dropbox_link { "$user:.pypirc": }
+  kpi::home::shared_link { "$user:.ssh/config": }
+  kpi::home::shared_link { "$user:start_work": }
+  kpi::home::shared_link { "$user:.pypirc": }
 }
 
-define kpi::home::dropbox_link {
+define kpi::home::shared_link {
   $i = split($name, ":")
   $user = $i[0]
   $path = $i[1]
   kpi::home_link {"$user:$path":
-    target=>"Dropbox/home/$path",
+    target=>"Yandex.Disk/home/$path",
     require => [File["/home/$user/.ssh"]]
   }
 }

@@ -59,10 +59,10 @@ class kpi::packages () {
     'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
     'awesome', 'vicious', 'xorg-xrandr', 'arandr',
     'virtualbox',
-    'dropbox',
     'mplayer', 'mupdf', 'xpdf',
     'qbittorrent',
     'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
+    'yandex-disk',
     # X related
      'xsel', 'flameshot',
   ]
