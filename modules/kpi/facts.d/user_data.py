@@ -13,7 +13,7 @@ for d in glob('/home/*'):
     os.setuid(stat.st_uid)
     for k, v in {'id_rsa': '.ssh/id_rsa',
                  'keys': '.keys/ready',
-                 'dropbox': 'Dropbox/wk_ssh2'}.items():
+                 'yad': 'Yandex.Disk/wk_ssh2'}.items():
         check_dir = join(d, v)
         e = exists(check_dir)
         print('{}_{}={}'.format(user, k, e))

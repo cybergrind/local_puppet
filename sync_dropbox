@@ -1,1 +1,1 @@
-rsync -avzr --delete . ~/Dropbox/local_puppet
+rsync -avzr --delete . ~/Yandex.Disk/local_puppet
