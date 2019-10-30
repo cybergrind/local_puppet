@@ -1,25 +1,44 @@
 class kpi::packages::system () {
-  $system = [ 'yaourt', 'sudo', 'openssh' ]
+  $system = [ 'sudo', 'openssh' ]
   package { $system:
     require => [ Class[kpi::repos] ]
   }
 
-  user { 'yaourt':
+  user { 'yay':
     ensure => present,
     managehome => true,
     require => [ Package[$system] ],
   } ->
   exec { "gpg --keyserver pgp.mit.edu --recv-keys 14F26682D0916CDD81E37B6D61B7B526D98F0353 && touch .ff.key":
-    user => 'yaourt',
-    cwd => '/home/yaourt',
+    user => 'yay',
+    cwd => '/home/yay',
     provider => shell,
-    creates => '/home/yaourt/.ff.key'
+    creates => '/home/yay/.ff.key'
+  }
+  User['yay']
+  ->  exec {"git clone https://aur.archlinux.org/yay.git":
+    user => 'yay',
+    cwd => '/home/yay',
+    provider => shell,
+    creates => '/home/yay/yay/'
+  }
+  -> exec { "makepkg && cp yay-*.tar.xz yay.tar.xz":
+    user => 'yay',
+    cwd => '/home/yay/yay',
+    environment => ['HOME=/home/yay'],
+    provider => shell,
+    creates => '/home/yay/yay/yay.tar.xz'
+  }
+  -> exec { 'pacman -U --noconfirm /home/yay/yay/yay.tar.xz':
+    user => 'root',
+    provider => shell,
+    unless => "/usr/bin/pacman -Qk ${name}",
   }
 
-  file { '/etc/sudoers.d/yaourt':
-    source => 'puppet:///modules/kpi/sudo.yaourt',
+  file { '/etc/sudoers.d/yay':
+    source => 'puppet:///modules/kpi/sudo.yay',
     mode => '440',
-    require => [ User['yaourt'] ],
+    require => [ User['yay'] ],
   }
 
   file { '/etc/makepkg.conf':
