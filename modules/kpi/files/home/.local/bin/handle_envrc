@@ -20,6 +20,7 @@ import asyncio
 import hashlib
 import logging
 import os
+import shutil
 
 from tipsi_tools.unix import ExecError, asucc
 
@@ -124,8 +125,8 @@ def add_file(args, fname):
     dsrc = os.path.dirname(src)
     if not os.path.exists(dsrc):
         os.makedirs(dsrc, exist_ok=True)
-    ren = os.rename(tgt, src)
-    print(f"Rename result: {ren} {tgt} => {src} [{SHARED_DIR}]")
+    ren = shutil.move(tgt, src)
+    print(f"Move result: {ren} {tgt} => {src} [{SHARED_DIR}]")
     os.symlink(src, tgt)
 
 
