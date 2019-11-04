@@ -48,6 +48,7 @@ case "$(hostname)" in
         xrandr --addmode eDP1 1920x1080
         xrandr --output eDP1 --mode 1920x1080
         tpad_trackpoint
+        xinput set-prop 'Synaptics TM3149-002' 'Synaptics Scrolling Distance' -31 -31
         ;;
     zz)
         xrandr --output DP-0 --mode 2560x1440 --rate 144
