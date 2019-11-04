@@ -83,7 +83,7 @@ class kpi::packages () {
     'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
     'yandex-disk',
     # X related
-     'xsel', 'flameshot',
+     'xsel', 'flameshot', 'clipit'
   ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
