@@ -103,9 +103,9 @@ def npm_publish():
 
 
 def pypi_publish():
-    commit_cmd('rm -rf dist/*.tar.gz')
-    commit_cmd('python setup.py sdist')
-    commit_cmd('twine upload dist/*.tar.gz')
+    commit_cmd('rm -rf dist/*')
+    commit_cmd('hatch build')
+    commit_cmd('hatch release')
 
 
 def publish():
