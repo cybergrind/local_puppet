@@ -633,7 +633,7 @@ end)
 -- autorun
 awful.util.spawn_with_shell("xscreensaver")
 awful.util.spawn_with_shell("flameshot")
-awful.util.spawn_with_shell("clipit")
+awful.util.spawn_with_shell("copyq")
 
 
 gears.timer {
