@@ -67,6 +67,12 @@ define kpi::home {
     creates => "${home}/.local/lib/python3.6/site-packages/flake8_string_format.py",
   }
 
+  exec { '/bin/pip3 install --user dot-tools':
+    creates => "${home}/.local/bin/release.py",
+    provider => shell,
+    cwd => $home,
+    user => $user
+  }
 
 }
 
