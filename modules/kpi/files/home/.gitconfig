@@ -24,6 +24,8 @@
     helper = cache --timeout=3600000
 [http]
     sslVerify = false
+[pull]
+    rebase = true
 [push]
     default = tracking
 [rebase]
