@@ -177,7 +177,7 @@ alias ccd=/home/kpi/devel/tipsi/tipsi_util/scripts/compose-cmd.sh
 alias tdev=/home/kpi/devel/tipsi/tipsi_util/helpers/init_dev.py
 
 
-export PATH=`echo ~`/bin:`echo ~/.local/bin`:/opt/android-sdk/platform-tools/:$PATH
+export PATH=`echo ~/.local/bin`:`echo ~`/bin:/opt/android-sdk/platform-tools/:$PATH
 # Customize to your needs...
 
 function active-window-id {
