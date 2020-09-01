@@ -56,14 +56,14 @@ class kpi::packages::system () {
 class kpi::packages () {
   $pkgs_nox = [
     'zsh', 'screen', 'encfs', 'iotop', 'htop', 'atop',
-    'pv', 'pwgen', 'rsync', 'strace', 'the_silver_searcher',
+    'pv', 'pwgen', 'rsync', 'strace',
     'netctl', 'dialog', 'wpa_supplicant',
     'alsa-firmware', 'alsa-plugins', 'alsa-tools', 'alsa-utils',
     'net-tools', 'mtr', 'nmap', 'openbsd-netcat', 'bwm-ng', 'ipset',
     'unzip', 'pigz',
     'powertop',
-    'yapf',
     'universal-ctags-git', 'vim-plug-git',
+    'the_silver_searcher', 'fd',
   ]
   kpi::install { $pkgs_nox:
     require => [Class[kpi::packages::system]],
