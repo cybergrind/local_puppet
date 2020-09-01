@@ -172,6 +172,9 @@ alias tpad_gitlab='mk_ssh_screen gitlab@tpad gitlab'
 alias pk="pid_kill_rm_nohup"
 alias new_screen="screen -c ~/.screenrc2 $@"
 
+alias gln='set -o noglob'
+alias gly='set +o noglob'
+
 alias e='emacsclient --alternate-editor="" -nw -c "$@"'
 alias ccd=/home/kpi/devel/tipsi/tipsi_util/scripts/compose-cmd.sh
 alias tdev=/home/kpi/devel/tipsi/tipsi_util/helpers/init_dev.py
