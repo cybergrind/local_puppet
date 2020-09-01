@@ -1,3 +1,5 @@
+pcall(require, "luarocks.loader")
+
 -- Standard awesome library
 local gears = require("gears")
 local awful = require("awful")
@@ -10,6 +12,8 @@ local beautiful = require("beautiful")
 local naughty = require("naughty")
 local menubar = require("menubar")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
+
+require("awful.hotkeys_popup.keys")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -172,16 +176,11 @@ local tasklist_buttons = awful.util.table.join(
                                               if c == client.focus then
                                                   c.minimized = true
                                               else
-                                                  -- Without this, the following
-                                                  -- :isvisible() makes no sense
-                                                  c.minimized = false
-                                                  if not c:isvisible() and c.first_tag then
-                                                      c.first_tag:view_only()
-                                                  end
-                                                  -- This will also un-minimize
-                                                  -- the client, if needed
-                                                  client.focus = c
-                                                  c:raise()
+                                                  c:emit_signal(
+                                                      "request::activate",
+                                                      "tasklist",
+                                                      {raise = true}
+                                                  )
                                               end
                                           end),
                      awful.button({ }, 3, client_menu_toggle_fn()),
@@ -395,7 +394,19 @@ clientkeys = awful.util.table.join(
             c.maximized = not c.maximized
             c:raise()
         end ,
-        {description = "maximize", group = "client"})
+        {description = "maximize", group = "client"}),
+    awful.key({ modkey, "Control" }, "m",
+        function (c)
+            c.maximized_vertical = not c.maximized_vertical
+            c:raise()
+        end ,
+        {description = "(un)maximize vertically", group = "client"}),
+    awful.key({ modkey, "Shift"   }, "m",
+        function (c)
+            c.maximized_horizontal = not c.maximized_horizontal
+            c:raise()
+        end ,
+        {description = "(un)maximize horizontally", group = "client"})
 )
 
 -- Bind all key numbers to tags.
@@ -448,10 +459,19 @@ for i = 1, 9 do
     )
 end
 
-clientbuttons = awful.util.table.join(
-    awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
-    awful.button({ modkey }, 1, awful.mouse.client.move),
-    awful.button({ modkey }, 3, awful.mouse.client.resize))
+clientbuttons = gears.table.join(
+    awful.button({ }, 1, function (c)
+        c:emit_signal("request::activate", "mouse_click", {raise = true})
+    end),
+    awful.button({ modkey }, 1, function (c)
+        c:emit_signal("request::activate", "mouse_click", {raise = true})
+        awful.mouse.client.move(c)
+    end),
+    awful.button({ modkey }, 3, function (c)
+        c:emit_signal("request::activate", "mouse_click", {raise = true})
+        awful.mouse.client.resize(c)
+    end)
+)
 
 
 function loadrc(name)
@@ -501,15 +521,17 @@ awful.rules.rules = {
         instance = {
           "DTA",  -- Firefox addon DownThemAll.
           "copyq",  -- Includes session name in class.
+          "pinentry",
         },
         class = {
           "Arandr",
+          "Blueman-manager",
           "Gpick",
           "Kruler",
           "MessageWin",  -- kalarm.
           "Sxiv",
+          "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
           "Wpa_gui",
-          "pinentry",
           "veromix",
           "xtightvncviewer"},
 
@@ -530,10 +552,10 @@ awful.rules.rules = {
       properties = { screen = 1, tag = "4" }},
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
-    { rule = { class = "Firefox", role = "browser" },
-      properties = { tag = "9" } },
-    { rule = { class = "Google-chrome", role = "browser" },
-      properties = { tag = "9" } },
+    -- { rule = { class = "Firefox", role = "browser" },
+    --   properties = { tag = "9" } },
+    -- { rule = { class = "Google-chrome", role = "browser" },
+    --   properties = { tag = "9" } },
     { rule = { class = 'Screenshot Monitor', type = 'utility' },
       properties = { focusable = false, } },
     { rule = { class = 'Screenshot Monitor', type = 'normal'},
@@ -559,15 +581,13 @@ end)
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
 client.connect_signal("request::titlebars", function(c)
     -- buttons for the titlebar
-    local buttons = awful.util.table.join(
+    local buttons = gears.table.join(
         awful.button({ }, 1, function()
-            client.focus = c
-            c:raise()
+            c:emit_signal("request::activate", "titlebar", {raise = true})
             awful.mouse.client.move(c)
         end),
         awful.button({ }, 3, function()
-            client.focus = c
-            c:raise()
+            c:emit_signal("request::activate", "titlebar", {raise = true})
             awful.mouse.client.resize(c)
         end)
     )
@@ -600,10 +620,7 @@ end)
 
 -- Enable sloppy focus, so that focus follows mouse.
 client.connect_signal("mouse::enter", function(c)
-    if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
-        and awful.client.focus.filter(c) then
-        client.focus = c
-    end
+    c:emit_signal("request::activate", "mouse_enter", {raise = false})
 end)
 
 client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
