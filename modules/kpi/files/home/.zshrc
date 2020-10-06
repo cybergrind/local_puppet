@@ -118,7 +118,7 @@ function pid_kill_rm_nohup {
 }
 
 function rmpyc {
-    find . -name \*.pyc -exec rm {} \;
+    fd -I -e \.pyc -x rm {}
 }
 
 function rmtmp {
@@ -127,9 +127,9 @@ function rmtmp {
     esac;
 
     rmpyc
-    find . -name \*~ -delete
-    find . -name "\#*" -delete
-    find . -iname '__pycache__' -type d | xargs rm -rf
+    fd -I '~$' -x rm {}
+    fd -I "#.*#" -x rm {}
+    fd -I '__pycache__' -t d -x rm -r {}
     true
 }
 
