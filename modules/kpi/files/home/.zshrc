@@ -208,7 +208,7 @@ function dck_tmp {
 }
 
 function dck_bash_tmp {
-    docker run  $2 $3 $4 $5 $6 --rm=true -it $1 /bin/bash
+    docker run  $2 $3 $4 $5 $6 --rm=true --entrypoint='' -it $1 /bin/bash
 }
 
 
