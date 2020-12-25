@@ -82,8 +82,8 @@ export PYMACS_PYTHON='python2'
 export BROWSER="firefox-nightly"
 export DIA_DIR=.
 
-export JAVA_HOME=/usr/lib/jvm/java-8-jdk
-export JDK_HOME=/usr/lib/jvm/java-8-jdk
+#export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+#export JDK_HOME=/usr/lib/jvm/java-8-jdk
 
 export LC_ALL=en_US.UTF-8
 export LANG=en_US.UTF-8
