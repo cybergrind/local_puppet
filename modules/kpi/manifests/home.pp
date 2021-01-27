@@ -168,14 +168,6 @@ define kpi::home::vim_setup($user, $dir=undef){
   file {"$home/.vimrc":
     source => 'puppet:///modules/kpi/home/.vimrc',
     owner => $user,
-  } ->
-
-  exec { "git clone https://github.com/junegunn/fzf.git ${home}/.fzf":
-    provider => shell,
-    cwd => "${home}",
-    user => $user,
-    creates => "${home}/.fzf",
-    require => [ File[$home], Kpi::Install['git'] ],
   }
 
   # "[$user] please run vim +PluginInstall +qall"
