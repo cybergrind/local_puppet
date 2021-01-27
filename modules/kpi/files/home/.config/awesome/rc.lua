@@ -76,7 +76,8 @@ batwidget = wibox.widget.textbox()
 beautiful.init(awful.util.get_themes_dir() .. "default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "sakura"
+sakura_args = os.getenv('SAKURA_ARGS') or ' -c 232 -r 61'
+terminal = "sakura" .. sakura_args
 lock_cmd = "slock"
 editor = os.getenv("EDITOR") or "emacs"
 editor_cmd = terminal .. " -e " .. editor
