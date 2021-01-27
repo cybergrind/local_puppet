@@ -315,9 +315,11 @@ function bcc_tools {
 # C-u to kill line from cursor to beginning
 bindkey \^U backward-kill-line
 
-if [ -f ~/.fzf.zsh ]; then
-    source ~/.fzf.zsh
+if [ -f /usr/share/fzf/completion.zsh ]; then
+    source /usr/share/fzf/completion.zsh
+    source /usr/share/fzf/key-bindings.zsh
     export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -f -g ""'
+    export FZF_CTRL_T_COMMAND='ag --hidden --ignore .git -f -g ""'
 fi
 
 if [ -f /usr/share/nvm/nvm.sh ]; then

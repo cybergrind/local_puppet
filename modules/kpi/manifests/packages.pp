@@ -60,7 +60,7 @@ class kpi::packages () {
     'netctl', 'dialog', 'wpa_supplicant',
     'alsa-firmware', 'alsa-plugins', 'alsa-tools', 'alsa-utils',
     'net-tools', 'mtr', 'nmap', 'openbsd-netcat', 'bwm-ng', 'ipset',
-    'unzip', 'pigz',
+    'unzip', 'pigz', 'fzf',
     'powertop',
     'universal-ctags-git', 'vim-plug-git',
     'the_silver_searcher', 'fd',
