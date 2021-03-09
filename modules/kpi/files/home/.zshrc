@@ -82,6 +82,7 @@ export PYMACS_PYTHON='python2'
 export BROWSER="firefox-nightly"
 export DIA_DIR=.
 export PGKEXT='.pkg.tar'
+export EMACS_EXTRA_LANGS=1
 
 #export JAVA_HOME=/usr/lib/jvm/java-8-jdk
 #export JDK_HOME=/usr/lib/jvm/java-8-jdk
