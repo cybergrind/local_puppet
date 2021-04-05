@@ -81,7 +81,7 @@ export EDITOR='emacsclient --alternate-editor="" -nw -c'
 export PYMACS_PYTHON='python2'
 export BROWSER="firefox-nightly"
 export DIA_DIR=.
-export PGKEXT='.pkg.tar'
+export PKGEXT='.pkg.tar'
 export EMACS_EXTRA_LANGS=1
 
 #export JAVA_HOME=/usr/lib/jvm/java-8-jdk
