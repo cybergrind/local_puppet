@@ -181,6 +181,8 @@ alias e='emacsclient --alternate-editor="" -nw -c "$@"'
 alias ccd=/home/kpi/devel/tipsi/tipsi_util/scripts/compose-cmd.sh
 alias tdev=/home/kpi/devel/tipsi/tipsi_util/helpers/init_dev.py
 
+alias allowme='wd wcm; ./venv/bin/python src/allow_me.py; cd -'
+
 
 export PATH=`echo ~/.local/bin`:`echo ~/go/bin`:`echo ~`/bin:/opt/android-sdk/platform-tools/:$PATH
 # Customize to your needs...
