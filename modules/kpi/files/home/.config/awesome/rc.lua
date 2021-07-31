@@ -634,16 +634,20 @@ langs = {}
 
 client.connect_signal("focus", function(c)
                          -- os.execute(string.format("logger 'AW Client: %s Class: %s Type: %s Name: %s Instance: %s Role: %s'", c, c.class, c.type, c.name, c.instance, c.role))
-                         if langs[c.pid] then
-                            awesome.xkb_set_layout_group(langs[c.pid])
+                         if langs[c.window] then
+                            awesome.xkb_set_layout_group(langs[c.window])
                          end
 end)
 
 client.connect_signal("unfocus", function(c)
                          local g = awesome.xkb_get_layout_group()
-                         if c.pid then
-                            langs[c.pid] = g
+                         if c.window then
+                            langs[c.window] = g
                          end
+end)
+
+client.connect_signal("unmanage", function(c)
+                         langs[c.window] = nil
 end)
 
 -- }}}
