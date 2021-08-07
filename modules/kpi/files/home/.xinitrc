@@ -49,8 +49,10 @@ case "$(hostname)" in
         xrandr --output eDP1 --mode 1920x1080
         tpad_trackpoint
         xinput set-prop 'Synaptics TM3149-002' 'Synaptics Scrolling Distance' -31 -31
+        export SAKURA_ARGS=''
         ;;
     zz)
+        export SAKURA_ARGS='-c 232 -r 64'
         xrandr --output DP-0 --mode 2560x1440 --rate 144
         ;;
 esac
