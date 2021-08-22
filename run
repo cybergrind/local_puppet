@@ -26,6 +26,7 @@ if [ -e /bin/sudo ]; then
     if [ ! -f $SUB ]; then
         echo update submodules
         sudo puppet module install puppetlabs-stdlib
+        sudo puppet module install puppetlabs-vcsrepo
         touch $SUB
     fi
     sudo puppet apply --modulepath `pwd`/modules:/etc/puppetlabs/code/modules/ manifests/hosts.pp $@
