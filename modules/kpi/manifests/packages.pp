@@ -16,23 +16,25 @@ class kpi::packages::system () {
     creates => '/home/yay/.ff.key'
   }
   User['yay']
-  ->  exec {"git clone https://aur.archlinux.org/yay.git":
+  -> vcsrepo {'/home/yay/yay/':
+    ensure => latest,
+    provider => git,
+    source => 'https://aur.archlinux.org/yay.git',
     user => 'yay',
-    cwd => '/home/yay',
-    provider => shell,
-    creates => '/home/yay/yay/'
   }
-  -> exec { "makepkg && cp yay-*.tar.xz yay.tar.xz":
+  ~> exec { "makepkg -f && cp yay-*.pkg.tar.xz yay.tar.xz":
     user => 'yay',
     cwd => '/home/yay/yay',
     environment => ['HOME=/home/yay'],
     provider => shell,
-    creates => '/home/yay/yay/yay.tar.xz'
+    creates => '/home/yay/yay/yay.tar.xz',
+    refreshonly => true,
   }
-  -> exec { 'pacman -U --noconfirm /home/yay/yay/yay.tar.xz':
+  ~> exec { 'pacman -U --noconfirm /home/yay/yay/yay.tar.xz':
     user => 'root',
     provider => shell,
     unless => "/usr/bin/pacman -Qk ${name}",
+    refreshonly => true,
   }
 
   file { '/etc/sudoers.d/yay':
