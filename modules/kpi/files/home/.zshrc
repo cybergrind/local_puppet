@@ -44,11 +44,9 @@ ZSH_THEME="jonathan"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(
     archlinux
-    docker
     extract
     fabric
     git
-    go
     golang
     lein
     mvn
@@ -247,6 +245,11 @@ function de {
     esac
 }
 compctl -K _de_completion de
+
+function dck {
+    docker $@
+}
+compctl -K _de_completion dck
 # docker exec completion end
 
 
