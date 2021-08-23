@@ -329,17 +329,21 @@ if [ -f /usr/share/fzf/completion.zsh ]; then
     export FZF_CTRL_T_COMMAND='ag --hidden --ignore .git -f -g ""'
 fi
 
-if [ -f /usr/share/nvm/nvm.sh ]; then
-    [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
-    source /usr/share/nvm/nvm.sh
-    source /usr/share/nvm/bash_completion
-    source /usr/share/nvm/install-nvm-exec
-fi
+function load_nvm {
+    if [ -f /usr/share/nvm/nvm.sh ]; then
+        [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
+        source /usr/share/nvm/nvm.sh
+        source /usr/share/nvm/bash_completion
+        source /usr/share/nvm/install-nvm-exec
+    fi
+}
 
-if [ -s "$HOME/.rvm/scripts/rvm" ]; then
-    . "$HOME/.rvm/scripts/rvm" # Load RVM function
-    export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
-fi
+function load_rvm {
+    if [ -s "$HOME/.rvm/scripts/rvm" ]; then
+        . "$HOME/.rvm/scripts/rvm" # Load RVM function
+        export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
+    fi
+}
 
 if [ -e "/usr/bin/direnv" ]; then
     eval "$(direnv hook zsh)"
