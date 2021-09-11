@@ -238,6 +238,12 @@ function _de_completion {
 }
 function de {
     case $# in
+        0)
+            if [[ $# = 0 && ! -z "$DE_DEFAULT" ]]; then
+                docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) $DE_DEFAULT /bin/bash
+            else
+                echo 'define $DE_DEFAULT variable to use without parameters'
+            fi;;
         1)
             docker exec -it -e LINES=$(tput lines) -e COLUMNS=$(tput cols) $1 /bin/bash;;
         *)
