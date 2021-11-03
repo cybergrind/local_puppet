@@ -76,7 +76,7 @@ export HISTSIZE=9999999
 export PYTHONPATH=.
 export EDITOR='emacsclient --alternate-editor="" -nw -c'
 export PYMACS_PYTHON='python2'
-export BROWSER="firefox-nightly"
+export BROWSER="google-chrome-stable"
 export DIA_DIR=.
 export PKGEXT='.pkg.tar'
 export EMACS_EXTRA_LANGS=1
