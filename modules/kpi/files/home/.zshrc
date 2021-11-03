@@ -61,7 +61,6 @@ plugins=(
     systemd
     wd
     z
-    zsh_reload
 )
 
 if [ ! -z $ZSH/oh-my-zsh.sh ]; then
