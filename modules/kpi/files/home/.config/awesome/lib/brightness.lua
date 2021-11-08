@@ -23,3 +23,6 @@ function dec_volume()
    change_vol('-')
 end
 
+function toggle_volume()
+   os.execute('pactl set-sink-mute 0 toggle')
+end
