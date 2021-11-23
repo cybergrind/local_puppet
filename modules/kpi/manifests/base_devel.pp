@@ -11,7 +11,7 @@ class kpi::base_devel () {
   $other = [ 'go', 'nodejs', 'npm', 'yarn', 'jdk']
   kpi::install { $other: }
 
-  $editors = ['emacs-nox', 'vim']
+  $editors = ['emacs-nox', 'vim', 'emacs-python-mode']
   kpi::install { $editors: }
 
   $tools = ['git', 'docker', 'docker-compose']
