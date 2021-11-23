@@ -47,12 +47,12 @@ define kpi::home {
     require => [ User[$user] ],
   }
 
-  exec { '/bin/sbt gen-ensime exit':
-    unless => "/bin/test -e ${home}/.sbt/0.13/plugins/target",
-    user => $user,
-    timeout => 1800,
-    require => [ File[$home] ],
-  }
+  # exec { '/bin/sbt gen-ensime exit':
+  #   unless => "/bin/test -e ${home}/.sbt/0.13/plugins/target",
+  #   user => $user,
+  #   timeout => 1800,
+  #   require => [ File[$home] ],
+  # }
 
   kpi::home_repo {"$user-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
   kpi::home_repo {"$user-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
