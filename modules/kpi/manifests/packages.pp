@@ -17,13 +17,13 @@ class kpi::packages::system () {
   }
   ~> exec { "makepkg -f && cp yay-*.pkg.tar.xz yay.tar.xz":
     user => 'yay',
-    cwd => '/home/yay/yay',
+    cwd => '/home/yay/yay-bin',
     environment => ['HOME=/home/yay'],
     provider => shell,
-    creates => '/home/yay/yay/yay.tar.xz',
+    creates => '/home/yay/yay-bin/yay.tar.xz',
     refreshonly => true,
   }
-  ~> exec { 'pacman -U --noconfirm /home/yay/yay/yay.tar.xz':
+  ~> exec { 'pacman -U --noconfirm /home/yay/yay-bin/yay.tar.xz':
     user => 'root',
     provider => shell,
     unless => "/usr/bin/pacman -Qk ${name}",
