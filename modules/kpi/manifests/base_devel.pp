@@ -2,20 +2,19 @@ class kpi::base_devel () {
   include kpi::packages
   include kpi::packages::optional
 
-  $python2 = [ 'python2', 'python2-numpy', 'ipython2', 'python2-virtualenv' ]
-  kpi::install { $python2: }
+  # $python2 = [ 'python2', 'python2-numpy', 'ipython2', 'python2-virtualenv' ]
+  # kpi::install { $python2: }
 
-  $scala = [ 'jdk', 'scala', 'scala-docs', 'sbt', 'java-jline' ]
-  kpi::install { $scala: }
+  # $scala = [ 'jdk', 'scala', 'scala-docs', 'sbt', 'java-jline' ]
+  # kpi::install { $scala: }
 
-  $other = [ 'go', 'nodejs', 'npm', 'yarn',]
+  $other = [ 'go', 'nodejs', 'npm', 'yarn', 'jdk']
   kpi::install { $other: }
 
   $editors = ['emacs-nox', 'vim']
   kpi::install { $editors: }
 
-  $tools = ['git', 'mercurial', 'subversion',
-            'docker', 'docker-compose', 'docker-machine']
+  $tools = ['git', 'docker', 'docker-compose']
   kpi::install { $tools: }
 
   file {"/root": ensure => directory}

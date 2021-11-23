@@ -1,5 +1,5 @@
 class kpi::packages::system () {
-  $system = [ 'sudo', 'openssh' ]
+  $system = [ 'sudo', 'openssh', 'base-devel' ]
   package { $system:
     require => [ Class[kpi::repos] ]
   }
@@ -21,13 +21,14 @@ class kpi::packages::system () {
     environment => ['HOME=/home/yay'],
     provider => shell,
     creates => '/home/yay/yay-bin/yay.tar.xz',
-    refreshonly => true,
+    #refreshonly => true,
   }
   ~> exec { 'pacman -U --noconfirm /home/yay/yay-bin/yay.tar.xz':
     user => 'root',
     provider => shell,
-    unless => "/usr/bin/pacman -Qk ${name}",
-    refreshonly => true,
+    #unless => "/usr/bin/pacman -Qk ${name}",
+    creates => '/usr/bin/yay',
+    #refreshonly => true,
   }
 
   file { '/etc/sudoers.d/yay':
@@ -55,9 +56,9 @@ class kpi::packages () {
     'netctl', 'dialog', 'wpa_supplicant',
     'alsa-firmware', 'alsa-plugins', 'alsa-tools', 'alsa-utils',
     'net-tools', 'mtr', 'nmap', 'openbsd-netcat', 'bwm-ng', 'ipset',
-    'unzip', 'pigz', 'fzf',
+    'unzip', 'pigz', 'fzf', 'p7zip',
     'powertop',
-    'universal-ctags-git', 'vim-plug-git',
+    'uctags-git', 'vim-plug-git',
     'the_silver_searcher', 'fd',
   ]
   kpi::install { $pkgs_nox:
@@ -68,14 +69,13 @@ class kpi::packages () {
     'ttf-droid', 'ttf-ms-fonts', 'ttf-bitstream-vera',
     'ttf-droid-sans-mono-slashed-powerline-git',
     'ttf-liberation', 'ttf-ubuntu-font-family',
-    'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev', 'xf86-input-keyboard',
-    'xf86-input-mouse',
+    'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev',
     'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
     'awesome', 'vicious', 'xorg-xrandr', 'arandr',
     'virtualbox',
-    'mplayer', 'mupdf', 'xpdf',
+    'mplayer', 'mupdf', 'xpdf', 'feh',
     'qbittorrent',
-    'firefox', 'google-chrome', 'flashplugin', 'lib32-flashplugin',
+    'firefox', 'google-chrome',
     'yandex-disk',
     # X related
      'xsel', 'flameshot', 'copyq'
@@ -89,14 +89,13 @@ class kpi::packages::optional () {
   $pkgs = [
     'direnv', 'viber',
     'lm_sensors', 'lshw', 'hdparm', 'tk',
-    'pavucontrol', 'pulseaudio-alsa', 'pulseaudio',
+    'pavucontrol', 'pipewire-pulse', 'pasystray',
     'xscreensaver', 'teamviewer',
     'emacs-python-mode',
     'inotify-tools',
     # development
     'python-virtualenv', 'whois', 'bind-tools', # dig
-    'python-pip', 'python2-pip', 'flake8',
-    'selenium-server-standalone',
+    'python-pip', 'flake8',
     'postgresql-libs',
   ]
   kpi::install { $pkgs:
