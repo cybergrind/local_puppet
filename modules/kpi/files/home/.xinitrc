@@ -52,7 +52,7 @@ case "$(hostname)" in
         export SAKURA_ARGS=''
         ;;
     zz)
-        export SAKURA_ARGS='-c 232 -r 64'
+        export SAKURA_ARGS='-c 232 -r 61'
         xrandr --output DP-0 --mode 2560x1440 --rate 144
         ;;
 esac
