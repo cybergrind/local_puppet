@@ -91,7 +91,7 @@ class kpi::packages::optional () {
     'lm_sensors', 'lshw', 'hdparm', 'tk',
     'pavucontrol', 'pipewire-pulse', 'pasystray',
     'xscreensaver', 'teamviewer',
-    'emacs-python-mode',
+    'emacs-nox', 'emacs-python-mode',
     'inotify-tools',
     # development
     'python-virtualenv', 'whois', 'bind-tools', # dig
