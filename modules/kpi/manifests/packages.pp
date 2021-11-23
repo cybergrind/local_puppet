@@ -8,18 +8,11 @@ class kpi::packages::system () {
     ensure => present,
     managehome => true,
     require => [ Package[$system] ],
-  } ->
-  exec { "gpg --keyserver pgp.mit.edu --recv-keys 14F26682D0916CDD81E37B6D61B7B526D98F0353 && touch .ff.key":
-    user => 'yay',
-    cwd => '/home/yay',
-    provider => shell,
-    creates => '/home/yay/.ff.key'
   }
-  User['yay']
-  -> vcsrepo {'/home/yay/yay/':
+  -> vcsrepo {'/home/yay/yay-bin/':
     ensure => latest,
     provider => git,
-    source => 'https://aur.archlinux.org/yay.git',
+    source => 'https://aur.archlinux.org/yay-bin.git',
     user => 'yay',
   }
   ~> exec { "makepkg -f && cp yay-*.pkg.tar.xz yay.tar.xz":
