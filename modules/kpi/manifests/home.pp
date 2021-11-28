@@ -170,6 +170,6 @@ define kpi::home::vim_setup($user, $dir=undef){
     owner => $user,
   }
 
-  # "[$user] please run vim +PluginInstall +qall"
+  # "[$user] please run vim +PlugInstall +qall"
 
 }
