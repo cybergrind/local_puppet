@@ -1,6 +1,9 @@
 set nocompatible
 filetype off
 
+" remember last position
+source $VIMRUNTIME/defaults.vim
+
 call plug#begin()
 
 " common
