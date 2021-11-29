@@ -5,7 +5,7 @@ set nocompatible
 filetype off
 
 " remember last position
-source $VIMRUNTIME/defaults.vim
+" source $VIMRUNTIME/defaults.vim
 
 call plug#begin()
 
@@ -104,8 +104,6 @@ set background=dark
 set t_Co=256
 let g:lucius_style = 'dark'
 " let g:lucius_contrast = 'low'
-" let s:bg0  = ['#3F3F3F', 235]
-" set termguicolors
 colorscheme gruvbox
 
 
@@ -154,15 +152,6 @@ noremap <leader>7 7gt
 noremap <leader>8 8gt
 noremap <leader>9 9gt
 noremap <leader>0 :tablast<cr>
-
-" map <alt+n> to navigate through tabs
-for c in range(1, 9)
-    exec "set <A-".c.">=\e".c
-    exec "map \e".c." <A-".c.">"
-
-    let n = c - '0'
-    exec "map <M-". n ."> ". n ."gt"
-endfor
 
 " nerdtree
 let NERDTreeAutoDeleteBuffer = 1
@@ -260,3 +249,4 @@ let g:easytags_file = './tags'
 let g:easytags_auto_highlight = 0
 let g:easytags_events = ['BufWritePost']
 let g:easytags_async = 1
+
