@@ -11,6 +11,8 @@ call plug#begin()
 
 " common
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'ctrlpvim/ctrlp.vim'
+
 " Plug 'valloric/youcompleteme'
 " Plug 'xolox/vim-easytags'
 Plug 'majutsushi/tagbar'
@@ -50,7 +52,10 @@ Plug 'mtscout6/vim-tagbar-css'
 " colors
 Plug 'damage220/solas.vim'
 Plug 'nanotech/jellybeans.vim'
-Plug 'mhartington/oceanic-next'
+Plug 'morhetz/gruvbox'
+Plug 'joshdick/onedark.vim'
+Plug 'jonathanfilip/vim-lucius'
+
 
 call plug#end()
 
@@ -94,7 +99,11 @@ filetype plugin indent on
 " color
 syntax enable
 set background=dark
-" colorscheme solas
+set t_Co=256
+let g:lucius_style = 'dark'
+" let g:lucius_contrast = 'low'
+colorscheme lucius
+
 
 " abbreviations
 abbr help tab help
@@ -154,7 +163,7 @@ let g:ycm_key_list_select_completion = ['<Down>']
 let g:user_emmet_expandabbr_key = '<C-e>'
 
 " airline
-let g:airline_theme='solarized'
+let g:airline_theme='atomic'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#tab_min_count = 0
