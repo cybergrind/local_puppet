@@ -72,6 +72,7 @@ class kpi::packages () {
     'ttf-liberation', 'ttf-ubuntu-font-family',
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev',
     'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
+    'kitty',
     'awesome', 'vicious', 'xorg-xrandr', 'arandr',
     'virtualbox',
     'mplayer', 'mupdf', 'xpdf', 'feh',

@@ -81,6 +81,7 @@ beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 -- This is used later as the default terminal and editor to run.
 sakura_args = os.getenv('SAKURA_ARGS') or ''
 terminal = "sakura" .. " " .. sakura_args
+terminal = "kitty"
 lock_cmd = "slock"
 editor = os.getenv("EDITOR") or "emacs"
 editor_cmd = terminal .. " -e " .. editor

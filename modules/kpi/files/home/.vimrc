@@ -13,7 +13,9 @@ call plug#begin()
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'ctrlpvim/ctrlp.vim'
 
-" Plug 'valloric/youcompleteme'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+" Plug 'neovim/nvim-lspconfig'
+Plug 'valloric/youcompleteme'
 " Plug 'xolox/vim-easytags'
 Plug 'majutsushi/tagbar'
 Plug 'easymotion/vim-easymotion'
@@ -102,7 +104,9 @@ set background=dark
 set t_Co=256
 let g:lucius_style = 'dark'
 " let g:lucius_contrast = 'low'
-colorscheme lucius
+" let s:bg0  = ['#3F3F3F', 235]
+" set termguicolors
+colorscheme gruvbox
 
 
 " abbreviations
@@ -139,6 +143,18 @@ cnoremap <C-k> <C-p>
 nnoremap <F4> :tabe ~/.vimrc<CR>:tabm 0<CR>
 nnoremap <F5> :w<CR>:so $MYVIMRC<CR>
 
+
+noremap <leader>1 1gt
+noremap <leader>2 2gt
+noremap <leader>3 3gt
+noremap <leader>4 4gt
+noremap <leader>5 5gt
+noremap <leader>6 6gt
+noremap <leader>7 7gt
+noremap <leader>8 8gt
+noremap <leader>9 9gt
+noremap <leader>0 :tablast<cr>
+
 " map <alt+n> to navigate through tabs
 for c in range(1, 9)
     exec "set <A-".c.">=\e".c
@@ -163,7 +179,7 @@ let g:ycm_key_list_select_completion = ['<Down>']
 let g:user_emmet_expandabbr_key = '<C-e>'
 
 " airline
-let g:airline_theme='atomic'
+let g:airline_theme='angr'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#tab_min_count = 0
@@ -200,7 +216,7 @@ au BufNewFile,BufRead *.tpl set filetype=html syntax=php
 
 " syntastic
 let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
+let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
 
