@@ -116,6 +116,7 @@ define kpi::home::shared_link {
 define kpi::home::keys_links {
   $user = $name
   $files = ['id_rsa', 'id_rsa.pub',
+            'id_ed25519', 'id_ed25519.pub',
             'tipsikey_test_v2.pem',
             'tipsikey_test_v3.pem',
             'tipsikey_prod_v2.pem',
@@ -166,6 +167,18 @@ define kpi::home::vim_setup($user, $dir=undef){
   }
 
   file {"$home/.vimrc":
+    source => 'puppet:///modules/kpi/home/.vimrc',
+    owner => $user,
+  }
+  ~> file {"$home/.config":
+    owner => $user,
+    ensure => directory,
+  }
+  -> file {"$home/.config/nvim":
+    owner => $user,
+    ensure => directory,
+  }
+  -> file {"$home/.config/nvim/init.vim":
     source => 'puppet:///modules/kpi/home/.vimrc',
     owner => $user,
   }
