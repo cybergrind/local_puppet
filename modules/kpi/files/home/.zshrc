@@ -48,6 +48,7 @@ plugins=(
     fabric
     git
     golang
+    kubectl
     lein
     mvn
     pip
