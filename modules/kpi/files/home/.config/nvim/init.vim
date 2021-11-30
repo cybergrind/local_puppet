@@ -156,6 +156,7 @@ nnoremap <Space>h <C-w>h
 nnoremap <Space>l <C-w>l
 nnoremap <Space>j <C-w>j
 nnoremap <Space>k <C-w>k
+nnoremap ZX :qa<CR>
 
 " nerdtree
 let NERDTreeAutoDeleteBuffer = 1
