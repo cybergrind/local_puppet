@@ -154,15 +154,10 @@ noremap <leader>7 7gt
 noremap <leader>8 8gt
 noremap <leader>9 9gt
 noremap <leader>0 :tablast<cr>
-
-" map <alt+n> to navigate through tabs
-for c in range(1, 9)
-    exec "set <A-".c.">=\e".c
-    exec "map \e".c." <A-".c.">"
-
-    let n = c - '0'
-    exec "map <M-". n ."> ". n ."gt"
-endfor
+nnoremap <Space>h <C-w>h
+nnoremap <Space>l <C-w>l
+nnoremap <Space>j <C-w>j
+nnoremap <Space>k <C-w>k
 
 " nerdtree
 let NERDTreeAutoDeleteBuffer = 1
