@@ -1,11 +1,15 @@
 " curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+
 " :PlugInstall
 
 set nocompatible
 filetype off
 
+if has('nvim')
 " remember last position
 source $VIMRUNTIME/defaults.vim
+endif
 
 call plug#begin()
 
@@ -15,7 +19,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'neovim/nvim-lspconfig'
-Plug 'valloric/youcompleteme'
+Plug 'ycm-core/youcompleteme', {'do': 'python3 install.py'}
 " Plug 'xolox/vim-easytags'
 Plug 'majutsushi/tagbar'
 Plug 'easymotion/vim-easymotion'
