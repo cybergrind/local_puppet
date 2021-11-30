@@ -69,6 +69,7 @@ class kpi::packages () {
   $pkgs = [
     'ttf-droid', 'ttf-ms-fonts', 'ttf-bitstream-vera',
     'ttf-droid-sans-mono-slashed-powerline-git',
+    'ttf-fira-code',
     'ttf-liberation', 'ttf-ubuntu-font-family',
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev',
     'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
