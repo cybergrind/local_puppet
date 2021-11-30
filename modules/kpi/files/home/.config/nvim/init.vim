@@ -152,6 +152,10 @@ noremap <leader>7 7gt
 noremap <leader>8 8gt
 noremap <leader>9 9gt
 noremap <leader>0 :tablast<cr>
+nnoremap <Space>h <C-w>h
+nnoremap <Space>l <C-w>l
+nnoremap <Space>j <C-w>j
+nnoremap <Space>k <C-w>k
 
 " nerdtree
 let NERDTreeAutoDeleteBuffer = 1
