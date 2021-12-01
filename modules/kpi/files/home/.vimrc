@@ -6,7 +6,7 @@
 set nocompatible
 filetype off
 
-if has('nvim')
+if !has('nvim')
 " remember last position
 source $VIMRUNTIME/defaults.vim
 endif
