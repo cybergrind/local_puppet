@@ -106,11 +106,11 @@ filetype plugin indent on
 syntax enable
 set background=dark
 set t_Co=256
-let g:lucius_style = 'dark'
-" let g:lucius_contrast = 'low'
-" let s:bg0  = ['#3F3F3F', 235]
-" set termguicolors
-colorscheme gruvbox
+
+try
+  colorscheme gruvbox
+  catch
+endtry
 
 
 " abbreviations
