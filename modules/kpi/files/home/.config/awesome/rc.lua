@@ -139,10 +139,18 @@ myawesomemenu = {
    { "quit", function() awesome.quit() end },
 }
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal }
-                                  }
-                        })
+
+kbd_menu = {
+   { "regular", "setxkbmap 'us,ru(winkeys)' -option grp:toggle,grp_led:scroll,ctrl:nocaps" },
+   { "workman", "setxkbmap 'us(workman),ru(winkeys)' -option grp:toggle,grp_led:scroll,ctrl:nocaps" },
+}
+mymainmenu = awful.menu({
+      items = {
+         { "awesome", myawesomemenu, beautiful.awesome_icon },
+         { "open terminal", terminal },
+         { "keyboard", kbd_menu },
+      }
+})
 
 mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
