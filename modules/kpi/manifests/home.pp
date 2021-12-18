@@ -166,15 +166,7 @@ define kpi::home::vim_setup($user, $dir=undef){
     default => $dir,
   }
 
-  file {"$home/.vimrc":
-    source => 'puppet:///modules/kpi/home/.vimrc',
-    owner => $user,
-  }
-  ~> file {"$home/.config":
-    owner => $user,
-    ensure => directory,
-  }
-  -> file {"$home/.config/nvim":
+  file {"$home/.config/nvim":
     owner => $user,
     ensure => directory,
   }
