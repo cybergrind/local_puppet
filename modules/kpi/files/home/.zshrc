@@ -162,7 +162,6 @@ function findi {
 alias em='emacs -nw'
 alias aenv='. ./venv/bin/activate || . ./bin/activate'
 alias lsg='ls -lah | grep -i $1'
-alias psg='pa aux | grep -i $1'
 
 alias hz1="mk_ssh_screen hz1 gitlab"
 alias hz3="mk_ssh_screen_x hz3 gitlab"
@@ -178,6 +177,9 @@ alias gly='set +o noglob'
 alias e='emacsclient --alternate-editor="" -nw -c "$@"'
 alias ccd=/home/kpi/devel/tipsi/tipsi_util/scripts/compose-cmd.sh
 alias tdev=/home/kpi/devel/tipsi/tipsi_util/helpers/init_dev.py
+
+# kubernetes
+alias kp='k get po -A -o wide'
 
 alias allowme='wd wcm; ./venv/bin/python src/allow_me.py; cd -'
 
