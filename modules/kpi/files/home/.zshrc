@@ -180,6 +180,7 @@ alias tdev=/home/kpi/devel/tipsi/tipsi_util/helpers/init_dev.py
 
 # kubernetes
 alias kp='k get po -A -o wide'
+alias kev="kubectl get events --sort-by='.metadata.creationTimestamp' -A"
 
 alias allowme='wd wcm; ./venv/bin/python src/allow_me.py; cd -'
 
