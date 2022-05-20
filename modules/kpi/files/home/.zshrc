@@ -159,7 +159,26 @@ function findi {
 }
 
 
+function new_tmux_session {
+    # 0 - start base session
+    # 1 - name
+    # 2 - config
+    # 3 - socket name
+    case $# in
+        0)
+            new_tmux_session wk ~/.config/tmux/tmux2.conf wk;;
+        1)
+            tmux -L default new-session -A -t $1;;
+        2)
+            tmux -f $2 -L $1 new -A -t $1;;
+        3)
+            tmux -L $3 -f $2 -L $1 new -A -t $1;;
+    esac;
+}
+
 alias em='emacs -nw'
+alias tmx='new_tmux_session'
+
 alias aenv='. ./venv/bin/activate || . ./bin/activate'
 alias lsg='ls -lah | grep -i $1'
 
