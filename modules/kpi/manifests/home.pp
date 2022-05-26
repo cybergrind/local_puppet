@@ -74,6 +74,22 @@ define kpi::home {
     user => $user
   }
 
+  File[$home] -> kpi::home::tmux_setup {"$user-tmux": user=>$user}
+}
+
+define kpi::home::tmux_setup($user){
+  file { "/home/${user}/.config/tmux/tmux2.conf":
+    ensure => file,
+    content => epp('kpi/tmux.conf.epp', {
+      unique_part => file('kpi/tmux.wk.conf')
+    })
+  } ->
+  file { "/home/${user}/.config/tmux/tmux.conf":
+    ensure => file,
+    content => epp('kpi/tmux.conf.epp', {
+      unique_part => file('kpi/tmux.general.conf')
+    })
+  }
 }
 
 define kpi::home_symlinks($user){
