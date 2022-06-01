@@ -280,6 +280,16 @@ function dck {
 compctl -K _de_completion dck
 # docker exec completion end
 
+function hupde {
+    # send HUP signal to process 1
+    if [[ -z "$DE_DEFAULT" ]]; then
+        echo 'There is no $DE_DEFAULT defined'
+        return 1
+    fi
+    docker kill -s HUP $DE_DEFAULT
+}
+
+
 
 function tcp_ports {
     sudo lsof -i -n -P | grep TCP
