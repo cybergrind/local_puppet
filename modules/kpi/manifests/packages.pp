@@ -81,7 +81,8 @@ class kpi::packages () {
     'firefox', 'google-chrome',
     'yandex-disk',
     # X related
-     'xsel', 'flameshot', 'copyq'
+    'xsel', 'flameshot', 'copyq',
+    'dunst', # required for flameshot
   ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
