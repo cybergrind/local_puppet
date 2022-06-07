@@ -51,7 +51,9 @@ class kpi::packages::system () {
 
 class kpi::packages () {
   $pkgs_nox = [
-    'zsh', 'tmux', 'encfs', 'iotop', 'htop', 'atop',
+    'zsh', 'zsh-completions',
+    'gnome-keyring', 'libgnome-keyring',
+    'tmux', 'encfs', 'iotop', 'htop', 'atop',
     'inetutils',
     'pv', 'pwgen', 'rsync', 'strace',
     'netctl', 'dialog', 'wpa_supplicant',
