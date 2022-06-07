@@ -56,4 +56,11 @@ case "$(hostname)" in
         xrandr --output DP-0 --mode 2560x1440 --rate 144
         ;;
 esac
-exec awesome
+
+systemctl --user import-environment DISPLAY
+
+eval $(/usr/bin/gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh)
+# You probably need to do this too:
+export GNOME_KEYRING_CONTROL GNOME_KEYRING_PID GPG_AGENT_INFO SSH_AUTH_SOCK
+
+exec dbus-launch awesome
