@@ -387,6 +387,10 @@ if [ -e "/usr/bin/direnv" ]; then
     eval "$(direnv hook zsh)"
 fi
 
+if [ -d "$HOME/.nimble/bin" ]; then
+    export PATH="$HOME/.nimble/bin:$PATH"
+fi
+
 if (( $+commands[heroku] )); then
     HEROKU_AC_ZSH_SETUP_PATH=/home/kpi/.cache/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH || eval "$(heroku autocomplete:script zsh)"
 fi
