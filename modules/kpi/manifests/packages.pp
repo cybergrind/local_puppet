@@ -66,12 +66,23 @@ class kpi::packages () {
 }
 
 class kpi::packages::macos () {
-  kpi::install{'gromgit/fuse': tap => true }
+  kpi::install::macos{'gromgit/fuse':
+    tap => true,
+    bin => '/opt/homebrew/bin/encfs',
+  }
+  kpi::install {'git': bin => 'noinstall'}
+  kpi::install {'findutils':
+    bin => '/opt/homebrew/opt/findutils'
+  }
+  kpi::install {'encfs-mac':
+    bin => '/opt/homebrew/bin/encfs'
+  }
+
   $pkgs_nox = [
-    'git', 'pinentry-mac',
-    'encfs-mac', 'gpg', 'findutils',
+    'pinentry-mac',
+    'gpg',
     'tmux', 'cmake', 'emacs', 'kubectl', 'nvim',
-    'vim', 'ag', 'direnv', 'fd', 'yandex-disk', 'nvm',
+    'vim', 'ag', 'direnv', 'fd', 'nvm',
     'htop', 'tree', 'npm',
     'py3cairo', 'gtk+3',
   ]

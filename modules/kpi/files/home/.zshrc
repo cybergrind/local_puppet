@@ -363,9 +363,15 @@ bindkey \^U backward-kill-line
 if [ -f /usr/share/fzf/completion.zsh ]; then
     source /usr/share/fzf/completion.zsh
     source /usr/share/fzf/key-bindings.zsh
-    export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -f -g ""'
-    export FZF_CTRL_T_COMMAND='ag --hidden --ignore .git -f -g ""'
 fi
+if [ -f ~/.fzf/shell/completion.zsh ]; then
+    source ~/.fzf/shell/completion.zsh
+    source ~/.fzf/shell/key-bindings.zsh
+fi
+export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -f -g ""'
+export FZF_CTRL_T_COMMAND='ag --hidden --ignore .git -f -g ""'
+
+
 
 function load_nvm {
     if [ -f /usr/share/nvm/nvm.sh ]; then
