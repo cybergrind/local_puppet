@@ -17,3 +17,7 @@ node 'zz' {
   include kpi::base_devel
   kpi::home { 'kpi': }
 }
+
+node 'kpis-mbp' {
+  include kpi::base_devel
+}
