@@ -1,4 +1,5 @@
 
+export PATH=$PATH:/opt/homebrew/bin/
 eval "$(direnv hook zsh)"
 
 BDIR=$(brew --prefix)
