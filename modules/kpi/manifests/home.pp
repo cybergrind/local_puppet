@@ -113,19 +113,19 @@ define kpi::home_symlinks($user, $base){
   }
 
   if $keys {
-    kpi::home::keys_links {$user: }
+    kpi::home::keys_links {$user: base=>$base}
   }
 
   if $yad {
-    kpi::home::shared_links {$user: }
+    kpi::home::shared_links {$user: base=>$base}
   }
 }
 
-define kpi::home::shared_links {
+define kpi::home::shared_links ($base){
   $user = $name
-  kpi::home::shared_link { "$user:.ssh/config": }
-  kpi::home::shared_link { "$user:start_work": }
-  kpi::home::shared_link { "$user:.pypirc": }
+  kpi::home::shared_link { "$user:.ssh/config": base=>$base}
+  kpi::home::shared_link { "$user:start_work": base=>$base}
+  kpi::home::shared_link { "$user:.pypirc": base=>$base}
 }
 
 define kpi::home::shared_link($base) {
@@ -134,7 +134,8 @@ define kpi::home::shared_link($base) {
   $path = $i[1]
   kpi::home_link {"$user:$path":
     target=>"Yandex.Disk/home/$path",
-    require => [File["${base}/$user/.ssh"]]
+    require => [File["${base}/$user/.ssh"]],
+    base=>$base
   }
 }
 
@@ -150,15 +151,16 @@ define kpi::home::keys_links ($base) {
   $files.each |String $fileName| {
     kpi::home::keys_ssh_link {"$user:.ssh/$fileName":
       require => [File["${base}/$user/.ssh"]],
+      base => $base,
     }
   }
 }
 
-define kpi::home::keys_ssh_link {
+define kpi::home::keys_ssh_link ($base) {
   $i = split($name, ":")
   $user = $i[0]
   $path = $i[1]
-  kpi::home_link {"$user:$path": target=>".keys/$path", mode=>'0600'}
+  kpi::home_link {"$user:$path": target=>".keys/$path", mode=>'0600', base=>$base}
 }
 
 define kpi::home_link ($target, $mode='0755', $base){

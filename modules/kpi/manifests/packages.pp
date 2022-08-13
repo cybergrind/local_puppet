@@ -110,7 +110,7 @@ class kpi::packages::linux () {
 
 class kpi::packages::optional () {
   $pkgs = [
-    'direnv', 'viber',
+    'direnv',
     'lm_sensors', 'lshw', 'hdparm', 'tk',
     'pavucontrol', 'pipewire-pulse', 'pasystray',
     'xscreensaver', 'teamviewer',
