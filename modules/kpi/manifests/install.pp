@@ -1,5 +1,8 @@
 define kpi::install::macos () {
-  info("try to install on macos ${name}")
+  exec {$name:
+    unless => "/usr/bin/whereis ${name}",
+    command => "/opt/homebrew/bin/brew install ${name}",
+  }
 }
 
 define kpi::install::linux () {

@@ -25,6 +25,6 @@ node 'kpis-mbp' {
   include kpi::base_devel
   class {'kpi::home':
     user => 'kpi',
-    home_dir => '/Users'
+    home_dir => '/Users/kpi'
   }
 }
