@@ -5,26 +5,26 @@ class kpi::home::repos {
 define kpi::home::rdir ($user) {
   exec { $name:
     creates => $user,
-    user => $user,
+    user    => $user,
     command => "/bin/mkdir -p ${name}"
   } -> file { $name: }
 }
 
 define kpi::home::rfile ($user, $source) {
   $dname = dirname($name)
-  kpi::home::rfile { dname:
+  kpi::home::rfile { 'dname':
     user => $user
   }
   file { $name:
-    source => $source,
-    owner => $user,
+    source  => $source,
+    owner   => $user,
     require => Rfile[dname],
   }
 }
 
-define kpi::home ($base = '/home'){
-  $user = $title
-  if $facts['os']['family'] == 'linux' {
+class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
+
+  if $facts['os']['family'] == 'Archinux' {
     $managehome = true
     $groups = [ 'wheel', 'audio', 'docker' ]
   } else {
@@ -33,24 +33,24 @@ define kpi::home ($base = '/home'){
   }
 
   user { $user:
-    ensure => present,
+    ensure     => present,
     managehome => $managehome,
-    groups => $groups,
-    shell => '/bin/zsh',
-    require => [ Class[kpi::packages::system] ]
+    groups     => $groups,
+    shell      => '/bin/zsh',
+    require    => [ Class[kpi::packages::system] ]
   }
 
 
-  $home = "${base}/$user"
+  $home = $kpi::home::home_dir
 
   file { $home:
-    ensure => directory,
-    recurse => remote,
-    source => 'puppet:///modules/kpi/home',
-    source_permissions => use,
-    owner => $user,
+    ensure             => directory,
+    recurse            => remote,
+    source             => 'puppet:///modules/kpi/home',
+    source_permissions => 'use',
+    owner              => $user,
     # group => $user,
-    require => [ User[$user] ],
+    require            => [ User[$user] ],
   }
 
   # exec { '/bin/sbt gen-ensime exit':
@@ -60,86 +60,84 @@ define kpi::home ($base = '/home'){
   #   require => [ File[$home] ],
   # }
 
-  kpi::home_repo {"$user-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config', base=>$base}
-  kpi::home_repo {"$user-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh', base=>$base}
-  kpi::home_symlinks {"$user-symlinks": user=>$user, base=>$base}
-  kpi::home::vim_setup {"$user-vim": user=>$user, base=>$base}
+  kpi::home_repo {"${user}-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
+  kpi::home_repo {"${user}-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
+  kpi::home_symlinks {"${user}-symlinks": user=>$user}
+  kpi::home::vim_setup {"${user}-vim": user=>$user}
 
   exec { "${home} flake8-string-format":
-    command => "pip3 install --user flake8-string-format",
+    command  => 'pip3 install --user flake8-string-format',
     provider => shell,
-    cwd => "${home}",
-    user => $user,
-    creates => "${home}/.local/lib/python3.6/site-packages/flake8_string_format.py",
+    cwd      => $home,
+    user     => $user,
+    creates  => "${home}/.local/lib/python3.6/site-packages/flake8_string_format.py",
   }
 
   exec { 'pip3 install --user dot-tools':
-    creates => "${home}/.local/bin/release.py",
+    creates  => "${home}/.local/bin/release.py",
     provider => shell,
-    cwd => $home,
-    user => $user
+    cwd      => $home,
+    user     => $user
   }
 
-  File[$home] -> kpi::home::tmux_setup {"$user-tmux":
+  File[$home] -> kpi::home::tmux_setup {"${user}-tmux":
     user => $user,
-    base => $base
   }
 }
 
-define kpi::home::tmux_setup($user, $base){
-  file { "${base}/${user}/.config/tmux/tmux2.conf":
-    ensure => file,
+define kpi::home::tmux_setup($user){
+  file { "${kpi::home::home_dir}/.config/tmux/tmux2.conf":
+    ensure  => file,
     content => epp('kpi/tmux.conf.epp', {
       unique_part => file('kpi/tmux.wk.conf')
     })
-  } ->
-  file { "${base}/${user}/.config/tmux/tmux.conf":
-    ensure => file,
+  }
+  -> file { "${kpi::home::home_dir}/.config/tmux/tmux.conf":
+    ensure  => file,
     content => epp('kpi/tmux.conf.epp', {
       unique_part => file('kpi/tmux.general.conf')
     })
   }
 }
 
-define kpi::home_symlinks($user, $base){
+define kpi::home_symlinks($user){
   $id_rsa = str2bool($facts["${user}_id_rsa"])
   $keys = str2bool($facts["${user}_keys"])
   $yad = str2bool($facts["${user}_yad"])
 
-  file { "${base}/$user/.ssh":
+  file { "${kpi::home::home_dir}/.ssh":
     ensure => directory,
-    owner => $user,
-    mode => "0600",
+    owner  => $user,
+    mode   => '0600',
   }
 
   if $keys {
-    kpi::home::keys_links {$user: base=>$base}
+    kpi::home::keys_links {$user:}
   }
 
   if $yad {
-    kpi::home::shared_links {$user: base=>$base}
+    kpi::home::shared_links {$user:}
   }
 }
 
-define kpi::home::shared_links ($base){
+define kpi::home::shared_links (){
   $user = $name
-  kpi::home::shared_link { "$user:.ssh/config": base=>$base}
-  kpi::home::shared_link { "$user:start_work": base=>$base}
-  kpi::home::shared_link { "$user:.pypirc": base=>$base}
+  kpi::home::shared_link { "${user}:.ssh/config": }
+  kpi::home::shared_link { "${user}:start_work": }
+  kpi::home::shared_link { "${user}:.pypirc": }
 }
 
-define kpi::home::shared_link($base) {
-  $i = split($name, ":")
+define kpi::home::shared_link() {
+  $i = split($name, ':')
   $user = $i[0]
   $path = $i[1]
-  kpi::home_link {"$user:$path":
-    target=>"Yandex.Disk/home/$path",
-    require => [File["${base}/$user/.ssh"]],
-    base=>$base
+  kpi::home_link {"${user}:${path}":
+    target  =>"Yandex.Disk/home/${path}",
+    require => [File["${kpi::home::home_dir}/.ssh"]],
   }
 }
 
-define kpi::home::keys_links ($base) {
+define kpi::home::keys_links () {
   $user = $name
   $files = ['id_rsa', 'id_rsa.pub',
             'id_ed25519', 'id_ed25519.pub',
@@ -148,58 +146,57 @@ define kpi::home::keys_links ($base) {
             'tipsikey_prod_v2.pem',
             'perfect_label.pem']
 
-  $files.each |String $fileName| {
-    kpi::home::keys_ssh_link {"$user:.ssh/$fileName":
-      require => [File["${base}/$user/.ssh"]],
-      base => $base,
+  $files.each |String $filename| {
+    kpi::home::keys_ssh_link {"${user}:.ssh/${filename}":
+      require => [File["${kpi::home::home_dir}/.ssh"]],
     }
   }
 }
 
-define kpi::home::keys_ssh_link ($base) {
-  $i = split($name, ":")
+define kpi::home::keys_ssh_link () {
+  $i = split($name, ':')
   $user = $i[0]
   $path = $i[1]
-  kpi::home_link {"$user:$path": target=>".keys/$path", mode=>'0600', base=>$base}
+  kpi::home_link {"${user}:${path}": target=>".keys/${path}", mode=>'0600'}
 }
 
-define kpi::home_link ($target, $mode='0755', $base){
-  $i = split($name, ":")
+define kpi::home_link ($target, $mode='0755'){
+  $i = split($name, ':')
   $user = $i[0]
   $src = $i[1]
-  file { "${base}/${user}/${src}":
+  file { "${kpi::home::home_dir}/${src}":
     ensure => link,
-    owner => $user,
-    mode => $mode,
-    target=>"${base}/${user}/${target}",
+    owner  => $user,
+    mode   => $mode,
+    target =>"${kpi::home::home_dir}/${target}",
   }
 }
 
-define kpi::home_repo($user, $dir, $repo, $base){
-  $home_dir = "${base}/$user/$dir"
-  exec { "git clone http://github.com/$repo.git $home_dir":
+define kpi::home_repo($user, $dir, $repo){
+  $repo_dir = "${kpi::home::home_dir}/${dir}"
+  exec { "git clone http://github.com/${repo}.git ${repo_dir}":
     provider => shell,
-    cwd => "${base}/$user",
-    user => $user,
-    creates => "$home_dir/.git/config",
-    timeout => 1800,
-    require => [ File["${base}/$user"], Kpi::Install['git'] ],
+    cwd      => $kpi::home::home_dir,
+    user     => $user,
+    creates  => "${repo_dir}/.git/config",
+    timeout  => 1800,
+    require  => [ File[$kpi::home::home_dir], Kpi::Install['git'] ],
   }
 }
 
-define kpi::home::vim_setup($user, $dir=undef, $base){
+define kpi::home::vim_setup($user, $dir=undef){
   $home = $dir ? {
-    undef => "${base}/$user",
+    undef => $kpi::home::home_dir,
     default => $dir,
   }
 
-  file {"$home/.config/nvim":
-    owner => $user,
+  file {"${home}/.config/nvim":
     ensure => directory,
+    owner  => $user,
   }
-  -> file {"$home/.config/nvim/init.vim":
+  -> file {"${home}/.config/nvim/init.vim":
     source => 'puppet:///modules/kpi/home/.vimrc',
-    owner => $user,
+    owner  => $user,
   }
 
   # "[$user] please run vim +PlugInstall +qall"
