@@ -1,4 +1,8 @@
-define kpi::install () {
+define kpi::install::macos () {
+  info("try to install on macos ${name}")
+}
+
+define kpi::install::linux () {
   include kpi::repos
   include kpi::packages::system
 
@@ -10,5 +14,13 @@ define kpi::install () {
     command => "/usr/bin/yay -S --noconfirm ${name}",
     require => [ Class[kpi::packages::system] ],
     environment => ['HOME=/home/yay'],
+  }
+}
+
+define kpi::install () {
+  if $facts['os']['family'] == 'Darwin' {
+    kpi::install::macos{$name:}
+  } else {
+    kpi::install::linux{$name:}
   }
 }

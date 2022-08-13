@@ -1,6 +1,8 @@
 class kpi::base_devel () {
   include kpi::packages
+  include kpi::packages::system
   include kpi::packages::optional
+  include kpi::repos
 
   # $python2 = [ 'python2', 'python2-numpy', 'ipython2', 'python2-virtualenv' ]
   # kpi::install { $python2: }
@@ -17,6 +19,8 @@ class kpi::base_devel () {
   $tools = ['git', 'docker', 'docker-compose']
   kpi::install { $tools: }
 
-  file {"/root": ensure => directory}
-  kpi::home::vim_setup {"vim-root": user=>"root", dir=>"/root"}
+  if $facts['os']['family'] == 'Linux' {
+    file {"/root": ensure => directory}
+    kpi::home::vim_setup {"vim-root": user=>"root", dir=>"/root"}
+  }
 }
