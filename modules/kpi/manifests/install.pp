@@ -1,7 +1,19 @@
-define kpi::install::macos () {
-  exec {$name:
-    unless => "/usr/bin/whereis ${name}",
-    command => "/opt/homebrew/bin/brew install ${name}",
+define kpi::install::macos ($bin=undef, $tap=false) {
+  if $tap {
+    $command = "/opt/homebrew/bin/brew tap ${name}"
+  } else {
+    $command = "/opt/homebrew/bin/brew install ${name}"
+  }
+  if $bin {
+    exec {$name:
+      unless => "/usr/bin/whereis ${bin}",
+      command => $command,
+    }
+  } else {
+    exec {$name:
+      unless => "/usr/bin/whereis ${name}",
+      command => $command,
+    }
   }
 }
 
