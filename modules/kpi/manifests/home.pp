@@ -1,5 +1,4 @@
 class kpi::home::repos {
-
 }
 
 
@@ -23,19 +22,26 @@ define kpi::home::rfile ($user, $source) {
   }
 }
 
-define kpi::home {
+define kpi::home ($base = '/home'){
   $user = $title
+  if $facts['os']['family'] == 'linux' {
+    $managehome = true
+    $groups = [ 'wheel', 'audio', 'docker' ]
+  } else {
+    $managehome = false
+    $groups = []
+  }
 
   user { $user:
     ensure => present,
-    managehome => true,
-    groups => [ 'wheel', 'audio', 'docker' ],
+    managehome => $managehome,
+    groups => $groups,
     shell => '/bin/zsh',
     require => [ Class[kpi::packages::system] ]
   }
 
 
-  $home = "/home/$user"
+  $home = "${base}/$user"
 
   file { $home:
     ensure => directory,
@@ -43,7 +49,7 @@ define kpi::home {
     source => 'puppet:///modules/kpi/home',
     source_permissions => use,
     owner => $user,
-    group => $user,
+    # group => $user,
     require => [ User[$user] ],
   }
 
@@ -54,10 +60,10 @@ define kpi::home {
   #   require => [ File[$home] ],
   # }
 
-  kpi::home_repo {"$user-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
-  kpi::home_repo {"$user-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
-  kpi::home_symlinks {"$user-symlinks": user=>$user}
-  kpi::home::vim_setup {"$user-vim": user=>$user}
+  kpi::home_repo {"$user-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config', base=>$base}
+  kpi::home_repo {"$user-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh', base=>$base}
+  kpi::home_symlinks {"$user-symlinks": user=>$user, base=>$base}
+  kpi::home::vim_setup {"$user-vim": user=>$user, base=>$base}
 
   exec { "${home} flake8-string-format":
     command => "pip3 install --user flake8-string-format",
@@ -67,24 +73,27 @@ define kpi::home {
     creates => "${home}/.local/lib/python3.6/site-packages/flake8_string_format.py",
   }
 
-  exec { '/bin/pip3 install --user dot-tools':
+  exec { 'pip3 install --user dot-tools':
     creates => "${home}/.local/bin/release.py",
     provider => shell,
     cwd => $home,
     user => $user
   }
 
-  File[$home] -> kpi::home::tmux_setup {"$user-tmux": user=>$user}
+  File[$home] -> kpi::home::tmux_setup {"$user-tmux":
+    user => $user,
+    base => $base
+  }
 }
 
-define kpi::home::tmux_setup($user){
-  file { "/home/${user}/.config/tmux/tmux2.conf":
+define kpi::home::tmux_setup($user, $base){
+  file { "${base}/${user}/.config/tmux/tmux2.conf":
     ensure => file,
     content => epp('kpi/tmux.conf.epp', {
       unique_part => file('kpi/tmux.wk.conf')
     })
   } ->
-  file { "/home/${user}/.config/tmux/tmux.conf":
+  file { "${base}/${user}/.config/tmux/tmux.conf":
     ensure => file,
     content => epp('kpi/tmux.conf.epp', {
       unique_part => file('kpi/tmux.general.conf')
@@ -92,12 +101,12 @@ define kpi::home::tmux_setup($user){
   }
 }
 
-define kpi::home_symlinks($user){
+define kpi::home_symlinks($user, $base){
   $id_rsa = str2bool($facts["${user}_id_rsa"])
   $keys = str2bool($facts["${user}_keys"])
   $yad = str2bool($facts["${user}_yad"])
 
-  file { "/home/$user/.ssh":
+  file { "${base}/$user/.ssh":
     ensure => directory,
     owner => $user,
     mode => "0600",
@@ -119,17 +128,17 @@ define kpi::home::shared_links {
   kpi::home::shared_link { "$user:.pypirc": }
 }
 
-define kpi::home::shared_link {
+define kpi::home::shared_link($base) {
   $i = split($name, ":")
   $user = $i[0]
   $path = $i[1]
   kpi::home_link {"$user:$path":
     target=>"Yandex.Disk/home/$path",
-    require => [File["/home/$user/.ssh"]]
+    require => [File["${base}/$user/.ssh"]]
   }
 }
 
-define kpi::home::keys_links {
+define kpi::home::keys_links ($base) {
   $user = $name
   $files = ['id_rsa', 'id_rsa.pub',
             'id_ed25519', 'id_ed25519.pub',
@@ -140,7 +149,7 @@ define kpi::home::keys_links {
 
   $files.each |String $fileName| {
     kpi::home::keys_ssh_link {"$user:.ssh/$fileName":
-      require => [File["/home/$user/.ssh"]],
+      require => [File["${base}/$user/.ssh"]],
     }
   }
 }
@@ -152,33 +161,33 @@ define kpi::home::keys_ssh_link {
   kpi::home_link {"$user:$path": target=>".keys/$path", mode=>'0600'}
 }
 
-define kpi::home_link ($target, $mode='0755'){
+define kpi::home_link ($target, $mode='0755', $base){
   $i = split($name, ":")
   $user = $i[0]
   $src = $i[1]
-  file { "/home/${user}/${src}":
+  file { "${base}/${user}/${src}":
     ensure => link,
     owner => $user,
     mode => $mode,
-    target=>"/home/${user}/${target}",
+    target=>"${base}/${user}/${target}",
   }
 }
 
-define kpi::home_repo($user, $dir, $repo){
-  $home_dir = "/home/$user/$dir"
+define kpi::home_repo($user, $dir, $repo, $base){
+  $home_dir = "${base}/$user/$dir"
   exec { "git clone http://github.com/$repo.git $home_dir":
     provider => shell,
-    cwd => "/home/$user",
+    cwd => "${base}/$user",
     user => $user,
     creates => "$home_dir/.git/config",
     timeout => 1800,
-    require => [ File["/home/$user"], Kpi::Install['git'] ],
+    require => [ File["${base}/$user"], Kpi::Install['git'] ],
   }
 }
 
-define kpi::home::vim_setup($user, $dir=undef){
+define kpi::home::vim_setup($user, $dir=undef, $base){
   $home = $dir ? {
-    undef => "/home/$user",
+    undef => "${base}/$user",
     default => $dir,
   }
 

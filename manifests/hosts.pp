@@ -20,4 +20,5 @@ node 'zz' {
 
 node 'kpis-mbp' {
   include kpi::base_devel
+  kpi::home { 'kpi': base => '/Users'}
 }
