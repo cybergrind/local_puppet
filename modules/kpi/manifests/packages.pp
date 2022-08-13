@@ -1,4 +1,13 @@
-class kpi::packages::system () {
+
+class kpi::packages::system() {
+  if $facts['os']['family'] == 'linux' {
+    class {'kpi::packages::system::linux':}
+  } else {
+    info("no system for macos")
+  }
+}
+
+class kpi::packages::system::linux () {
   $system = [ 'sudo', 'openssh', 'base-devel' ]
   package { $system:
     require => [ Class[kpi::repos] ]
@@ -50,6 +59,14 @@ class kpi::packages::system () {
 }
 
 class kpi::packages () {
+  if $facts['os']['family'] == 'linux' {
+    class {'kpi::packages::linux':}
+  } else {
+    info("no packages for macos")
+  }
+}
+
+class kpi::packages::linux () {
   $pkgs_nox = [
     'zsh', 'zsh-completions',
     'gnome-keyring', 'libgnome-keyring',
