@@ -1,6 +1,6 @@
 
 class kpi::packages::system() {
-  if $facts['os']['family'] == 'linux' {
+  if $facts['os']['family'] == 'Archlinux' {
     class {'kpi::packages::system::linux':}
   } else {
     info("no system for macos")
@@ -59,7 +59,7 @@ class kpi::packages::system::linux () {
 }
 
 class kpi::packages () {
-  if $facts['os']['family'] == 'linux' {
+  if $facts['os']['family'] == 'Archlinux' {
     class {'kpi::packages::linux':}
   } else {
     info("no packages for macos")
@@ -95,9 +95,9 @@ class kpi::packages::linux () {
     'kitty',
     'awesome', 'vicious', 'xorg-xrandr', 'arandr',
     'virtualbox',
-    'mplayer', 'mupdf', 'xpdf', 'feh',
+    'mupdf', 'xpdf', 'feh',
     'qbittorrent',
-    'firefox', 'google-chrome',
+    'google-chrome',
     'yandex-disk',
     # X related
     'xsel', 'flameshot', 'copyq',

@@ -7,6 +7,7 @@ class kpi::repos () {
       exec {"pacman -Sy":
         provider => shell,
         user => 'root',
+        onlyif => '[ $(( $(date +%s) - $(stat -c %Y /var/lib/pacman/sync) )) -gt 1000 ]',
       }
     }
   }

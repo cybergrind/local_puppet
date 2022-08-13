@@ -9,18 +9,21 @@ class kpi::base_devel () {
 
   # $scala = [ 'jdk', 'scala', 'scala-docs', 'sbt', 'java-jline' ]
   # kpi::install { $scala: }
+  case $::os['name'] {
+    'Archlinux': {
+      $other = [ 'go', 'nodejs', 'npm', 'yarn', 'jdk']
+      kpi::install { $other: }
 
-  $other = [ 'go', 'nodejs', 'npm', 'yarn', 'jdk']
-  kpi::install { $other: }
+      $editors = ['emacs-nox', 'vim', 'emacs-python-mode']
+      kpi::install { $editors: }
 
-  $editors = ['emacs-nox', 'vim', 'emacs-python-mode']
-  kpi::install { $editors: }
+      $tools = ['git', 'docker', 'docker-compose']
+      kpi::install { $tools: }
+      file {"/root": ensure => directory}
 
-  $tools = ['git', 'docker', 'docker-compose']
-  kpi::install { $tools: }
-
-  if $facts['os']['family'] == 'Linux' {
-    file {"/root": ensure => directory}
-    kpi::home::vim_setup {"vim-root": user=>"root", dir=>"/root"}
+      kpi::home::vim_setup {"vim-root": user=>"root", dir=>"/root"}
+    }
+    'Darwin': {
+    }
   }
 }

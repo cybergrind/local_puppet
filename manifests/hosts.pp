@@ -1,3 +1,5 @@
+$base = '/home'
+
 node 'home' {
   include kpi::base_devel
   kpi::home { 'kpi': }
@@ -15,10 +17,14 @@ node 'dm4' {
 
 node 'zz' {
   include kpi::base_devel
-  kpi::home { 'kpi': }
+
+  class {'kpi::home': }
 }
 
 node 'kpis-mbp' {
   include kpi::base_devel
-  kpi::home { 'kpi': base => '/Users'}
+  class {'kpi::home':
+    user => 'kpi',
+    home_dir => '/Users'
+  }
 }
