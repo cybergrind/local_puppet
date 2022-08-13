@@ -6,4 +6,5 @@ class kpi::system {
         require => [ Kpi::Install['xf86-input-synaptics'] ],
       }
     }
+  }
 }
