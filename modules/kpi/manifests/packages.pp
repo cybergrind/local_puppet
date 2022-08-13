@@ -1,4 +1,3 @@
-
 class kpi::packages::system() {
   if $facts['os']['family'] == 'Archlinux' {
     class {'kpi::packages::system::linux':}
@@ -62,8 +61,13 @@ class kpi::packages () {
   if $facts['os']['family'] == 'Archlinux' {
     class {'kpi::packages::linux':}
   } else {
-    info("no packages for macos")
+    class {'kpi::packages::macos':}
   }
+}
+
+class kpi::packages::macos () {
+  $pkgs_nox = ['git']
+  kpi::install { $pkgs_nox: }
 }
 
 class kpi::packages::linux () {
@@ -109,7 +113,9 @@ class kpi::packages::linux () {
 }
 
 class kpi::packages::optional () {
-  $pkgs = [
+  case $::os['name'] {
+    'Archlinux': {
+      $pkgs = [
     'direnv',
     'lm_sensors', 'lshw', 'hdparm', 'tk',
     'pavucontrol', 'pipewire-pulse', 'pasystray',
@@ -120,6 +126,13 @@ class kpi::packages::optional () {
     'python-pip', 'flake8',
     'postgresql-libs',
   ]
+    }
+    'Darwin': {
+      $pkgs = []
+    }
+  }
+
+
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
   }
