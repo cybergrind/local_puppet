@@ -22,14 +22,23 @@ fi
 
 find $DUMP_DIR -name $SUB -mtime +7 -delete
 
-if [ -e /bin/sudo ]; then
-    if [ ! -f $SUB ]; then
-        echo update submodules
-        sudo puppet module install puppetlabs-stdlib
-        sudo puppet module install puppetlabs-vcsrepo
-        touch $SUB
-    fi
-    sudo puppet apply --modulepath `pwd`/modules:/etc/puppetlabs/code/modules/ manifests/hosts.pp $@
+if [[ $OSTYPE == 'darwin'* ]]; then
+    PUPPET_INSTALL='puppet module install'
+    PUPPET_APPLY='puppet apply'
 else
-    puppet apply --modulepath `pwd`/modules:/etc/puppetlabs/code/modules/ manifests/hosts.pp $@
+    if [ -e /bin/sudo ]; then
+        PUPPET_INSTALL='sudo puppet module install'
+        PUPPET_APPLY='sudo puppet apply'
+    fi
 fi
+
+
+
+if [ ! -f $SUB ]; then
+    echo update submodules
+    ${PUPPET_INSTALL} puppetlabs-stdlib
+    ${PUPPET_INSTALL} puppetlabs-vcsrepo
+    touch $SUB
+fi
+
+${PUPPET_APPLY} --modulepath `pwd`/modules:/etc/puppetlabs/code/modules/ manifests/hosts.pp $@
