@@ -66,8 +66,17 @@ class kpi::packages () {
 }
 
 class kpi::packages::macos () {
-  $pkgs_nox = ['git']
+  kpi::install{'gromgit/fuse': tap => true }
+  $pkgs_nox = [
+    'git', 'pinentry-mac',
+    'encfs-mac', 'gpg', 'findutils',
+    'tmux', 'cmake', 'emacs', 'kubectl', 'nvim',
+    'vim', 'ag', 'direnv', 'fd', 'yandex-disk', 'nvm',
+    'htop', 'tree', 'npm',
+    'py3cairo', 'gtk+3',
+  ]
   kpi::install { $pkgs_nox: }
+
 }
 
 class kpi::packages::linux () {
