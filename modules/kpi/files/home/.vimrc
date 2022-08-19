@@ -21,7 +21,7 @@ Plug 'ctrlpvim/ctrlp.vim'
 
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " Plug 'neovim/nvim-lspconfig'
-Plug 'ycm-core/youcompleteme', {'do': 'python3 install.py'}
+" Plug 'ycm-core/youcompleteme', {'do': 'python3 install.py'}
 " Plug 'xolox/vim-easytags'
 Plug 'majutsushi/tagbar'
 Plug 'easymotion/vim-easymotion'
