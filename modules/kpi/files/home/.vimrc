@@ -14,6 +14,8 @@ endif
 call plug#begin()
 
 " common
+Plug 'github/copilot.vim', {'branch': 'main'}
+
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'ctrlpvim/ctrlp.vim'
 
