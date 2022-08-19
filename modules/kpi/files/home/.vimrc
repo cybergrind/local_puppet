@@ -125,6 +125,7 @@ nnoremap 2O O<Esc>O
 nnoremap tm :tabm +1<CR>
 nnoremap tM :tabm -1<CR>
 nnoremap J L
+
 nnoremap K H
 nnoremap H gT
 nnoremap L gt
@@ -146,14 +147,16 @@ inoremap <C-j> <C-n>
 inoremap <C-k> <C-p>
 cnoremap <C-j> <C-n>
 cnoremap <C-k> <C-p>
+
 if has('nvim')
 nnoremap <F4> :tabe ~/.config/nvim/init.vim<CR>:tabm 0<CR>
 else
 nnoremap <F4> :tabe ~/.vimrc<CR>:tabm 0<CR>
 endif
+
 nnoremap <F5> :w<CR>:so $MYVIMRC<CR>
 
-
+" leader = ,
 noremap <leader>1 1gt
 noremap <leader>2 2gt
 noremap <leader>3 3gt
