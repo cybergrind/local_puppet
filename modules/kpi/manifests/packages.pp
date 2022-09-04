@@ -85,6 +85,7 @@ class kpi::packages::macos () {
     'vim', 'ag', 'direnv', 'fd', 'nvm',
     'htop', 'tree', 'npm',
     'py3cairo', 'gtk+3',
+    'xsel'
   ]
   kpi::install { $pkgs_nox: }
 
