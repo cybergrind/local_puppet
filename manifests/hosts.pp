@@ -20,7 +20,7 @@ node 'zz' {
   class {'kpi::home': }
 }
 
-node 'kpis-mbp.local' {
+node 'kpis-mbp' {
   include kpi::base_devel
   class {'kpi::home':
     user => 'kpi',
