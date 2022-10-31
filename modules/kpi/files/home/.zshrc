@@ -389,12 +389,19 @@ function load_rvm {
     fi
 }
 
-if [ -e "/usr/bin/direnv" ]; then
+# $+commands[direnv] => 1
+# $commands[direnv] => /usr/bin/direnv
+
+if (( $+commands[direnv] )); then
     eval "$(direnv hook zsh)"
 fi
 
 if [ -d "$HOME/.nimble/bin" ]; then
     export PATH="$HOME/.nimble/bin:$PATH"
+fi
+
+if [ -d "$HOME/.cargo/bin/" ]; then
+    export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
 if (( $+commands[heroku] )); then
