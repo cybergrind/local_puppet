@@ -127,6 +127,7 @@ class kpi::packages::linux () {
     # X related
     'xsel', 'flameshot', 'copyq',
     'dunst', # required for flameshot
+    'network-manager-applet'
   ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],

@@ -688,6 +688,7 @@ awful.util.spawn_with_shell("flameshot")
 awful.util.spawn_with_shell("copyq")
 awful.util.spawn_with_shell("blueman-applet")
 awful.util.spawn_with_shell("pasystray")
+awful.util.spawn_with_shell("nm-applet")
 
 
 gears.timer {
