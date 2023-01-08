@@ -83,6 +83,16 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
   File[$home] -> kpi::home::tmux_setup {"${user}-tmux":
     user => $user,
   }
+
+  # helm env
+  exec { "install helm diff":
+    command => "helm plugin install https://github.com/databus23/helm-diff",
+    creates => "${home}/.local/share/helm/plugins/helm-diff/bin/diff",
+    require => Kpi::Install['helmfile'],
+    user => $user,
+    provider => shell,
+    cwd => $home,
+  }
 }
 
 define kpi::home::tmux_setup($user){

@@ -113,6 +113,7 @@ class kpi::packages::linux () {
     'the_silver_searcher', 'fd',
     'networkmanager-openvpn',
     'networkmanager',
+    'kubectx', 'xh',
   ]
   kpi::install { $pkgs_nox:
     require => [Class[kpi::packages::system]],
@@ -138,6 +139,10 @@ class kpi::packages::linux () {
     'network-manager-applet',
   ]
   kpi::install { $pkgs:
+    require => [Class[kpi::packages::system]],
+  }
+
+  kpi::install { 'helmfile':
     require => [Class[kpi::packages::system]],
   }
 }
