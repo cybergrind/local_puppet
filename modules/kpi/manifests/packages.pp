@@ -54,6 +54,12 @@ class kpi::packages::system::linux () {
     enable => true,
     require => [ Package['openssh'] ],
   }
+
+  service { 'NetworkManager':
+    ensure => running,
+    enable => true,
+    require => [Kpi::Install['networkmanager']]
+  }
   include kpi::system
 }
 
@@ -105,6 +111,8 @@ class kpi::packages::linux () {
     'powertop',
     'uctags-git', 'vim-plug-git',
     'the_silver_searcher', 'fd',
+    'networkmanager-openvpn',
+    'networkmanager',
   ]
   kpi::install { $pkgs_nox:
     require => [Class[kpi::packages::system]],
@@ -127,7 +135,7 @@ class kpi::packages::linux () {
     # X related
     'xsel', 'flameshot', 'copyq',
     'dunst', # required for flameshot
-    'network-manager-applet'
+    'network-manager-applet',
   ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
