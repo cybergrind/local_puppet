@@ -45,40 +45,44 @@ do
 end
 -- }}}
 
-
---awesome.font = "sans 15"
+default_font = "Fira Code 14"
+--awesome.font = "sans 18"
 --awesome.font_height = "140"
 local vicious = require("vicious")
 memwidget = wibox.widget.textbox()
+memwidget.font = default_font
 -- Register widget
 vicious.register(memwidget, vicious.widgets.mem, "<b>$2</b>mb/$3mb | ", 13)
 
 -- Initialize widget
 cpuwidget = wibox.widget.textbox()
+cpuwidget.font = default_font
 -- Register widget
 vicious.register(cpuwidget, vicious.widgets.cpu, "cpu\t <b>$1</b>% | ")
 
 -- {{{ Battery state
 batwidget = wibox.widget.textbox()
+batwidget.font = default_font
 -- Register widget
-    vicious.register(batwidget, vicious.widgets.bat,
-    function (widget, args)
-        if args[2] < 30 and args[2] >= 15 then
-            return " <span color=\"#FFFF00\">b" .. args[2] .. " (" ..args[3] .. ")</span> | "
-        elseif args[2] < 15 then
-            return " <span color=\"red\">b" .. args[2] .. " (" ..args[3] .. ")</span> | "
-        else
-            return " b" .. args[2] .. " (" .. args[3] .. ") | "
-        end
-    end,
-    60,
-    "BAT0") -- see /sys/class/power_supply for options
+vicious.register(batwidget, vicious.widgets.bat,
+function (widget, args)
+    if args[2] < 30 and args[2] >= 15 then
+        return " <span color=\"#FFFF00\">b" .. args[2] .. " (" ..args[3] .. ")</span> | "
+    elseif args[2] < 15 then
+        return " <span color=\"red\">b" .. args[2] .. " (" ..args[3] .. ")</span> | "
+    else
+        return " b" .. args[2] .. " (" .. args[3] .. ") | "
+    end
+end,
+60,
+"BAT0") -- see /sys/class/power_supply for options
 -- }}}
 
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
 beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
+beautiful.font = default_font
 
 -- This is used later as the default terminal and editor to run.
 sakura_args = os.getenv('SAKURA_ARGS') or ''
@@ -255,7 +259,7 @@ awful.screen.connect_for_each_screen(function(s)
     }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s })
+    s.mywibox = awful.wibar({ position = "top", screen = s, height = 20 })
 
     -- Add widgets to the wibox
     s.mywibox:setup {
