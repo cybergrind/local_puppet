@@ -151,14 +151,23 @@ define kpi::home::keys_links () {
   $user = $name
   $files = ['id_rsa', 'id_rsa.pub',
             'id_ed25519', 'id_ed25519.pub',
-            'tipsikey_test_v2.pem',
-            'tipsikey_test_v3.pem',
-            'tipsikey_prod_v2.pem',
             'perfect_label.pem']
 
   $files.each |String $filename| {
     kpi::home::keys_ssh_link {"${user}:.ssh/${filename}":
       require => [File["${kpi::home::home_dir}/.ssh"]],
+    }
+  }
+
+  file {"${home}/.kube":
+    ensure => directory,
+    owner  => $user,
+  }
+
+  ['octo-eks', 'octo-eks2'].each |String $fname| {
+    kpi::home_link { "${user}:.kube/${fname}":
+      target => ".keys/octo/${fname}",
+      require => [File["${home}/.kube"]]
     }
   }
 }
