@@ -151,16 +151,17 @@ class kpi::packages::optional () {
   case $::os['name'] {
     'Archlinux': {
       $pkgs = [
-    'direnv',
-    'lm_sensors', 'lshw', 'hdparm', 'tk',
-    'pavucontrol', 'pipewire-pulse', 'pasystray',
-    'xscreensaver', 'teamviewer',
-    'inotify-tools',
-    # development
-    'python-virtualenv', 'whois', 'bind-tools', # dig
-    'python-pip', 'flake8',
-    'postgresql-libs',
-  ]
+        'direnv',
+        'lm_sensors', 'lshw', 'hdparm', 'tk',
+        'pavucontrol', 'pipewire-pulse', 'pasystray',
+        'xscreensaver', 'teamviewer',
+        'inotify-tools',
+        # development
+        'python-virtualenv', 'whois', 'bind-tools', # dig
+        'python-pip', 'flake8',
+        'postgresql-libs',
+        'nvm', 'pnpm-bin',
+      ]
     }
     'Darwin': {
       $pkgs = []
