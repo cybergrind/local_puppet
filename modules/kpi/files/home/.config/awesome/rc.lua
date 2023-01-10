@@ -45,7 +45,7 @@ do
 end
 -- }}}
 
-default_font = "Fira Code 14"
+default_font = "sans 10"
 --awesome.font = "sans 18"
 --awesome.font_height = "140"
 local vicious = require("vicious")

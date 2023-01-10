@@ -15,7 +15,7 @@ node 'dm4' {
   class {'kpi::home': }
 }
 
-node 'zz' {
+node 'xx' {
   include kpi::base_devel
   class {'kpi::home': }
 }

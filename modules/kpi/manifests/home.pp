@@ -88,7 +88,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
   exec { "install helm diff":
     command => "helm plugin install https://github.com/databus23/helm-diff",
     creates => "${home}/.local/share/helm/plugins/helm-diff/bin/diff",
-    require => Kpi::Install['helmfile'],
+    require => Kpi::Install['helm'],
     user => $user,
     provider => shell,
     cwd => $home,
