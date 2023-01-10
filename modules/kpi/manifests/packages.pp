@@ -114,6 +114,7 @@ class kpi::packages::linux () {
     'networkmanager-openvpn',
     'networkmanager',
     'kubectx', 'xh',
+    'libxcrypt-compat', 'libselinux',
   ]
   kpi::install { $pkgs_nox:
     require => [Class[kpi::packages::system]],
@@ -132,11 +133,12 @@ class kpi::packages::linux () {
     'mupdf', 'xpdf', 'feh',
     'qbittorrent',
     'google-chrome',
-    'yandex-disk',
+    'yandex-disk', 'helm',
     # X related
     'xsel', 'flameshot', 'copyq',
     'dunst', # required for flameshot
     'network-manager-applet',
+    'gtk2',
   ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
