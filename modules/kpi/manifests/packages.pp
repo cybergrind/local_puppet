@@ -115,6 +115,7 @@ class kpi::packages::linux () {
     'networkmanager',
     'kubectx', 'xh',
     'libxcrypt-compat', 'libselinux',
+    'asp',
   ]
   kpi::install { $pkgs_nox:
     require => [Class[kpi::packages::system]],
@@ -123,7 +124,7 @@ class kpi::packages::linux () {
   $pkgs = [
     'ttf-droid', 'ttf-ms-fonts', 'ttf-bitstream-vera',
     'ttf-droid-sans-mono-slashed-powerline-git',
-    'ttf-fira-code',
+    'ttf-fira-code', 'woff-fira-code', 'woff2-fira-code',
     'ttf-liberation', 'ttf-ubuntu-font-family',
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev',
     'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
@@ -134,12 +135,14 @@ class kpi::packages::linux () {
     'qbittorrent',
     'google-chrome',
     'yandex-disk', 'helm',
+    'tfswitch-bin',
     # X related
     'xsel', 'flameshot', 'copyq',
     'dunst', # required for flameshot
     'network-manager-applet',
-    'gtk2',
+    'gtk2', 'freerdp', 'jq'
   ]
+
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
   }
