@@ -170,6 +170,10 @@ define kpi::home::keys_links () {
       require => [File["${home}/.kube"]]
     }
   }
+  kpi::home_link { "${user}:.kube/pl-eks":
+    target => ".keys/perfect_label/pl-eks",
+    require => [File["${home}/.kube"]]
+  }
 }
 
 define kpi::home::keys_ssh_link () {
