@@ -140,7 +140,7 @@ class kpi::packages::linux () {
     'xsel', 'flameshot', 'copyq',
     'dunst', # required for flameshot
     'network-manager-applet',
-    'gtk2', 'freerdp', 'jq'
+    'gtk2', 'freerdp', 'jq', 'yq',
   ]
 
   kpi::install { $pkgs:
