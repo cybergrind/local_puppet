@@ -14,6 +14,10 @@ if [ ! -z "$Apple_PubSub_Socket_Render" ]; then
     declare -x PATH="/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 fi
 
+if [[ $OSTYPE == "darwin"* ]]; then
+    declare -x PATH=$PATH:/opt/homebrew/bin:/opt/puppetlabs/bin
+fi
+
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
