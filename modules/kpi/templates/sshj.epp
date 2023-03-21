@@ -1,0 +1,11 @@
+[Unit]
+Description=sshj
+After=network.target
+
+[Service]
+ExecStart=ssh <%= $sshj_user %>@ssh-j.com -N -R <%= $host %>:22:localhost:22
+RestartSec=30
+Restart=always
+
+[Install]
+WantedBy=default.target

@@ -50,6 +50,18 @@ if [ ! -f $SUB ]; then
     touch $SUB
 fi
 
+if [[ -f ~/.keys/env ]]; then
+    source ~/.keys/common_env
+fi
+
+if [[ ! -z $FACTER_SSHJ_USER ]]; then
+    if [[ $OSTYPE == 'darwin'* ]]; then
+        export PUPPET_APPLY="FACTER_SSHJ_USER=${FACTER_SSHJ_USER} puppet apply -v"
+    else
+        export PUPPET_APPLY="sudo FACTER_SSHJ_USER=${FACTER_SSHJ_USER} puppet apply -v"
+    fi
+fi
+
 set -x
 ${PUPPET_APPLY} \
     --modulepath `pwd`/modules${PUPPET_MODULES} \
