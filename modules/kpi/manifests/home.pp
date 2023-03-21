@@ -84,6 +84,12 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
     user => $user,
   }
 
+  if $facts['os']['family'] == 'Archlinux' and $sshj_user != undef {
+    File[$home] -> kpi::home::sshj {"${user}-sshj":
+      user => $user,
+    }
+  }
+
   # helm env
   exec { "install helm diff":
     command => "helm plugin install https://github.com/databus23/helm-diff",
@@ -107,6 +113,42 @@ define kpi::home::tmux_setup($user){
     content => epp('kpi/tmux.conf.epp', {
       unique_part => file('kpi/tmux.general.conf')
     })
+  }
+}
+
+define kpi::home::sshj($user){
+  $uid = $user_uid
+
+  file { "${kpi::home::home_dir}/.local/share/systemd/user/":
+    ensure => directory,
+    recurse => true,
+    owner  => $user,
+    mode   => '0600',
+  }
+  -> file { "${kpi::home::home_dir}/.local/share/systemd/user/sshj.service":
+    ensure  => file,
+    content => epp('kpi/sshj.epp', {
+      host => $hostname,
+      sshj_user => $sshj_user
+    })
+  }
+  -> exec { 'sshj enable':
+    user => $user,
+    command => "/bin/systemctl --user enable sshj",
+    environment => [
+      "XDG_RUNTIME_DIR=/run/user/${uid}"
+    ],
+    provider => shell,
+    creates => "${kpi::home::home_dir}/.config/systemd/user/default.target.wants/sshj.service"
+  }
+  -> exec { 'sshj start':
+    user => $user,
+    environment => [
+      "XDG_RUNTIME_DIR=/run/user/${uid}"
+    ],
+    command => "/bin/systemctl --user start sshj",
+    creates => "/sys/fs/cgroup/user.slice/user-${uid}.slice/user@${uid}.service/app.slice/sshj.service/",
+    provider => shell,
   }
 }
 

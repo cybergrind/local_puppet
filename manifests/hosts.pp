@@ -1,4 +1,5 @@
 $base = '/home'
+$user_uid = 1000
 
 node 'home' {
   include kpi::base_devel

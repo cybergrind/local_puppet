@@ -18,6 +18,10 @@ if [[ $OSTYPE == "darwin"* ]]; then
     declare -x PATH=$PATH:/opt/homebrew/bin:/opt/puppetlabs/bin
 fi
 
+if [[ -f ~/.keys/env ]]; then
+    source ~/.keys/common_env
+fi
+
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
