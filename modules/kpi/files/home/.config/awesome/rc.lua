@@ -227,6 +227,16 @@ end
 -- Re-set wallpaper when a screen's geometry changes (e.g. different resolution)
 screen.connect_signal("property::geometry", set_wallpaper)
 
+local systray = wibox.widget.systray()
+
+-- set to 32 if hostname == 'tpad'
+local hostname = io.lines("/proc/sys/kernel/hostname")()
+local systray_size = 20
+if hostname == 'tpad' then
+   systray_size = 32
+end
+
+
 awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
@@ -259,7 +269,7 @@ awful.screen.connect_for_each_screen(function(s)
     }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s, height = 20 })
+    s.mywibox = awful.wibar({ position = "top", screen = s, height = systray_size })
 
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -277,7 +287,7 @@ awful.screen.connect_for_each_screen(function(s)
             batwidget,
             cpuwidget,
             memwidget,
-            wibox.widget.systray(),
+            systray,
             mytextclock,
             s.mylayoutbox,
         },
