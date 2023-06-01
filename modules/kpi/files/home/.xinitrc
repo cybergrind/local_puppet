@@ -43,7 +43,7 @@ function setup_wacom {
 
 
 function hiDPI {
-    xrandr --dpi 190
+    xrandr --dpi 192
     # Merge & load configuration from .Xresources
     xrdb -merge ~/.Xresources
     xrdb -merge ~/.Xdefaults
@@ -63,7 +63,6 @@ case "$(hostname)" in
         hiDPI
         ;;
     zz)
-        xrandr --output DP-0 --mode 2560x1440 --rate 144
         hiDPI
         ;;
 esac

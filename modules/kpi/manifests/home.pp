@@ -237,6 +237,12 @@ define kpi::home::hi_dpi ($user) {
     content => epp('kpi/chromium-flags.conf.epp', {}),
     owner => $user
   }
+
+  file { "${kpi::home::home_dir}/.Xresources":
+    ensure  => file,
+    content => epp('kpi/.Xresources.epp', {}),
+    owner => $user
+  }
 }
 
 define kpi::home::keys_ssh_link () {
