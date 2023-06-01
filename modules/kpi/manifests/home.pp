@@ -90,6 +90,12 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
     }
   }
 
+  if $facts['os']['family'] == 'ArchLinux' {
+    kpi::home::hi_dpi {"${user}-hidpi":
+      user => $user,
+    }
+  }
+
   # helm env
   exec { "install helm diff":
     command => "helm plugin install https://github.com/databus23/helm-diff",
@@ -191,6 +197,8 @@ define kpi::home::shared_link() {
 
 define kpi::home::keys_links () {
   $user = $name
+  $home = "/home/${user}"
+
   $files = ['id_rsa', 'id_rsa.pub',
             'id_ed25519', 'id_ed25519.pub',
             'perfect_label.pem']
@@ -206,7 +214,7 @@ define kpi::home::keys_links () {
     owner  => $user,
   }
 
-  ['octo-eks', 'octo-eks2'].each |String $fname| {
+  ['octo-eks1', 'octo-eks2', 'octo-cloud'].each |String $fname| {
     kpi::home_link { "${user}:.kube/${fname}":
       target => ".keys/octo/${fname}",
       require => [File["${home}/.kube"]]
@@ -215,6 +223,19 @@ define kpi::home::keys_links () {
   kpi::home_link { "${user}:.kube/pl-eks":
     target => ".keys/perfect_label/pl-eks",
     require => [File["${home}/.kube"]]
+  }
+}
+
+define kpi::home::hi_dpi ($user) {
+  file { "${kpi::home::home_dir}/.config/chrome-flags.conf":
+    ensure  => file,
+    content => epp('kpi/chromium-flags.conf.epp', {}),
+    owner => $user
+  }
+  file { "${kpi::home::home_dir}/.config/brave-flags.conf":
+    ensure  => file,
+    content => epp('kpi/chromium-flags.conf.epp', {}),
+    owner => $user
   }
 }
 

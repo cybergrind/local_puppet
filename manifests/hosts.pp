@@ -1,5 +1,6 @@
 $base = '/home'
 $user_uid = 1000
+$hiDPI = false
 
 node 'home' {
   include kpi::base_devel
@@ -7,6 +8,7 @@ node 'home' {
 }
 
 node 'tpad' {
+  $hiDPI = true
   include kpi::base_devel
   class {'kpi::home': }
 }
@@ -22,6 +24,7 @@ node 'xx' {
 }
 
 node 'zz' {
+  $hiDPI = true
   include kpi::base_devel
   class {'kpi::home': }
 }
