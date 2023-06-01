@@ -21,6 +21,11 @@ node 'xx' {
   class {'kpi::home': }
 }
 
+node 'zz' {
+  include kpi::base_devel
+  class {'kpi::home': }
+}
+
 node 'cybergrinds-macbook-pro.local' {
   include kpi::base_devel
   class {'kpi::home':
