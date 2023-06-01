@@ -183,6 +183,11 @@ function new_tmux_session {
             tmux -L $3 -f $2 -L $1 new -A -t $1;;
     esac;
 }
+function _new_tmux_session {
+    local values=( $(tmux -L default list-sessions -F "#S") )
+    reply=( $values )
+}
+compctl -K _new_tmux_session new_tmux_session
 
 alias em='emacs -nw'
 alias tmx='new_tmux_session'
