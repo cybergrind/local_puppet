@@ -427,3 +427,5 @@ if [ -f "$CUSTOM_CONFIG" ]; then
 else
     echo 'no custom config'
 fi
+
+[ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
