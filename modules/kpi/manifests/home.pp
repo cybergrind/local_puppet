@@ -125,11 +125,17 @@ define kpi::home::tmux_setup($user){
 define kpi::home::sshj($user){
   $uid = $user_uid
 
-  file { "${kpi::home::home_dir}/.local/share/systemd/user/":
+  file { "${kpi::home::home_dir}/.local/share/systemd/":
     ensure => directory,
     recurse => true,
     owner  => $user,
-    mode   => '0600',
+    mode   => '0700',
+  }
+  -> file { "${kpi::home::home_dir}/.local/share/systemd/user/":
+    ensure => directory,
+    recurse => true,
+    owner  => $user,
+    mode   => '0700',
   }
   -> file { "${kpi::home::home_dir}/.local/share/systemd/user/sshj.service":
     ensure  => file,
