@@ -42,6 +42,17 @@ function setup_wacom {
 }
 
 
+function hiDPI {
+    xrandr --dpi 190
+    # Merge & load configuration from .Xresources
+    xrdb -merge ~/.Xresources
+    xrdb -merge ~/.Xdefaults
+    # Let QT and GTK autodetect retina screen and autoadjust
+    export QT_AUTO_SCREEN_SCALE_FACTOR=1
+    export GDK_SCALE=2
+    export GDK_DPI_SCALE=0.5
+}
+
 case "$(hostname)" in
     tpad)
         # xrandr --newmode "1920x1080"  173.00  1920 2048 2248 2576  1080 1083 1088 1120 -hsync +vsync
@@ -49,19 +60,11 @@ case "$(hostname)" in
         # xrandr --output eDP1 --mode 1920x1080
         tpad_trackpoint
         xinput set-prop 'Synaptics TM3149-002' 'Synaptics Scrolling Distance' -31 -31
-        export SAKURA_ARGS=''
-        xrandr --dpi 190
-        # Merge & load configuration from .Xresources
-        xrdb -merge ~/.Xresources
-        xrdb -merge ~/.Xdefaults
-        # Let QT and GTK autodetect retina screen and autoadjust
-        export QT_AUTO_SCREEN_SCALE_FACTOR=1
-        export GDK_SCALE=2
-        export GDK_DPI_SCALE=0.5
+        hiDPI
         ;;
     zz)
-        export SAKURA_ARGS='-c 232 -r 61'
         xrandr --output DP-0 --mode 2560x1440 --rate 144
+        hiDPI
         ;;
 esac
 

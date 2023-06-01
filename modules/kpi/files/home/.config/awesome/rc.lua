@@ -231,10 +231,9 @@ local systray = wibox.widget.systray()
 
 -- set to 32 if hostname == 'tpad'
 local hostname = io.lines("/proc/sys/kernel/hostname")()
-local systray_size = 20
-if hostname == 'tpad' then
-   systray_size = 32
-end
+
+local custom_systray = { tpad=32, zz=32 }
+local systray_size = custom_systray[hostname] or 20
 
 
 awful.screen.connect_for_each_screen(function(s)
