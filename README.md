@@ -6,6 +6,14 @@ export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
 ```
 
 
+### sshj
+
+By default should already be set from keys. On new node it won't be set until keys are monted.
+
+```bash
+FACTER_SSHJ_USER=something ./run
+```
+
 ### coding snippets
 
 
