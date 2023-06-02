@@ -90,7 +90,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
     }
   }
 
-  if $facts['os']['family'] == 'ArchLinux' {
+  if $facts['os']['family'] == 'ArchLinux' and $hiDPI {
     kpi::home::hi_dpi {"${user}-hidpi":
       user => $user,
     }
