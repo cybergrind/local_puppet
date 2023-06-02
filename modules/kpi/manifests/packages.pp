@@ -126,6 +126,8 @@ class kpi::packages::linux () {
     'ttf-droid-sans-mono-slashed-powerline-git',
     'ttf-fira-code', 'woff-fira-code', 'woff2-fira-code',
     'ttf-liberation', 'ttf-ubuntu-font-family',
+    'liberation', 'ttf-liberation-mono-nerd', 'noto-fonts-emoji',
+    'otf-openmoji', 'ttf-joypixels', 'ttf-twemoji-color',
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev',
     'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
     'kitty',
