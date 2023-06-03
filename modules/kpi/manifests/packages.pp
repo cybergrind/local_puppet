@@ -6,6 +6,7 @@ class kpi::packages::system() {
   }
 }
 
+
 class kpi::packages::system::linux () {
   $system = [ 'sudo', 'openssh', 'base-devel' ]
   package { $system:
@@ -177,6 +178,16 @@ class kpi::packages::optional () {
   }
 
 
+  kpi::install { $pkgs:
+    require => [Class[kpi::packages::system]],
+  }
+}
+
+
+class kpi::packages::hidpi () {
+  $pkgs = [
+    'run_scaled-git',
+  ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
   }

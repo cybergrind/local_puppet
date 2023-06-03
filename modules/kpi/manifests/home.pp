@@ -249,6 +249,8 @@ define kpi::home::hi_dpi ($user) {
     content => epp('kpi/.Xresources.epp', {}),
     owner => $user
   }
+
+  class {'kpi::packages::hidpi':}
 }
 
 define kpi::home::keys_ssh_link () {
