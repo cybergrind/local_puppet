@@ -115,7 +115,7 @@ class kpi::packages::linux () {
     'networkmanager',
     'kubectx', 'xh',
     'libxcrypt-compat', 'libselinux',
-    'asp',
+    'asp', 'man-db',
   ]
   kpi::install { $pkgs_nox:
     require => [Class[kpi::packages::system]],
@@ -143,6 +143,7 @@ class kpi::packages::linux () {
     'dunst', # required for flameshot
     'network-manager-applet',
     'gtk2', 'freerdp', 'jq', 'yq',
+    'pcmanfm',
   ]
 
   kpi::install { $pkgs:
