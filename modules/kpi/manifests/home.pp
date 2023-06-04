@@ -65,14 +65,6 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
   kpi::home_symlinks {"${user}-symlinks": user=>$user}
   kpi::home::vim_setup {"${user}-vim": user=>$user}
 
-  exec { "${home} flake8-string-format":
-    command  => 'pip3 install --user flake8-string-format',
-    provider => shell,
-    cwd      => $home,
-    user     => $user,
-    creates  => "${home}/.local/lib/python3.6/site-packages/flake8_string_format.py",
-  }
-
   exec { 'pip3 install --user dot-tools':
     creates  => "${home}/.local/bin/release.py",
     provider => shell,

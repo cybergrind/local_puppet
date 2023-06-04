@@ -127,7 +127,7 @@ class kpi::packages::linux () {
     'ttf-droid-sans-mono-slashed-powerline-git',
     'ttf-fira-code', 'woff-fira-code', 'woff2-fira-code',
     'ttf-liberation', 'ttf-ubuntu-font-family',
-    'liberation', 'ttf-liberation-mono-nerd', 'noto-fonts-emoji',
+    'ttf-liberation-mono-nerd', 'noto-fonts-emoji',
     'otf-openmoji', 'ttf-joypixels', 'ttf-twemoji-color',
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev',
     'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
@@ -144,7 +144,8 @@ class kpi::packages::linux () {
     'dunst', # required for flameshot
     'network-manager-applet',
     'gtk2', 'freerdp', 'jq', 'yq',
-    'pcmanfm',
+    'pcmanfm', 'k9s',
+    'ruff',
   ]
 
   kpi::install { $pkgs:
@@ -186,7 +187,7 @@ class kpi::packages::optional () {
 
 class kpi::packages::hidpi () {
   $pkgs = [
-    'run_scaled-git',
+    'xpra',
   ]
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
