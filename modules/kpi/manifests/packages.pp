@@ -145,7 +145,8 @@ class kpi::packages::linux () {
     'network-manager-applet',
     'gtk2', 'freerdp', 'jq', 'yq',
     'pcmanfm', 'k9s',
-    'ruff',
+    'ruff', 'aws-cli',
+    'slock',
   ]
 
   kpi::install { $pkgs:
