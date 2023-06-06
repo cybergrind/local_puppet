@@ -28,6 +28,9 @@ function setup_wacom {
     #Wacom Intuos5 touch S Pad pad
     #Wacom Intuos5 touch S Pen eraser
     #Wacom Intuos5 touch S Pen cursor
+
+    xinput disable 'Wacom Intuos5 touch S Finger'
+
     xsetwacom set "Wacom Intuos5 touch S Pen stylus" MapToOutput HEAD-0
     xsetwacom set "Wacom Intuos5 touch S Pen eraser" MapToOutput HEAD-0
     xsetwacom set "Wacom Intuos5 touch S Pen cursor" MapToOutput HEAD-0
