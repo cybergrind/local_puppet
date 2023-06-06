@@ -130,9 +130,10 @@ class kpi::packages::linux () {
     'ttf-liberation-mono-nerd', 'noto-fonts-emoji',
     'otf-openmoji', 'ttf-joypixels', 'ttf-twemoji-color',
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev',
-    'xorg-xev', 'xterm', 'sakura', 'pkgfile', 'xorg-xmodmap',
-    'kitty',
-    'awesome', 'vicious', 'xorg-xrandr', 'arandr',
+    'xorg-xrdb', 'xorg-xev',
+    'xterm', 'xorg-xrandr', 'arandr', 'xorg-xmodmap',
+    'pkgfile', 'kitty',
+    'awesome', 'vicious',
     'virtualbox',
     'mupdf', 'xpdf', 'feh',
     'qbittorrent',
@@ -146,7 +147,7 @@ class kpi::packages::linux () {
     'gtk2', 'freerdp', 'jq', 'yq',
     'pcmanfm', 'k9s',
     'ruff', 'aws-cli',
-    'slock',
+    'slock', 'xorg-xinput',
   ]
 
   kpi::install { $pkgs:
