@@ -3,7 +3,7 @@ Description=sshj
 After=network.target
 
 [Service]
-ExecStart=ssh <%= $sshj_user %>@ssh-j.com -N -R <%= $host %>:22:localhost:22
+ExecStart=ssh -p 31022 <%= $sshj_spec %> -R <%= $host %>:22:localhost:22
 RestartSec=30
 Restart=always
 
