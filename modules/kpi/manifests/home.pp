@@ -76,7 +76,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
     user => $user,
   }
 
-  if $facts['os']['family'] == 'Archlinux' and $sshj_user != undef {
+  if $facts['os']['family'] == 'Archlinux' and $sshj_spec != undef {
     File[$home] -> kpi::home::sshj {"${user}-sshj":
       user => $user,
     }
@@ -133,7 +133,7 @@ define kpi::home::sshj($user){
     ensure  => file,
     content => epp('kpi/sshj.epp', {
       host => $hostname,
-      sshj_user => $sshj_user
+      sshj_spec => $sshj_spec
     })
   }
   -> exec { 'sshj enable':
