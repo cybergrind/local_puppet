@@ -54,6 +54,11 @@ function hiDPI {
     export QT_AUTO_SCREEN_SCALE_FACTOR=1
     export GDK_SCALE=2
     export GDK_DPI_SCALE=0.5
+    if [ -e /usr/bin/gsettings ]
+    then
+        gsettings set org.gnome.desktop.interface scaling-factor 2
+        gsettings set org.gnome.desktop.interface text-scaling-factor 2
+    fi
 }
 
 case "$(hostname)" in
