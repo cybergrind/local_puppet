@@ -212,7 +212,7 @@ define kpi::home::keys_links () {
     owner  => $user,
   }
 
-  ['octo-eks1', 'octo-eks2', 'octo-cloud'].each |String $fname| {
+  ['octo-eks1', 'octo-eks2', 'octo-cloud', 'octo-hz-de1', 'octo-hz-fi1'].each |String $fname| {
     kpi::home_link { "${user}:.kube/${fname}":
       target => ".keys/octo/${fname}",
       require => [File["${home}/.kube"]]
