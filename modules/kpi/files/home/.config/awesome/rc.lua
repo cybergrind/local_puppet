@@ -696,12 +696,14 @@ end)
 -- }}}
 
 -- autorun
-awful.util.spawn_with_shell("xscreensaver")
+-- awful.util.spawn_with_shell("xscreensaver")
 awful.util.spawn_with_shell("flameshot")
 awful.util.spawn_with_shell("copyq")
 awful.util.spawn_with_shell("blueman-applet")
 awful.util.spawn_with_shell("pasystray")
 awful.util.spawn_with_shell("nm-applet")
+awful.util.spawn_with_shell("xset +dpms")
+awful.util.spawn_with_shell("xset dpms 300 300 300")
 
 
 gears.timer {
