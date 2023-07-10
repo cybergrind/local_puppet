@@ -45,7 +45,13 @@ do
 end
 -- }}}
 
-default_font = "sans 10"
+
+local hostname = io.lines("/proc/sys/kernel/hostname")()
+
+local hiDPI_font = "sans 10"
+local custom_fonts = { tpad=hiDPI_font, zz=hiDPI_font }
+default_font = custom_fonts[hostname] or "sans 7"
+
 --awesome.font = "sans 18"
 --awesome.font_height = "140"
 local vicious = require("vicious")
@@ -228,10 +234,7 @@ end
 screen.connect_signal("property::geometry", set_wallpaper)
 
 local systray = wibox.widget.systray()
-
 -- set to 32 if hostname == 'tpad'
-local hostname = io.lines("/proc/sys/kernel/hostname")()
-
 local custom_systray = { tpad=32, zz=32 }
 local systray_size = custom_systray[hostname] or 20
 
