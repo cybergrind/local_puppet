@@ -522,7 +522,7 @@ function loadrc(name)
 end
 
 function screenshot()
-   os.execute('flameshot gui')
+   awful.spawn('flameshot gui')
 end
 
 loadrc('brightness')
