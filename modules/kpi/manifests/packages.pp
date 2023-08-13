@@ -116,7 +116,7 @@ class kpi::packages::linux () {
     'networkmanager',
     'kubectx', 'xh',
     'libxcrypt-compat', 'libselinux',
-    'asp', 'man-db',
+    'asp', 'man-db', 'man-pages',
   ]
   kpi::install { $pkgs_nox:
     require => [Class[kpi::packages::system]],
