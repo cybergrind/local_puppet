@@ -148,6 +148,8 @@ class kpi::packages::linux () {
     'pcmanfm', 'k9s',
     'ruff', 'aws-cli',
     'slock', 'xorg-xinput',
+    # notifications
+    'mate-notification-daemon',
   ]
 
   kpi::install { $pkgs:
