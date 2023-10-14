@@ -699,7 +699,7 @@ end)
 -- }}}
 
 -- autorun
--- awful.util.spawn_with_shell("xscreensaver")
+awful.util.spawn_with_shell("xscreensaver")
 awful.util.spawn_with_shell("flameshot")
 awful.util.spawn_with_shell("copyq")
 awful.util.spawn_with_shell("blueman-applet")
