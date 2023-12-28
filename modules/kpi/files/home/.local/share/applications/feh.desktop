@@ -1,0 +1,8 @@
+# update-desktop-database ~/.local/share/applications
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=feh
+Exec=/usr/bin/feh --cache-size 512 -FZd --start-at %f
+Categories=Utils;
+MimeType=image/*;image/png;image/webp;image/gif;image/jpeg;image/bmp;image/x-tga;image/x-xbitmap;image/x-targa;image/x-tga;image/x-icns;image/x-ico;image/x-win-bitmap;image/x-bmp;
