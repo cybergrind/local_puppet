@@ -11,7 +11,7 @@ STOPWORDS = [
     'twitch', 'youtube', 'mplayer', 'stepmania'
 ]
 
-wname = "xprop -id $(xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5) _NET_WM_NAME"
+wname = "xprop -id $(xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5) WM_NAME"
 stop_saver = 'xscreensaver-command -deactivate'
 
 
