@@ -72,7 +72,7 @@ plugins=(
     z
 )
 
-FZF_WD_BINDKEY='^e'
+FZF_WD_BINDKEY='^q'
 
 if [ ! -z $ZSH/oh-my-zsh.sh ]; then
     source $ZSH/oh-my-zsh.sh
