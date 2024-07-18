@@ -547,6 +547,13 @@ root.keys(globalkeys)
 -- {{{ Rules
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
+    { rule_any = {
+         class = { "steam", "steam_app_1974050" }
+      },
+      properties = { screen = 1, tag = "8", floating = true }},
+    { rule_any = {type = { "normal", "dialog" }},
+      properties = { titlebars_enabled = false }
+    },
     -- All clients will match this rule.
     { rule = { },
       properties = { border_width = beautiful.border_width,
@@ -592,9 +599,6 @@ awful.rules.rules = {
       }, properties = { floating = true }},
 
     -- Add titlebars to normal clients and dialogs
-    { rule_any = {type = { "normal", "dialog" }
-      }, properties = { titlebars_enabled = false }
-    },
     { rule = { class = "TeamViewer" },
       properties = { screen = 1, tag = "4" }},
 
