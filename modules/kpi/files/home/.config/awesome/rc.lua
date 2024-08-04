@@ -548,7 +548,7 @@ root.keys(globalkeys)
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
     { rule_any = {
-         class = { "steam", "steam_app_1974050" }
+         class = { "steam", "steam_app_1974050", "steam_app_275850" }
       },
       properties = { screen = 1, tag = "8", floating = true }},
     { rule_any = {type = { "normal", "dialog" }},
