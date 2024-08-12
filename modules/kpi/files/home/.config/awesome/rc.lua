@@ -45,6 +45,11 @@ do
 end
 -- }}}
 
+function loadrc(name)
+   local path = awful.util.getdir('config') .. '/lib/' .. name .. '.lua'
+   pcall(function() return dofile(path) end)
+end
+
 
 local hostname = io.lines("/proc/sys/kernel/hostname")()
 
@@ -84,6 +89,7 @@ end,
 "BAT0") -- see /sys/class/power_supply for options
 -- }}}
 
+local ip_country_widget = require('lib.ip_country')()
 
 -- {{{ Variable definitions
 -- Themes define colours, icons, font and wallpapers.
@@ -286,6 +292,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
+            ip_country_widget,
             batwidget,
             cpuwidget,
             memwidget,
@@ -516,11 +523,6 @@ clientbuttons = gears.table.join(
 )
 
 
-function loadrc(name)
-   local path = awful.util.getdir('config') .. '/lib/' .. name .. '.lua'
-   pcall(function() return dofile(path) end)
-end
-
 function screenshot()
    awful.spawn('flameshot gui')
 end
@@ -703,14 +705,14 @@ end)
 -- }}}
 
 -- autorun
-awful.util.spawn_with_shell("xscreensaver")
-awful.util.spawn_with_shell("flameshot")
-awful.util.spawn_with_shell("copyq")
-awful.util.spawn_with_shell("blueman-applet")
-awful.util.spawn_with_shell("pasystray")
-awful.util.spawn_with_shell("nm-applet")
-awful.util.spawn_with_shell("xset +dpms")
-awful.util.spawn_with_shell("xset dpms 300 300 300")
+awful.spawn.with_shell("xscreensaver")
+awful.spawn.with_shell("flameshot")
+awful.spawn.with_shell("copyq")
+awful.spawn.with_shell("blueman-applet")
+awful.spawn.with_shell("pasystray")
+awful.spawn.with_shell("nm-applet")
+awful.spawn.with_shell("xset +dpms")
+awful.spawn.with_shell("xset dpms 300 300 300")
 
 
 gears.timer {
