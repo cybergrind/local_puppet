@@ -172,7 +172,7 @@ class kpi::packages::optional () {
         'inotify-tools',
         # development
         'python-virtualenv', 'whois', 'bind-tools', # dig
-        'python-pip', 'flake8',
+        'python-pip', 'flake8', 'python-uv',
         'postgresql-libs',
         'nvm', 'pnpm-bin',
       ]
