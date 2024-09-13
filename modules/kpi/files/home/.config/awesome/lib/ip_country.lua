@@ -23,21 +23,21 @@ function refresh_country()
    -- wait for nordvpn to connect
    -- sleep 5 seconds
    ip_country_widget:set_text('??')
-   awful.spawn.easy_async('bash -c "sleep 4 && curl -s ifconfig.co/json | jq -r .country_iso"', function(stdout, stderr, exitreason, exitcode)
+   awful.spawn.easy_async('bash -c "sleep 3 && xh GET ifconfig.co/json | jq -r .country_iso"', function(stdout, stderr, exitreason, exitcode)
       if exitcode == 0 then
          set_country(string.sub(stdout, 1, 2))
       else
-         ip_country_widget:set_text("ERROR " .. exitcode .. " " .. stderr)
+         ip_country_widget:set_text("ERROR1 " .. exitcode .. " " .. stderr)
       end
    end)
 end
 
 function init_widget()
-  awful.widget.watch('bash -c "curl -s ifconfig.co/json | jq -r .country_iso"', 300, function(widget, stdout, stderr, exitreason, exitcode)
+  awful.widget.watch('bash -c "xh GET ifconfig.co/json | jq -r .country_iso"', 300, function(widget, stdout, stderr, exitreason, exitcode)
      if exitcode == 0 then
         set_country(string.sub(stdout, 1, 2))
      else
-        widget:set_text("ERROR " .. exitcode .. " " .. stderr)
+        widget:set_text("ERROR2 " .. exitcode .. " " .. stderr)
      end
   end, ip_country_widget)
   -- on click
