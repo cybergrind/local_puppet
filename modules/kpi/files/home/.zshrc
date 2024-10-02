@@ -51,7 +51,10 @@ ZSH_THEME="jonathan"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(
+    aliases
+    alias-finder
     archlinux
+    bgnotify
     extract
     fabric
     git
@@ -71,6 +74,10 @@ plugins=(
     wd
     z
 )
+zstyle ':omz:plugins:alias-finder' autoload yes # disabled by default
+zstyle ':omz:plugins:alias-finder' longer yes # disabled by default
+zstyle ':omz:plugins:alias-finder' exact yes # disabled by default
+zstyle ':omz:plugins:alias-finder' cheaper yes # disabled by default
 
 FZF_WD_BINDKEY='^q'
 
