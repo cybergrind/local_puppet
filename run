@@ -56,7 +56,8 @@ fi
 
 if [[ ! -z $FACTER_SSHJ_SPEC ]]; then
     if [[ $OSTYPE == 'darwin'* ]]; then
-        export PUPPET_APPLY="FACTER_SSHJ_SPEC=${FACTER_SSHJ_SPEC} puppet apply -v"
+        export FACTER_SSHJ_SPEC=${FACTER_SSHJ_SPEC}
+        export PUPPET_APPLY="puppet apply -v"
     else
         export PUPPET_APPLY="sudo FACTER_SSHJ_SPEC=${FACTER_SSHJ_SPEC} puppet apply -v"
     fi

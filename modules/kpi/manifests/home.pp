@@ -88,14 +88,16 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
     }
   }
 
-  # helm env
-  exec { "install helm diff":
-    command => "helm plugin install https://github.com/databus23/helm-diff",
-    creates => "${home}/.local/share/helm/plugins/helm-diff/bin/diff",
-    require => Kpi::Install['helm'],
-    user => $user,
-    provider => shell,
-    cwd => $home,
+  if $facts['os']['family'] == 'ArchLinux' and $user == 'kpi' {
+    # helm env
+    exec { "install helm diff":
+      command => "helm plugin install https://github.com/databus23/helm-diff",
+      creates => "${home}/.local/share/helm/plugins/helm-diff/bin/diff",
+      require => Kpi::Install['helm'],
+      user => $user,
+      provider => shell,
+      cwd => $home,
+    }
   }
 }
 
