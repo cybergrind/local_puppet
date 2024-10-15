@@ -1,0 +1,20 @@
+[
+  {
+    "context": "vim_mode",
+    "bindings": {
+      "ctrl-j": "workspace::ToggleBottomDock"
+    }
+  },
+  {
+    "context": "vim_mode == insert",
+    "bindings": {
+      "alt-ctrl-i": "copilot::Suggest",
+      "alt-b": "editor::MoveLeft",
+      "alt-f": "editor::MoveRight",
+      "alt-e": "editor::MoveToEndOfLine",
+      "alt-a": "editor::MoveToBeginningOfLine",
+      "ctrl-p": "editor::MoveUp",
+      "ctrl-n": "editor::MoveDown"
+    }
+  }
+]
