@@ -6,8 +6,18 @@
     }
   },
   {
+    "context": "vim_mode == normal",
+    "bindings": {
+      "ctrl-[": "workspace::Save",
+      "alt-, p f": "file_finder::Toggle",
+      "alt-, p p": "projects::OpenRecent"
+    }
+  },
+  {
     "context": "vim_mode == insert",
     "bindings": {
+      "alt-, p f": "file_finder::Toggle",
+      "alt-, p p": "projects::OpenRecent",
       "alt-ctrl-i": "copilot::Suggest",
       "alt-b": "editor::MoveLeft",
       "alt-f": "editor::MoveRight",
