@@ -57,6 +57,7 @@ plugins=(
     bgnotify
     extract
     fabric
+    fzf
     git
     golang
     kubectl
@@ -381,18 +382,16 @@ function bcc_tools {
 # C-u to kill line from cursor to beginning
 bindkey \^U backward-kill-line
 
-if [ -f /usr/share/fzf/completion.zsh ]; then
-    source /usr/share/fzf/completion.zsh
-    source /usr/share/fzf/key-bindings.zsh
-fi
-if [ -f ~/.fzf/shell/completion.zsh ]; then
-    source ~/.fzf/shell/completion.zsh
-    source ~/.fzf/shell/key-bindings.zsh
-fi
-export FZF_DEFAULT_COMMAND='ag --hidden --silent --ignore .git -f -g ""'
-export FZF_CTRL_T_COMMAND='ag --hidden --silent --ignore .git -f -g ""'
+HAS_FZF=$(which fzf)
 
-
+if [ -n "$HAS_FZF" ]; then
+    export FZF_DEFAULT_OPTS='--height 80% --reverse --border'
+    export FZF_DEFAULT_COMMAND='ag --hidden --silent --ignore .git -f -g ""'
+    export FZF_CTRL_T_COMMAND='ag --hidden --silent --ignore .git -f -g ""'
+    source < $(fzf --zsh)
+else
+	echo "NO FZF"
+fi
 
 function load_nvm {
     if [ -f /usr/share/nvm/nvm.sh ]; then
