@@ -1,5 +1,10 @@
 [
   {
+    "bindings": {
+      "ctrl-[": "menu::Cancel"
+    }
+  },
+  {
     "context": "vim_mode",
     "bindings": {
       "ctrl-j": "workspace::ToggleBottomDock"
@@ -9,6 +14,10 @@
     "context": "vim_mode == normal",
     "bindings": {
       "ctrl-[": "workspace::Save",
+      ", p f": "file_finder::Toggle",
+      ", p p": "projects::OpenRecent",
+      ", b": "tab_switcher::Toggle",
+      ", ,": "workspace::ActivatePreviousPane",
       "alt-, p f": "file_finder::Toggle",
       "alt-, p p": "projects::OpenRecent"
     }
