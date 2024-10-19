@@ -96,6 +96,12 @@ class kpi::packages::macos () {
   ]
   kpi::install { $pkgs_nox: }
 
+  $pkgs_cask = [
+    'nikitabobko/tap/aerospace',
+  ]
+
+  kpi::install::macos { $pkgs_cask: cask => true }
+
 }
 
 class kpi::packages::linux () {

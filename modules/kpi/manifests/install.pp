@@ -1,6 +1,8 @@
-define kpi::install::macos ($bin=undef, $tap=false) {
+define kpi::install::macos ($bin=undef, $tap=false, $cask=false) {
   info("Install ${name}")
-  if $tap {
+  if $cask {
+    $command = "/opt/homebrew/bin/brew install --cask ${name}"
+  } elsif $tap {
     $command = "/opt/homebrew/bin/brew tap ${name}"
   } else {
     $command = "/opt/homebrew/bin/brew install ${name}"
@@ -11,6 +13,7 @@ define kpi::install::macos ($bin=undef, $tap=false) {
       exec {$name:
         creates => "/opt/homebrew/bin/${name}",
         command => $command,
+        environment => ["HOME=/Users/kpi"],
       }
     }
     'noinstall': {}
@@ -22,6 +25,7 @@ define kpi::install::macos ($bin=undef, $tap=false) {
     default: {
       exec {$name:
         #unless => "/usr/bin/whereis -q ${bin}",
+        environment => ["HOME=/Users/kpi"],
         creates => $bin,
         command => $command,
       }
@@ -44,11 +48,12 @@ define kpi::install::linux () {
   }
 }
 
-define kpi::install ($bin=undef, $tap=false) {
+define kpi::install ($bin=undef, $tap=false, $cask=false) {
   if $facts['os']['family'] == 'Darwin' {
     kpi::install::macos{$name:
       bin => $bin,
       tap => $tap,
+      cask => $cask,
     }
   } else {
     kpi::install::linux{$name:}
