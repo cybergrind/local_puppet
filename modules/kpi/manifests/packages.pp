@@ -88,7 +88,7 @@ class kpi::packages::macos () {
   $pkgs_nox = [
     'pinentry-mac',
     'gpg',
-    'tmux', 'cmake', 'emacs', 'kubectl', 'nvim',
+    'tmux', 'cmake', 'emacs-plus', 'kubectl', 'nvim',
     'vim', 'ag', 'direnv', 'fd', 'nvm',
     'htop', 'tree', 'npm',
     'py3cairo', 'gtk+3',
