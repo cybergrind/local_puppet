@@ -52,6 +52,18 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
     # group => $user,
     require            => [ User[$user] ],
   }
+  ## additional directory for macos
+  if $facts['os']['family'] == 'Darwin' {
+    file { "${home}/.config":
+    ensure             => directory,
+    recurse            => remote,
+    source             => 'puppet:///modules/kpi/osx_home',
+    source_permissions => 'use',
+    owner              => $user,
+    # group => $user,
+    require            => [ User[$user] ],
+    }
+  }
 
   # exec { '/bin/sbt gen-ensime exit':
   #   unless => "/bin/test -e ${home}/.sbt/0.13/plugins/target",
