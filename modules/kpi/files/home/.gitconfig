@@ -35,3 +35,5 @@
     autostash = true
 [merge]
     conflictStyle = diff3
+[rerere]
+    enabled = true
