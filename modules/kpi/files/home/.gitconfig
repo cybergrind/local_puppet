@@ -20,6 +20,7 @@
     desc = describe
     yapf = ! git diff --cached --name-only | grep -E '.py$' | xargs -- yapf -i
     black = ! git diff --cached --name-only | grep -E '.py$' | xargs -n1 -I_file -- sh -c 'black _file && isort _file'
+    pre-commit = ! pre-commit run --all-files --show-diff-on-failure
 [color]
     ui = auto
 [credential]
