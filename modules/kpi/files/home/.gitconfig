@@ -2,7 +2,7 @@
     email = cybergrind@gmail.com
     name = Kirill Pinchuk
     #signingkey = BB5BBD8433449F98292C98875999278597B2373E
-    signkey = ~/.ssh/id_ed25519.pub
+    signingkey = ~/.ssh/id_ed25519.pub
 [alias]
     d = diff HEAD
     st = status
