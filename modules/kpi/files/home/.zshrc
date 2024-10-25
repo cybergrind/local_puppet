@@ -385,7 +385,7 @@ bindkey \^U backward-kill-line
 HAS_FZF=$(which fzf)
 
 if [ -n "$HAS_FZF" ]; then
-    export FZF_DEFAULT_OPTS='--height 80% --reverse --border'
+    export FZF_DEFAULT_OPTS='--height 80% --border'
     export FZF_DEFAULT_COMMAND='ag --hidden --silent --ignore .git -f -g ""'
     export FZF_CTRL_T_COMMAND='ag --hidden --silent --ignore .git -f -g ""'
     source < $(fzf --zsh)

@@ -20,6 +20,7 @@ node 'dm4' {
 
 node 'xx' {
   include kpi::base_devel
+  $hostname = 'xx'
   class {'kpi::home': }
 }
 
