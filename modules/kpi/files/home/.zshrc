@@ -73,6 +73,7 @@ plugins=(
     svn
     systemd
     wd
+    uv
     z
 )
 zstyle ':omz:plugins:alias-finder' autoload yes # disabled by default
