@@ -64,9 +64,23 @@ class kpi::packages::system::linux () {
   include kpi::system
 }
 
+
+class kpi::sway () {
+  $pkgs_sway = [
+    'sway', 'swaylock',
+    'wl-clipboard',
+    'xdg-desktop-portal',
+    'xdg-desktop-portal-gnome',
+    'grim', 'slurp',
+    'spectacle',
+  ]
+  kpi::install { $pkgs_sway: } 
+}
+
 class kpi::packages () {
   if $facts['os']['family'] == 'Archlinux' {
     class {'kpi::packages::linux':}
+    # class {'kpi::packages::sway':}
   } else {
     class {'kpi::packages::macos':}
   }
