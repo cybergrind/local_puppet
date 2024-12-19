@@ -65,7 +65,7 @@ class kpi::packages::system::linux () {
 }
 
 
-class kpi::sway () {
+class kpi::packages::sway () {
   $pkgs_sway = [
     'sway', 'swaylock',
     'wl-clipboard',
