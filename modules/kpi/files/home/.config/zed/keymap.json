@@ -5,9 +5,15 @@
     }
   },
   {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-j": "terminal_panel::ToggleFocus"
+    }
+  },
+  {
     "context": "vim_mode",
     "bindings": {
-      "ctrl-j": "workspace::ToggleBottomDock"
+      "ctrl-j": "terminal_panel::ToggleFocus"
     }
   },
   {
