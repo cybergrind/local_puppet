@@ -81,11 +81,13 @@ zstyle ':omz:plugins:alias-finder' longer yes # disabled by default
 zstyle ':omz:plugins:alias-finder' exact yes # disabled by default
 zstyle ':omz:plugins:alias-finder' cheaper yes # disabled by default
 
+
 FZF_WD_BINDKEY='^q'
 
 if [ ! -z $ZSH/oh-my-zsh.sh ]; then
     source $ZSH/oh-my-zsh.sh
 fi
+
 
 if [ ! -z "$SSH_CLIENT" ]; then
     declare -x PR_CYAN=$PR_LIGHT_RED
@@ -108,7 +110,6 @@ export LANG=en_US.UTF-8
 export TERM=xterm-256color
 
 #export LC_CTYPE=en_US.UTF-8
-
 
 function jobskill {
     kill -9 `jobs -p | awk '{print $3}'`
@@ -409,6 +410,18 @@ function load_rvm {
         export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
     fi
 }
+
+
+# uv enable file completion
+_uv_run_mod() {
+    if [[ "$words[2]" == "run" && "$words[CURRENT]" != -* ]]; then
+        _arguments '*:filename:_files'
+    else
+        _uv "$@"
+    fi
+}
+compdef _uv_run_mod uv
+
 
 # $+commands[direnv] => 1
 # $commands[direnv] => /usr/bin/direnv
