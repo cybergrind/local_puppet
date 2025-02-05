@@ -9,9 +9,10 @@
 {
   "theme": "One Dark",
   "vim_mode": true,
+  "buffer_font_family": "Fira Code",
   "assistant": {
     "default_model": {
-      "provider": "openai",
+      "provider": "deepseek",
       "model": "deepseek-reasoner"
     },
     "inline_alternatives": [
