@@ -41,7 +41,14 @@
     enabled = true
 [gpg]
     format = ssh
+[diff]
+    orderFile = ~/.config/git/git-diff-order
 # verify command: git log --show-signature
 # .ssh/allowed_format: email@domain id_ed25519 XXXXXXXXXXXXXXXX
 [gpg "ssh"]
 	allowedSignersFile = ~/.ssh/allowed_signers
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
