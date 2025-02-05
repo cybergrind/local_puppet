@@ -1,7 +1,8 @@
 [
   {
     "bindings": {
-      "ctrl-[": "menu::Cancel"
+      // russian layout
+      "ctrl-х": "vim::NormalBefore"
     }
   },
   {
@@ -25,7 +26,13 @@
       ", b": "tab_switcher::Toggle",
       ", ,": "workspace::ActivatePreviousPane",
       "alt-, p f": "file_finder::Toggle",
-      "alt-, p p": "projects::OpenRecent"
+      "alt-, p p": "projects::OpenRecent",
+      // russian layout
+      "о": "vim::Down",
+      "л": "vim::Up",
+      "д": "vim::Left",
+      "т": "vim::Right",
+      "щ": "vim::InsertLineBelow"
     }
   },
   {

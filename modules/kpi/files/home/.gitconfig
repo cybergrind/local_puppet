@@ -39,10 +39,10 @@
     conflictStyle = diff3
 [rerere]
     enabled = true
-[gpg]
-    format = ssh
 [diff]
     orderFile = ~/.config/git/git-diff-order
+[gpg]
+    format = ssh
 # verify command: git log --show-signature
 # .ssh/allowed_format: email@domain id_ed25519 XXXXXXXXXXXXXXXX
 [gpg "ssh"]
