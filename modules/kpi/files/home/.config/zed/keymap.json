@@ -8,7 +8,9 @@
   {
     "context": "Terminal",
     "bindings": {
-      "ctrl-j": "terminal_panel::ToggleFocus"
+      "ctrl-j": "terminal_panel::ToggleFocus",
+      "ctrl-p": ["terminal::SendKeystroke", "ctrl-p"],
+      "ctrl-n": ["terminal::SendKeystroke", "ctrl-n"]
     }
   },
   {
