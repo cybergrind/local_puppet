@@ -7,13 +7,16 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "features": {
+    "edit_prediction_provider": "zed"
+  },
   "theme": "One Dark",
   "vim_mode": true,
   "buffer_font_family": "Fira Code",
   "assistant": {
     "default_model": {
-      "provider": "deepseek",
-      "model": "deepseek-reasoner"
+      "provider": "copilot_chat",
+      "model": "o3-mini"
     },
     "inline_alternatives": [
       {
@@ -43,6 +46,6 @@
       "api_url": "https://api.deepseek.com/beta"
     }
   },
-  "ui_font_size": 11,
+  "ui_font_size": 10,
   "buffer_font_size": 9
 }
