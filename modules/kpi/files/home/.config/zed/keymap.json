@@ -22,7 +22,8 @@
   {
     "context": "vim_mode == normal",
     "bindings": {
-      "ctrl-[": "workspace::Save",
+      "ctrl-[": ["workspace::SendKeystrokes", "escape , `"],
+      ", `": "workspace::Save",
       ", p f": "file_finder::Toggle",
       ", p p": "projects::OpenRecent",
       ", b": "tab_switcher::Toggle",
@@ -49,6 +50,18 @@
       "alt-a": "editor::MoveToBeginningOfLine",
       "ctrl-p": "editor::MoveUp",
       "ctrl-n": "editor::MoveDown"
+    }
+  },
+  {
+    "context": "BufferSearchBar",
+    "bindings": {
+      "ctrl-[": "buffer_search::Dismiss"
+    }
+  },
+  {
+    "context": "ProjectSearchBar",
+    "bindings": {
+      "ctrl-[": "project_search::ToggleFocus"
     }
   }
 ]
