@@ -117,6 +117,20 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
       cwd => $home,
     }
   }
+
+
+  if $facts['os']['family'] == 'ArchLinux' {
+    file { "${kpi::home::home_dir}/.config/chrome-flags.conf":
+      ensure  => file,
+      content => epp('kpi/chromium-flags.conf.epp', {}),
+      owner => $user
+    }
+    file { "${kpi::home::home_dir}/.config/brave-flags.conf":
+      ensure  => file,
+      content => epp('kpi/chromium-flags.conf.epp', {}),
+      owner => $user
+    }
+  }
 }
 
 define kpi::home::tmux_setup($user){
@@ -257,17 +271,6 @@ define kpi::home::keys_links () {
 }
 
 define kpi::home::hi_dpi ($user) {
-  file { "${kpi::home::home_dir}/.config/chrome-flags.conf":
-    ensure  => file,
-    content => epp('kpi/chromium-flags.conf.epp', {}),
-    owner => $user
-  }
-  file { "${kpi::home::home_dir}/.config/brave-flags.conf":
-    ensure  => file,
-    content => epp('kpi/chromium-flags.conf.epp', {}),
-    owner => $user
-  }
-
   file { "${kpi::home::home_dir}/.Xresources":
     ensure  => file,
     content => epp('kpi/.Xresources.epp', {}),
