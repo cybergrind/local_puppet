@@ -2,6 +2,9 @@ $base = '/home'
 $user_uid = 1000
 $hiDPI = false
 
+$use_wayland = true
+$use_ksnip = true
+
 node 'home' {
   include kpi::base_devel
   class {'kpi::home': }

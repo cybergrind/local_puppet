@@ -94,6 +94,12 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
     }
   }
 
+  if $facts['os']['family'] == 'Archlinux' {
+    File[$home] -> kpi::home::hyprland {"${user}-hyprland":
+      user => $user,
+    }
+  }
+
   if $facts['os']['family'] == 'ArchLinux' and $hiDPI {
     kpi::home::hi_dpi {"${user}-hidpi":
       user => $user,
@@ -167,6 +173,18 @@ define kpi::home::sshj($user){
     command => "/bin/systemctl --user start sshj",
     creates => "/sys/fs/cgroup/user.slice/user-${uid}.slice/user@${uid}.service/app.slice/sshj.service/",
     provider => shell,
+  }
+}
+
+define kpi::home::hyprland($user){
+  file { "${kpi::home::home_dir}/.config/hypr":
+    ensure => directory,
+    owner  => $user,
+  }
+  -> file { "${kpi::home::home_dir}/.config/hypr/hyprland.conf":
+    ensure  => file,
+    content => epp('kpi/hyprland.conf', {}),
+    owner => $user
   }
 }
 
