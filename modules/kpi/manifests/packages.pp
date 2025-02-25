@@ -67,6 +67,8 @@ class kpi::packages::system::linux () {
 class kpi::packages::hyprland () {
   $pkgs = [
     'hyprland', 'wofi',
+    'uwsm',
+    'wl-clipboard',
     'xdg-desktop-portal-hyprland',
     'xdg-desktop-portal',
     'xdg-desktop-portal-gnome',

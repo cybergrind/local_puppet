@@ -8,5 +8,8 @@ if [ -z "$WAYLAND_DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ] ; th
     #export XDG_CURRENT_DESKTOP=sway
     #export XDG_SESSION_DESKTOP=sway
     #exec dbus-run-session sway --unsupported-gpu
-    exec Hyprland
+    #exec Hyprland
+    if uwsm check may-start; then
+        exec uwsm start hyprland-uwsm.desktop
+    fi
 fi
