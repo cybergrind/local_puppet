@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-flameshot
+XDG_CURRENT_DESKTOP=sway flameshot "$@"
