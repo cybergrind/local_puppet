@@ -64,11 +64,14 @@ class kpi::packages::system::linux () {
   include kpi::system
 }
 
+# systemctl --user enable --now hyprpolkitagent.service
+
 class kpi::packages::hyprland () {
   $pkgs = [
     'hyprland', 'wofi',
     'uwsm',
     'wl-clipboard',
+    'hyprpolkitagent',
     'xdg-desktop-portal-hyprland',
     'xdg-desktop-portal',
     'xdg-desktop-portal-gnome',
