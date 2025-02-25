@@ -61,7 +61,8 @@ exec-once = waybar &
 # exec-once = /home/kpi/.local/bin/flameshot_wrapper.sh &
 exec-once = copyq --start-server &
 exec-once = dunst &
-exec-once = swayidle timeout 30 'hyprctl dispatcher dpms off && swaylock'
+#exec-once = swayidle timeout 30 'hyprctl dispatcher dpms off && swaylock'
+exec-once = /home/kpi/.local/bin/hyprland_sleep.sh
 
 
 #############################
