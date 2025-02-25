@@ -64,7 +64,16 @@ class kpi::packages::system::linux () {
   include kpi::system
 }
 
-
+class kpi::packages::hyprland () {
+  $pkgs = [
+    'hyprland', 'wofi',
+    'xdg-desktop-portal-hyprland',
+    'xdg-desktop-portal',
+    'xdg-desktop-portal-gnome',
+    'xdg-desktop-portal-gtk-git'
+  ]
+  kpi::install { $pkgs: }
+}
 class kpi::packages::sway () {
   $pkgs_sway = [
     'sway', 'swaylock',
@@ -81,6 +90,7 @@ class kpi::packages () {
   if $facts['os']['family'] == 'Archlinux' {
     class {'kpi::packages::linux':}
     # class {'kpi::packages::sway':}
+    class {'kpi::packages::hyprland':}
   } else {
     class {'kpi::packages::macos':}
   }
