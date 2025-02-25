@@ -16,9 +16,24 @@
 
 # See https://wiki.hyprland.org/Configuring/Monitors/
 #monitor=,preferred,auto,auto
+
+<% if $hostname == 'xx' { -%>
+# epp: check hostname == xx
 monitor = DP-1, 2560x1440, 0x0, 1, transform, 3
 monitor = DP-2, 2560x1440@144, 1440x0, 1
 
+workspace=1,monitor:DP-2
+workspace=2,monitor:DP-2
+workspace=3,monitor:DP-1
+workspace=4,monitor:DP-2
+workspace=5,monitor:DP-2
+workspace=6,monitor:DP-2
+workspace=7,monitor:DP-2
+workspace=8,monitor:DP-2
+workspace=9,monitor:DP-2
+<% } else { -%>
+# epp: check hostname != xx
+<% } -%>
 
 ###################
 ### MY PROGRAMS ###
@@ -43,9 +58,10 @@ $menu = wofi --show drun
 # exec-once = nm-applet &
 # exec-once = waybar & hyprpaper & firefox
 exec-once = waybar &
-exec-once = /home/kpi/.local/bin/flameshot_wrapper.sh &
+# exec-once = /home/kpi/.local/bin/flameshot_wrapper.sh &
 exec-once = copyq --start-server &
 exec-once = dunst &
+exec-once = swayidle timeout 30 'hyprctl dispatcher dpms off && swaylock'
 
 
 #############################
@@ -292,12 +308,20 @@ bindl = , XF86AudioPrev, exec, playerctl previous
 
 windowrulev2 = float, class:com.github.hluk.copyq
 windowrulev2 = immediate, class:Terraria.bin.x86_64
+# bitwarden
 windowrulev2 = float, title:(_crx_)(.*)
-#windowrulev2 = float, class:(brave-nngceckbapebfimnlniiiahkandclblb)(.*)
+windowrulev2 = float, class:feh
 
-## flameshot 
+<% if $use_ksnip == true { -%>
+bind = , Pause, exec, /home/kpi/.local/bin/snip_screenshot.sh
+<% } -%>
+windowrulev2 = float, class:org.ksnip.ksnip
+windowrulev2 = maximize, class:org.ksnip.ksnip
 
+## flameshot
+<% if $use_ksnip == false { -%>
 bind = , Pause, exec, XDG_CURRENT_DESKTOP=sway flameshot gui
+<% } -%>
 windowrulev2 = noanim, class:^(flameshot)$
 windowrulev2 = float, class:^(flameshot)$
 windowrulev2 = move -1440 0, class:^(flameshot)$
