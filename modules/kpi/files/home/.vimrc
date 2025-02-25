@@ -120,6 +120,8 @@ abbr help tab help
 
 " mappings
 imap df <Esc>l
+nnoremap <Esc> <Esc>:w<CR>
+
 nnoremap 2o o<CR>
 nnoremap 2O O<Esc>O
 nnoremap tm :tabm +1<CR>
