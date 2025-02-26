@@ -67,6 +67,7 @@ exec-once = dunst &
 #exec-once = swayidle timeout 30 'hyprctl dispatcher dpms off && swaylock'
 exec-once = /home/kpi/.local/bin/hyprland_sleep.sh
 exec-once = /home/kpi/.local/bin/hyprland_fix_tmux.sh
+exec-once = hypridle
 
 
 #############################
@@ -241,6 +242,7 @@ bind = $mainMod, Space, togglefloating,
 bind = $mainMod, R, exec, $menu
 bind = $mainMod, F, fullscreen
 bind = $mainMod, M, fullscreenstate, 1
+
 
 bind = $mainMod, P, pseudo, # dwindle
 bind = $mainMod SHIFT, J, togglesplit, # dwindle

@@ -73,7 +73,7 @@ class kpi::packages::hyprland () {
     'wl-clipboard',
     'hyprpolkitagent',
     'ksnip', 'slurp', 'grim',
-    'swayidle', 'swaylock',
+    'hypridle', 'hyprlock',
     'xdg-desktop-portal-hyprland',
     'xdg-desktop-portal',
     'xdg-desktop-portal-gnome',
