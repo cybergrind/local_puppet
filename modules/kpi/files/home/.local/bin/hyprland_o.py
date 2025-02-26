@@ -48,11 +48,31 @@ def move_active_window(monitors_list):
         if not monitor['focused']:
             to_workspace = monitor['activeWorkspace']['name']
             hyprctl(['dispatch', 'movetoworkspace', str(to_workspace)], is_json=False)
+            monitor_width = monitor['width']
+            if monitor['transform'] in (1, 3):
+                monitor_width = monitor['height']
+            monitor_right_x = monitor['x'] + monitor_width
+
+            curr_info = hyprctl('activewindow')
+            if curr_info['size'][0] > monitor_width:
+                delta_size_x = monitor_width - curr_info['size'][0]
+                log.debug(f'{delta_size_x=}')
+                hyprctl(['dispatch', 'resizeactive', f'{delta_size_x} 0'], is_json=False)
+                curr_info = hyprctl('activewindow')
+
+            right_x_corner = curr_info['at'][0] + curr_info['size'][0]
+            move_x_to_fit = monitor_right_x - right_x_corner
+            log.debug(f'{right_x_corner=}: {monitor_right_x=} {move_x_to_fit=}')
+
+            if move_x_to_fit < 0:
+                hyprctl(['dispatch', 'moveactive', f'{move_x_to_fit} 0'], is_json=False)
+
             return
 
 
 def main():
     args = parse_args()
+    log.setLevel(logging.DEBUG)
     if args.debug:
         log.setLevel(logging.DEBUG)
     log.debug(f'args: {args}')
