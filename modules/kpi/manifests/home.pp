@@ -191,14 +191,11 @@ define kpi::home::sshj($user){
 }
 
 define kpi::home::hyprland($user){
-  file { "${kpi::home::home_dir}/.config/hypr":
-    ensure => directory,
-    owner  => $user,
-  }
-  -> file { "${kpi::home::home_dir}/.config/hypr/hyprland.conf":
+  file { "${kpi::home::home_dir}/.config/hypr/hyprland.conf":
     ensure  => file,
     content => epp('kpi/hyprland.conf', {}),
-    owner => $user
+    owner => $user,
+    require => File["${kpi::home::home_dir}"]
   }
 }
 
