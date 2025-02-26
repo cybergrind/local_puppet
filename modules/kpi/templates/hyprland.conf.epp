@@ -31,6 +31,9 @@ workspace=6,monitor:DP-2
 workspace=7,monitor:DP-2
 workspace=8,monitor:DP-2
 workspace=9,monitor:DP-2
+
+windowrulev2 = float, workspace:3
+windowrulev2 = size 100% 050%, workspace:3
 <% } else { -%>
 # epp: check hostname != xx
 <% } -%>
@@ -63,6 +66,7 @@ exec-once = copyq --start-server &
 exec-once = dunst &
 #exec-once = swayidle timeout 30 'hyprctl dispatcher dpms off && swaylock'
 exec-once = /home/kpi/.local/bin/hyprland_sleep.sh
+exec-once = /home/kpi/.local/bin/hyprland_fix_tmux.sh
 
 
 #############################
@@ -196,6 +200,7 @@ input {
     kb_model =
     kb_options = grp:toggle,grp_led:scroll,ctrl:nocaps
     kb_rules =
+    resolve_binds_by_sym = true
 
     follow_mouse = 1
 
@@ -232,7 +237,7 @@ bind = $mainMod, Return, exec, $terminal
 bind = $mainMod SHIFT, C, killactive,
 bind = $mainMod SHIFT, M, exec, uwsm stop
 bind = $mainMod, E, exec, $fileManager
-bind = $mainMod SHIFT, Space, togglefloating,
+bind = $mainMod, Space, togglefloating,
 bind = $mainMod, R, exec, $menu
 bind = $mainMod, F, fullscreen
 bind = $mainMod, M, fullscreen, 1
