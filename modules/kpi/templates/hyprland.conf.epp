@@ -240,7 +240,7 @@ bind = $mainMod, E, exec, $fileManager
 bind = $mainMod, Space, togglefloating,
 bind = $mainMod, R, exec, $menu
 bind = $mainMod, F, fullscreen
-bind = $mainMod, M, fullscreen, 1
+bind = $mainMod, M, fullscreenstate, 1
 
 bind = $mainMod, P, pseudo, # dwindle
 bind = $mainMod SHIFT, J, togglesplit, # dwindle
@@ -274,6 +274,7 @@ bind = $mainMod, 0, workspace, 10
 bind = $mainMod SHIFT, 1, movetoworkspace, 1
 bind = $mainMod SHIFT, 2, movetoworkspace, 2
 bind = $mainMod SHIFT, 3, movetoworkspace, 3
+bind = $mainMod, O, exec, /home/kpi/.local/bin/hyprland_o.py
 bind = $mainMod SHIFT, 4, movetoworkspace, 4
 bind = $mainMod SHIFT, 5, movetoworkspace, 5
 bind = $mainMod SHIFT, 6, movetoworkspace, 6
