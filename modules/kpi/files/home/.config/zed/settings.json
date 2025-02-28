@@ -55,6 +55,6 @@
       "api_url": "https://api.deepseek.com/beta"
     }
   },
-  "ui_font_size": 10,
-  "buffer_font_size": 9
+  "ui_font_size": 20,
+  "buffer_font_size": 17
 }

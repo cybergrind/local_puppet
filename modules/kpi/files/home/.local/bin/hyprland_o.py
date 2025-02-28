@@ -34,6 +34,7 @@ def hyprctl(command: str | list, is_json=True) -> dict | list | str:
 def parse_args():
     parser = argparse.ArgumentParser(description='DESCRIPTION')
     parser.add_argument('-d', '--debug', action='store_true')
+    parser.add_argument('-f', '--focus-other', action='store_true')
     parser.add_argument('command', nargs='?', default=None)
     return parser.parse_args()
 
@@ -70,6 +71,13 @@ def move_active_window(monitors_list):
             return
 
 
+def focus_other(monitors):
+    for monitor in monitors:
+        if not monitor['focused']:
+            hyprctl(['dispatch', 'focusmonitor', monitor['name']], is_json=False)
+            return
+
+
 def main():
     args = parse_args()
     log.setLevel(logging.DEBUG)
@@ -80,6 +88,9 @@ def main():
         out = hyprctl(args.command)
         pprint(out)  # noqa: T203
         return
+    elif args.focus_other:
+        monitors = hyprctl('monitors')
+        focus_other(monitors)
     else:
         monitors = hyprctl('monitors')
         move_active_window(monitors)
