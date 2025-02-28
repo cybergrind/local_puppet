@@ -49,6 +49,8 @@ def move_active_window(monitors_list):
         if not monitor['focused']:
             to_workspace = monitor['activeWorkspace']['name']
             hyprctl(['dispatch', 'movetoworkspace', str(to_workspace)], is_json=False)
+            hyprctl(['dispatch', 'bringactivetotop'], is_json=False)
+
             monitor_width = monitor['width']
             if monitor['transform'] in (1, 3):
                 monitor_width = monitor['height']
@@ -75,6 +77,7 @@ def focus_other(monitors):
     for monitor in monitors:
         if not monitor['focused']:
             hyprctl(['dispatch', 'focusmonitor', monitor['name']], is_json=False)
+            hyprctl(['dispatch', 'bringactivetotop'], is_json=False)
             return
 
 
