@@ -249,19 +249,14 @@ bind = $mainMod SHIFT, J, togglesplit, # dwindle
 
 # Move focus with mainMod + arrow keys
 bind = $mainMod, j, cyclenext
-bind = $mainMod, j, alterzorder, top
+bind = $mainMod, j, bringactivetotop
 bind = $mainMod, k, cyclenext, prev
-bind = $mainMod, k, alterzorder, top
+bind = $mainMod, k, bringactivetotop
 
 bind = $mainMod, Cyrillic_o, cyclenext
-bind = $mainMod, Cyrillic_o, alterzorder, top
+bind = $mainMod, Cyrillic_o, bringactivetotop
 bind = $mainMod, Cyrillic_el, cyclenext, prev
-bind = $mainMod, Cyrillic_el, alterzorder, top
-
-bind = $mainMod, Cyrillic_o, cyclenext
-bind = $mainMod, Cyrillic_o, alterzorder, top
-bind = $mainMod, Cyrillic_el, cyclenext, prev
-bind = $mainMod, k, alterzorder, top
+bind = $mainMod, Cyrillic_el, bringactivetotop
 
 bind = $mainMod, left, movefocus, l
 bind = $mainMod, right, movefocus, r
