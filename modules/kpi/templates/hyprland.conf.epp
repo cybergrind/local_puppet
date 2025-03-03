@@ -116,7 +116,7 @@ decoration {
     inactive_opacity = 1.0
 
     shadow {
-        enabled = true
+        enabled = false
         range = 4
         render_power = 3
         color = rgba(1a1a1aee)
@@ -125,7 +125,7 @@ decoration {
     # https://wiki.hyprland.org/Configuring/Variables/#blur
     blur {
         enabled = true
-        size = 3
+        size = 0
         passes = 1
 
         vibrancy = 0.1696
@@ -248,15 +248,16 @@ bind = $mainMod, P, pseudo, # dwindle
 bind = $mainMod SHIFT, J, togglesplit, # dwindle
 
 # Move focus with mainMod + arrow keys
-bind = $mainMod, j, cyclenext
-bind = $mainMod, j, bringactivetotop
-bind = $mainMod, k, cyclenext, prev
-bind = $mainMod, k, bringactivetotop
+bind = $mainMod, j, cyclenext, next hist
+bind = $mainMod, j, alterzorder, top
 
-bind = $mainMod, Cyrillic_o, cyclenext
-bind = $mainMod, Cyrillic_o, bringactivetotop
-bind = $mainMod, Cyrillic_el, cyclenext, prev
-bind = $mainMod, Cyrillic_el, bringactivetotop
+bind = $mainMod, k, cyclenext, prev hist
+bind = $mainMod, k, alterzorder, top
+
+bind = $mainMod, Cyrillic_o, cyclenext, next hist
+bind = $mainMod, Cyrillic_o, alterzorder, top
+bind = $mainMod, Cyrillic_el, cyclenext, prev hist
+bind = $mainMod, Cyrillic_el, alterzorder, top
 
 bind = $mainMod, left, movefocus, l
 bind = $mainMod, right, movefocus, r
