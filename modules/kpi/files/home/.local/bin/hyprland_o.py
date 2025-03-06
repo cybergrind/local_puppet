@@ -35,6 +35,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='DESCRIPTION')
     parser.add_argument('-d', '--debug', action='store_true')
     parser.add_argument('-f', '--focus-other', action='store_true')
+    parser.add_argument('-m', '--maximize', action='store_true')
     parser.add_argument('command', nargs='?', default=None)
     return parser.parse_args()
 
@@ -81,6 +82,31 @@ def focus_other(monitors):
             return
 
 
+TOP_BAR_SIZE = 22
+
+
+def maximize_current():
+    monitors = hyprctl('monitors')
+    active_params = hyprctl('activewindow')
+    for monitor in monitors:
+        if monitor['focused']:
+            monitor_width = monitor['width']
+            monitor_height = monitor['height'] - TOP_BAR_SIZE
+            if monitor['transform'] in (1, 3):
+                monitor_width = monitor['height']
+                monitor_height = monitor['width'] - TOP_BAR_SIZE
+            left_x = monitor['x']
+            left_y = TOP_BAR_SIZE
+            delta_x = left_x - active_params['at'][0]
+            delta_y = left_y - active_params['at'][1]
+            delta_width = monitor_width - active_params['size'][0]
+            delta_height = monitor_height - active_params['size'][1]
+            log.debug(f'{delta_x=} {delta_y=} {delta_width=} {delta_height=}')
+
+            hyprctl(['dispatch', 'moveactive', f'{delta_x} {delta_y}'], is_json=False)
+            hyprctl(['dispatch', 'resizeactive', f'{delta_width} {delta_height}'], is_json=False)
+            return
+
 def main():
     args = parse_args()
     log.setLevel(logging.DEBUG)
@@ -94,6 +120,8 @@ def main():
     elif args.focus_other:
         monitors = hyprctl('monitors')
         focus_other(monitors)
+    elif args.maximize:
+        maximize_current()
     else:
         monitors = hyprctl('monitors')
         move_active_window(monitors)
