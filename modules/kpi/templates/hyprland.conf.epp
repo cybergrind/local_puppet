@@ -338,7 +338,7 @@ windowrulev2 = float, class:.*
 windowrulev2 = move 0 26, class:brave-browser
 
 windowrulev2 = float, class:com.github.hluk.copyq
-windowrulev2 = immediate, class:Terraria.bin.x86_64
+windowrulev2 = immediate, class:(steam_app_.+)
 windowrulev2 = float, class:org.qbittorrent.qBittorrent
 
 # bitwarden
