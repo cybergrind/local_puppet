@@ -241,6 +241,7 @@ bind = $mainMod, E, exec, $fileManager
 bind = $mainMod, Space, togglefloating,
 bind = $mainMod, R, exec, $menu
 bind = $mainMod, F, fullscreen
+bind = $mainMod, T, pin
 
 
 bind = $mainMod, P, pseudo, # dwindle
