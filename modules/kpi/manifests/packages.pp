@@ -148,12 +148,14 @@ class kpi::packages::linux () {
     'unzip', 'pigz', 'fzf', 'p7zip',
     'powertop',
     'uctags-git', 'vim-plug-git',
-    'the_silver_searcher', 'fd',
     'networkmanager-openvpn',
     'networkmanager',
-    'kubectx', 'xh',
+    'kubectx',
     'libxcrypt-compat', 'libselinux',
     'asp', 'man-db', 'man-pages',
+    # alternatives
+    'the_silver_searcher', 'fd', 'xh',
+    'eza', 'bat', 'ripgrep',
   ]
   kpi::install { $pkgs_nox:
     require => [Class[kpi::packages::system]],

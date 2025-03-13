@@ -3,7 +3,7 @@ $user_uid = 1000
 $hiDPI = false
 
 $use_wayland = true
-$use_ksnip = true
+$use_ksnip = false
 
 node 'home' {
   include kpi::base_devel
