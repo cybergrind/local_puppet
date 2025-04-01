@@ -39,8 +39,6 @@
     conflictStyle = diff3
 [rerere]
     enabled = true
-[diff]
-    orderFile = ~/.config/git/git-diff-order
 [gpg]
     format = ssh
 # verify command: git log --show-signature
