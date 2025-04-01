@@ -65,7 +65,7 @@ exec-once = waybar &
 exec-once = copyq --start-server &
 exec-once = dunst &
 #exec-once = swayidle timeout 30 'hyprctl dispatcher dpms off && swaylock'
-exec-once = /home/kpi/.local/bin/hyprland_sleep.sh
+#exec-once = /home/kpi/.local/bin/hyprland_sleep.sh
 exec-once = /home/kpi/.local/bin/hyprland_fix_tmux.sh
 exec-once = hypridle
 
