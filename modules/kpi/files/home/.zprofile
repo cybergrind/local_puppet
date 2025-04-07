@@ -10,6 +10,6 @@ if [ -z "$WAYLAND_DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ] ; th
     #exec dbus-run-session sway --unsupported-gpu
     #exec Hyprland
     if uwsm check may-start; then
-        exec uwsm start hyprland-uwsm.desktop
+        exec uwsm start default
     fi
 fi

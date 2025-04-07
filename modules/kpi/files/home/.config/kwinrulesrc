@@ -1,0 +1,17 @@
+[94f81c65-d507-4617-b2a6-b511e77439a1]
+Description=Settings for flameshot
+above=true
+aboverule=2
+fullscreenrule=2
+ignoregeometry=true
+ignoregeometryrule=2
+screen=2
+screenrule=3
+strictgeometryrule=2
+types=1
+wmclass=flameshot
+wmclassmatch=1
+
+[General]
+count=1
+rules=94f81c65-d507-4617-b2a6-b511e77439a1
