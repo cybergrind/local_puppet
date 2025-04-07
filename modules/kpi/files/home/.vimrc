@@ -84,7 +84,6 @@ set keymap=russian-jcukenwin
 set iminsert=0
 set imsearch=0
 set encoding=utf-8
-set termencoding=utf-8
 set updatetime=500
 set noswapfile
 set splitright
