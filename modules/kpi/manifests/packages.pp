@@ -77,7 +77,7 @@ class kpi::packages::hyprland () {
     'xdg-desktop-portal-hyprland',
     'xdg-desktop-portal',
     'xdg-desktop-portal-gnome',
-    'xdg-desktop-portal-gtk-git'
+    'xdg-desktop-portal-gtk'
   ]
   kpi::install { $pkgs: }
 }
