@@ -14,6 +14,10 @@ Id_9=4a275c5e-356e-45fb-a8ab-245d0cec8804
 Number=9
 Rows=1
 
+[EdgeBarrier]
+CornerBarrier=false
+EdgeBarrier=0
+
 [Effect-overview]
 BorderActivate=9
 
