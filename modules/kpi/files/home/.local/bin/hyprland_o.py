@@ -107,12 +107,14 @@ def maximize_current():
             hyprctl(['dispatch', 'resizeactive', f'{delta_width} {delta_height}'], is_json=False)
             return
 
+
 def main():
     args = parse_args()
     log.setLevel(logging.DEBUG)
     if args.debug:
         log.setLevel(logging.DEBUG)
     log.debug(f'args: {args}')
+
     if args.command:
         out = hyprctl(args.command)
         pprint(out)  # noqa: T203

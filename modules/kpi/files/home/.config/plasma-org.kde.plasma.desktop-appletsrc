@@ -90,7 +90,7 @@ immutability=1
 plugin=org.kde.plasma.systemtray
 
 [Containments][28][Applets][33][Configuration]
-PreloadWeight=65
+PreloadWeight=75
 SystrayContainmentId=34
 
 [Containments][28][Applets][46]
@@ -98,7 +98,8 @@ immutability=1
 plugin=org.kde.plasma.digitalclock
 
 [Containments][28][Applets][46][Configuration]
-popupHeight=400
+PreloadWeight=55
+popupHeight=450
 popupWidth=560
 
 [Containments][28][Applets][47]
@@ -206,7 +207,7 @@ immutability=1
 plugin=org.kde.plasma.volume
 
 [Containments][34][Applets][37][Configuration]
-PreloadWeight=55
+PreloadWeight=60
 
 [Containments][34][Applets][37][Configuration][General]
 migrated=true
@@ -242,7 +243,7 @@ immutability=1
 plugin=org.kde.plasma.clipboard
 
 [Containments][34][Applets][43][Configuration]
-PreloadWeight=80
+PreloadWeight=85
 
 [Containments][34][Applets][44]
 immutability=1
@@ -274,7 +275,7 @@ immutability=1
 plugin=org.kde.plasma.bluetooth
 
 [Containments][34][Applets][51][Configuration]
-PreloadWeight=60
+PreloadWeight=75
 
 [Containments][34][Applets][52]
 immutability=1
@@ -388,4 +389,4 @@ knownItems=org.kde.plasma.bluetooth,org.kde.plasma.mediacontroller,org.kde.plasm
 
 [ScreenMapping]
 itemsOnDisabledScreens=
-screenMapping=desktop:/brave-pjibgclleladliembfgfagdaldikeohf-Default.desktop,0,0ca3d897-8040-48ba-916b-ee417ba32827,desktop:/brave-ohdpglnjenajbohgikjjdjobbbfkipak-Default.desktop,0,0ca3d897-8040-48ba-916b-ee417ba32827,desktop:/010editor-desktop.desktop,0,0ca3d897-8040-48ba-916b-ee417ba32827,desktop:/Old Firefox Data,0,0ca3d897-8040-48ba-916b-ee417ba32827
+screenMapping=desktop:/brave-pjibgclleladliembfgfagdaldikeohf-Default.desktop,0,0ca3d897-8040-48ba-916b-ee417ba32827,desktop:/010editor-desktop.desktop,0,0ca3d897-8040-48ba-916b-ee417ba32827,desktop:/brave-ohdpglnjenajbohgikjjdjobbbfkipak-Default.desktop,0,0ca3d897-8040-48ba-916b-ee417ba32827,desktop:/Old Firefox Data,0,0ca3d897-8040-48ba-916b-ee417ba32827
