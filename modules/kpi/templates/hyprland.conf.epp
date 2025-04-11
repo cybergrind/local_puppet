@@ -67,6 +67,7 @@ exec-once = dunst &
 #exec-once = swayidle timeout 30 'hyprctl dispatcher dpms off && swaylock'
 #exec-once = /home/kpi/.local/bin/hyprland_sleep.sh
 exec-once = /home/kpi/.local/bin/hyprland_fix_tmux.sh
+exec-once = /home/kpi/.local/bin/hyprland_lang.py
 exec-once = hypridle
 exec-once = [ workspace 2 silent; float; move 0 22 ] kitty
 
