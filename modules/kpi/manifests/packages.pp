@@ -75,8 +75,6 @@ class kpi::packages::hyprland () {
     'ksnip', 'slurp', 'grim',
     'hypridle', 'hyprlock',
     'xdg-desktop-portal-hyprland',
-    'xdg-desktop-portal',
-    'xdg-desktop-portal-gnome',
     'xdg-desktop-portal-gtk'
   ]
   kpi::install { $pkgs: }
