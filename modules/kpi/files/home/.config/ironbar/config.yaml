@@ -1,0 +1,27 @@
+---
+
+position: 'top'
+height: 22
+start:
+  - type: workspaces
+center:
+  - type: focused
+    icon_size: 16
+    show_icon: false
+
+  - type: script
+    cmd: /home/kpi/.local/bin/hyprland_workspace.py
+end:
+  - type: volume
+  - type: keyboard
+    icons:
+      layout_map:
+        'English (US)': 'en'
+        'Russian': 'ru'
+
+  - type: notifications
+  - type: tray
+  - type: label
+    label: '  '
+  - type: clock
+    format: '%Y-%m-%d %H:%M'
