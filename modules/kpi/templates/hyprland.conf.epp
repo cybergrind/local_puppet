@@ -214,6 +214,7 @@ input {
     }
 }
 
+
 # https://wiki.hyprland.org/Configuring/Variables/#gestures
 gestures {
     workspace_swipe = false
@@ -224,6 +225,13 @@ gestures {
 device {
     name = epic-mouse-v1
     sensitivity = -0.5
+}
+
+device {
+    name = ydotoold-virtual-device
+    kb_layout = us
+    kb_variant =
+    kb_model =
 }
 
 
