@@ -185,6 +185,8 @@ class kpi::packages::linux () {
     'pcmanfm', 'k9s',
     'ruff', 'aws-cli',
     'slock', 'xorg-xinput',
+    # sound
+    'helvum',
     # notifications
     'mate-notification-daemon',
   ]
