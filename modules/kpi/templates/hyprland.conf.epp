@@ -63,13 +63,16 @@ $menu = wofi --show drun
 exec-once = waybar &
 # exec-once = /home/kpi/.local/bin/flameshot_wrapper.sh &
 exec-once = copyq --start-server &
+# for some reason setEnv inside of script isn't working
+# script in `modules/kpi/files/home/.config/copyq/wayland.ini`
+exec-once = /home/kpi/.local/bin/monitor_clipboard_copyq.sh &
 exec-once = dunst &
 #exec-once = swayidle timeout 30 'hyprctl dispatcher dpms off && swaylock'
 #exec-once = /home/kpi/.local/bin/hyprland_sleep.sh
 exec-once = /home/kpi/.local/bin/hyprland_fix_tmux.sh
 exec-once = /home/kpi/.local/bin/hyprland_lang.py
 exec-once = hypridle
-exec-once = [ workspace 2 silent; float; move 0 22 ] kitty
+# exec-once = [ workspace 2 silent; float; move 0 22 ] kitty
 
 
 #############################
