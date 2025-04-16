@@ -1,0 +1,84 @@
+{
+    "dart.sdkPath": "/home/kpi/devel/flutter/bin/cache/dart-sdk",
+    "dart.flutterSdkPath": "/home/kpi/devel/flutter",
+    "debug.console.fontSize": 18,
+    "[dart]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.rulers": [
+            80
+        ],
+        "editor.selectionHighlight": false,
+        "editor.suggest.snippetsPreventQuickSuggestions": false,
+        "editor.suggestSelection": "first",
+        "editor.tabCompletion": "onlySnippets",
+        "editor.wordBasedSuggestions": "off"
+    },
+    "python.analysis.typeCheckingMode": "strict",
+    "explorer.confirmDelete": false,
+    "editor.multiCursorModifier": "alt",
+    "git.allowForcePush": true,
+    "git.confirmForcePush": false,
+    "python.languageServer": "Pylance",
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook"
+    },
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    },
+    "editor.inlineSuggest.enabled": true,
+    "remote.SSH.remotePlatform": {
+        "sandbox.pintql.csb": "linux"
+    },
+    "svelte.enable-ts-plugin": true,
+    "svelte.plugin.svelte.note-new-transformation": false,
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "svelte.plugin.svelte.defaultScriptLanguage": "ts",
+    "svelte.plugin.svelte.format.config.singleQuote": true,
+    "javascript.format.semicolons": "remove",
+    "javascript.preferences.quoteStyle": "single",
+    "prettier.documentSelectors": [
+        "*.svelte"
+    ],
+    "svelte.plugin.svelte.format.config.printWidth": 100,
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": true,
+        "markdown": true,
+        "scminput": false
+    },
+    "window.zoomLevel": 2,
+    "chat.agent.enabled": true,
+    "git.autofetch": true,
+    "mcp": {
+        "servers": {
+            "binaryninja-mcp": {
+                "type": "stdio",
+                "command": "uvx",
+                "args": [
+                    "binaryninja-mcp",
+                    "client"
+                ]
+            },
+            "kubectl": {
+                "type": "sse",
+                "url": "http://localhost:8000/sse"
+            }
+        }
+    },
+    "makefile.configureOnOpen": true,
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "vim.easymotion": true,
+    "terminal.integrated.commandsToSkipShell": [
+        "-workbench.action.quickOpen"
+    ],
+    "terminal.integrated.env.linux": {
+
+    }
+}
