@@ -250,7 +250,7 @@ bind = $mainMod, Q, exec, $terminal
 bind = $mainMod, Return, exec, $terminal
 
 bind = $mainMod SHIFT, C, killactive,
-bind = $mainMod, Cyrrilic_es, killactive
+bind = $mainMod SHIFT, Cyrillic_es, killactive
 
 bind = $mainMod SHIFT, M, exec, uwsm stop
 bind = $mainMod, E, exec, $fileManager
@@ -382,6 +382,7 @@ windowrulev2 = monitor 1, class:^(flameshot)$
 ## copyq
 
 bind = Control_L&Alt_L, H, exec, copyq -e "toggle()"
+bind = Control_L&Alt_L, Cyrillic_er, exec, copyq -e "toggle()"
 bind = $mainMod, V, exec, copyq -e "toggle()"
 
 # Example windowrule v1
