@@ -1,6 +1,4 @@
 {
-    "dart.sdkPath": "/home/kpi/devel/flutter/bin/cache/dart-sdk",
-    "dart.flutterSdkPath": "/home/kpi/devel/flutter",
     "debug.console.fontSize": 18,
     "[dart]": {
         "editor.formatOnSave": true,
@@ -80,5 +78,8 @@
     ],
     "terminal.integrated.env.linux": {
 
-    }
+    },
+    "dart.sdkPath": "/home/kpi/devel/flutter/bin/cache/dart-sdk",
+    "dart.flutterSdkPath": "/home/kpi/devel/flutter",
+    "vim.leader": ","
 }

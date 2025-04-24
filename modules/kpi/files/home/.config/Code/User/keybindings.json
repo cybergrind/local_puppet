@@ -15,13 +15,70 @@
         "when": "editorTextFocus && vim.active && vim.use<C-p> && !inDebugRepl || vim.active && vim.use<C-p> && !inDebugRepl && vim.mode == 'CommandlineInProgress' || vim.active && vim.use<C-p> && !inDebugRepl && vim.mode == 'SearchInProgressMode'"
     },
     {
+        "key": "alt+space",
+        "command": "-workbench.action.terminal.sendSequence",
+        "when": "terminalFocus && terminalShellIntegrationEnabled && !accessibilityModeEnabled && terminalShellType == 'pwsh'"
+    },
+    {
+        "key": "ctrl+c l",
+        "command": "extension.aceJump.line"
+    },
+    {
+        "key": "ctrl-c",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0003" },
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+shift+f",
+        "command": "-workbench.action.findInFiles"
+    },
+    {
+        "key": ", a",
+        "command": "workbench.action.findInFiles",
+        "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode != 'Insert'"
+    },
+    // escape on linux
+    {
+        "key": "ctrl+[",
+        "command": "extension.vim_escape",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Insert'"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "extension.vim_escape",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Visual'"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+                "extension.vim_escape",
+                "workbench.action.files.save",
+            ]
+        },
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert'"
+    },
+    {
         "key": "ctrl+[",
         "command": "closeReferenceSearch",
         "when": "inReferenceSearchEditor && !config.editor.stablePeek"
     },
     {
+        "key": "ctrl-[",
+        "command": "search.focus.nextInputBox",
+        "when": "inSearchEditor && inputBoxFocus || inputBoxFocus && searchViewletVisible"
+    },
+    {
         "key": "ctrl+[",
-        "command": "workbench.action.files.save",
-        "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode != 'Insert'"
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+                "workbench.action.toggleSidebarVisibility",
+                // "workbench.action.focusActiveEditorGroup",
+            ],
+        },
+        "when": "searchViewletFocus && !inputBoxFocus"
     }
 ]
