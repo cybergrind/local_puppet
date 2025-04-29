@@ -1,18 +1,5 @@
 {
     "debug.console.fontSize": 18,
-    "[dart]": {
-        "editor.formatOnSave": true,
-        "editor.formatOnType": true,
-        "editor.rulers": [
-            80
-        ],
-        "editor.selectionHighlight": false,
-        "editor.suggest.snippetsPreventQuickSuggestions": false,
-        "editor.suggestSelection": "first",
-        "editor.tabCompletion": "onlySnippets",
-        "editor.wordBasedSuggestions": "off"
-    },
-    "python.analysis.typeCheckingMode": "strict",
     "explorer.confirmDelete": false,
     "editor.multiCursorModifier": "alt",
     "git.allowForcePush": true,
@@ -30,7 +17,6 @@
         "sandbox.pintql.csb": "linux"
     },
     "svelte.enable-ts-plugin": true,
-    "svelte.plugin.svelte.note-new-transformation": false,
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
@@ -79,7 +65,8 @@
     "terminal.integrated.env.linux": {
 
     },
-    "dart.sdkPath": "/home/kpi/devel/flutter/bin/cache/dart-sdk",
-    "dart.flutterSdkPath": "/home/kpi/devel/flutter",
-    "vim.leader": ","
-}
+    "vim.leader": ",",
+    "[rust]": {
+        "editor.defaultFormatter": "rust-lang.rust-analyzer",
+        "editor.formatOnSave": true
+    },}
