@@ -66,8 +66,14 @@
 
     },
     "vim.leader": ",",
-    "terminal.integrated.defaultProfile.linux": "bash",
     "[rust]": {
         "editor.defaultFormatter": "rust-lang.rust-analyzer",
         "editor.formatOnSave": true
-    },}
+    },
+    "accessibility.voice.speechLanguage": "ru-RU",
+    "github.copilot.chat.codesearch.enabled": true,
+    "github.copilot.chat.agent.thinkingTool": true,
+    "github.copilot.chat.editor.temporalContext.enabled": true,
+    "github.copilot.chat.edits.temporalContext.enabled": true,
+    "github.copilot.chat.generateTests.codeLens": true,
+}
