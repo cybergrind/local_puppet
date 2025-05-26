@@ -61,8 +61,8 @@
     },
     "hyprland/workspaces": {
         "persistent-workspaces": {
-            "DP-1": [3],
-            "DP-2": [1, 2, 4, 5, 6, 7, 8, 9],
+            "DP-1": [10],
+            "DP-2": [1, 2, 3, 4, 5, 6, 7, 8, 9],
         },
         "format": "{icon} {name}",
         "format-icons":{

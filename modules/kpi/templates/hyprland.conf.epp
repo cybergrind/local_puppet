@@ -24,16 +24,17 @@ monitor = DP-2, 2560x1440@144, 1440x0, 1
 
 workspace=1,monitor:DP-2
 workspace=2,monitor:DP-2
-workspace=3,monitor:DP-1
+workspace=3,monitor:DP-2
 workspace=4,monitor:DP-2
 workspace=5,monitor:DP-2
 workspace=6,monitor:DP-2
 workspace=7,monitor:DP-2
 workspace=8,monitor:DP-2
 workspace=9,monitor:DP-2
+workspace=10,monitor:DP-1
 
-windowrulev2 = float, workspace:3
-windowrulev2 = size 100% 050%, workspace:3
+windowrulev2 = float, workspace:10
+windowrulev2 = size 100% 050%, workspace:10
 <% } else { -%>
 # epp: check hostname != xx
 <% } -%>
