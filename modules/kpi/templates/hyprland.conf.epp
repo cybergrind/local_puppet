@@ -19,8 +19,11 @@
 
 <% if $hostname == 'xx' { -%>
 # epp: check hostname == xx
-monitor = DP-1, 2560x1440, 0x0, 1, transform, 3
-monitor = DP-2, 2560x1440@144, 1440x0, 1
+#monitor = DP-1, 2560x1440, 0x0, 1, transform, 3
+#monitor = DP-2, 2560x1440@144, 1440x0, 1
+
+monitor = DP-1, 2560x1440, 0x0, 1
+monitor = DP-2, 2560x1440@144, 2560x0, 1
 
 workspace=1,monitor:DP-2
 workspace=2,monitor:DP-2
@@ -196,6 +199,11 @@ misc {
     # application not responding
     anr_missed_pings = 15
     enable_anr_dialog = false
+}
+
+debug {
+    # fix gamescope
+    full_cm_proto = true
 }
 
 
@@ -378,7 +386,7 @@ bind = , Pause, exec, XDG_CURRENT_DESKTOP=sway flameshot gui
 <% } -%>
 windowrulev2 = noanim, class:^(flameshot)$
 windowrulev2 = float, class:^(flameshot)$
-windowrulev2 = move -1440 0, class:^(flameshot)$
+windowrulev2 = move -2560 0, class:^(flameshot)$
 windowrulev2 = pin, class:^(flameshot)$
 
 windowrulev2 = monitor 1, class:^(flameshot)$
