@@ -58,6 +58,15 @@
         "command": "workbench.action.findInFiles",
         "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode != 'Insert'"
     },
+    {
+        "key": ", u o",
+        "command": "testing.runAtCursor",
+    },
+    {
+        "key": ", o",
+        "command": "testing.reRunLastRun"
+
+    },
     // escape on linux
     {
         "key": "ctrl+[",
