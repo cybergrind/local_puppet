@@ -61,11 +61,17 @@
     {
         "key": ", u o",
         "command": "testing.runAtCursor",
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert'"
     },
     {
         "key": ", o",
-        "command": "testing.reRunLastRun"
-
+        "command": "testing.reRunLastRun",
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert'"
+    },
+    {
+        "key": ", space",
+        "command": "extension.aceJump",
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert'"
     },
     // escape on linux
     {
