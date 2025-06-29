@@ -265,6 +265,9 @@ let g:ctrlp_buftag_types = {
 " ctrlsf
 let g:ctrlsf_position = 'right'
 
+" leader keys
+nmap <leader><space> <Plug>(easymotion-s)
+
 " easytags
 let g:easytags_file = './tags'
 let g:easytags_auto_highlight = 0
