@@ -68,7 +68,7 @@ class kpi::packages::system::linux () {
 
 class kpi::packages::hyprland () {
   $pkgs = [
-    'hyprland', 'rofi-wayland',
+    'hyprland', 'rofi-wayland', 'rofi-calc',
     'uwsm',
     'wl-clipboard',
     'hyprpolkitagent',
