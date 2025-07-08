@@ -51,7 +51,7 @@ windowrulev2 = size 100% 050%, workspace:10
 # Set programs that you use
 $terminal = kitty
 $fileManager = pcmanfp
-$menu = rofi -show combi -modes combi -combi-modes "window,run,drun"
+$menu = rofi -show combi -modes combi -combi-modes "calc:~/.local/bin/show_calc.sh,window,run,drun"
 
 
 #################
