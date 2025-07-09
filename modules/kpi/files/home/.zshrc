@@ -200,11 +200,11 @@ function _new_tmux_session {
 }
 compctl -K _new_tmux_session new_tmux_session
 
+alias upc='uv run pre-commit run -a'
 alias em='emacs -nw'
 alias tmx='new_tmux_session'
 
-alias aenv='. ./venv/bin/activate || . ./bin/activate'
-alias lsg='ls -lah | grep -i $1'
+alias lsg='ls -lah | ag -i $1'
 
 alias hz1="mk_ssh_screen hz1 gitlab"
 alias hz3="mk_ssh_screen_x hz3 gitlab"
