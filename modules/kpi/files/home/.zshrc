@@ -201,6 +201,7 @@ function _new_tmux_session {
 compctl -K _new_tmux_session new_tmux_session
 
 alias upc='uv run pre-commit run -a'
+alias claude="npx @anthropic-ai/claude-code $@"
 alias em='emacs -nw'
 alias tmx='new_tmux_session'
 
