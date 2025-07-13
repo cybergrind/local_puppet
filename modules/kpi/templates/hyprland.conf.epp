@@ -270,7 +270,10 @@ bind = $mainMod SHIFT, Cyrillic_es, killactive
 bind = $mainMod SHIFT, M, exec, uwsm stop
 bind = $mainMod, E, exec, $fileManager
 bind = $mainMod, Space, togglefloating,
+
 bind = $mainMod, R, exec, $menu
+bind = $mainMod, Cyrillic_ka, exec, $menu
+
 bind = $mainMod, F, fullscreen
 bind = $mainMod, T, pin
 
@@ -328,14 +331,16 @@ bind = $mainMod, Cyrillic_Shcha, exec, /home/kpi/.local/bin/hyprland_o.py
 bind = $mainMod CONTROL, j, exec, /home/kpi/.local/bin/hyprland_o.py -f
 bind = $mainMod CONTROL, k, exec, /home/kpi/.local/bin/hyprland_o.py -f
 bind = $mainMod CONTROL, Cyrillic_o, exec, /home/kpi/.local/bin/hyprland_o.py -f
-bind = $mainMod CONTROL, Cyrrilic_el, exec, /home/kpi/.local/bin/hyprland_o.py -f
+bind = $mainMod CONTROL, Cyrillic_el, exec, /home/kpi/.local/bin/hyprland_o.py -f
+
 bind = $mainMod, M, exec, /home/kpi/.local/bin/hyprland_o.py -m
+bind = $mainMod, Cyrrilic_softsign, exec, /home/kpi/.local/bin/hyprland_o.py -m
 
 # Example special workspace (scratchpad)
 bind = $mainMod, S, togglespecialworkspace, magic
 bind = $mainMod SHIFT, S, movetoworkspace, special:magic
 bind = $mainMod, Cyrillic_yeru, togglespecialworkspace, magic
-bind = $mainMod SHIFT, Cyrrilic_yeru, movetoworkspace, special:magic
+bind = $mainMod SHIFT, Cyrillic_yeru, movetoworkspace, special:magic
 
 # Scroll through existing workspaces with mainMod + scroll
 bind = $mainMod, mouse_down, workspace, e+1
