@@ -200,8 +200,12 @@ function _new_tmux_session {
 }
 compctl -K _new_tmux_session new_tmux_session
 
+# UV related
 alias upc='uv run pre-commit run'
 alias upca='uv run pre-commit run -a'
+alias uvt='uv run pytest'
+
+
 alias claude="npx @anthropic-ai/claude-code $@"
 alias em='emacs -nw'
 alias tmx='new_tmux_session'
@@ -209,8 +213,6 @@ alias tmx='new_tmux_session'
 alias lsg='ls -lah | ag -i $1'
 
 alias hz1="mk_ssh_screen hz1 gitlab"
-alias hz3="mk_ssh_screen_x hz3 gitlab"
-alias hz4="mk_ssh_screen_x hz4 gitlab"
 alias 9p='mk_ssh_screen_pf 9p proj 9090:localhost:9090'
 alias tpad_gitlab='mk_ssh_screen gitlab@tpad gitlab'
 alias pk="pid_kill_rm_nohup"
