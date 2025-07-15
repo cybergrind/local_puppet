@@ -120,6 +120,7 @@ abbr help tab help
 " mappings
 imap df <Esc>l
 nnoremap <Esc> <Esc>:w<CR>
+nnoremap <M-i> :only<CR>:vsp<CR>
 
 nnoremap 2o o<CR>
 nnoremap 2O O<Esc>O
@@ -276,13 +277,13 @@ let g:easytags_async = 1
 
 
 " " Copy to clipboard
-vnoremap  <leader>y  "+y
-nnoremap  <leader>Y  "+yg_
-nnoremap  <leader>y  "+y
-nnoremap  <leader>yy  "+yy
+vnoremap  <leader><leader>y  "+y
+nnoremap  <leader><leader>Y  "+yg_
+nnoremap  <leader><leader>y  "+y
+nnoremap  <leader><leader>yy  "+yy
 
 " " Paste from clipboard
-nnoremap <leader>p "+p
-nnoremap <leader>P "+P
-vnoremap <leader>p "+p
-vnoremap <leader>P "+P
+nnoremap <leader><leader>p "+p
+nnoremap <leader><leader>P "+P
+vnoremap <leader><leader>p "+p
+vnoremap <leader><leader>P "+P
