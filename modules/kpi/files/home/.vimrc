@@ -96,7 +96,7 @@ set hlsearch
 set incsearch
 set cursorline
 set pumheight=10
-set fillchars+=vert:\
+set fillchars+=vert:\|
 let mapleader=","
 filetype off
 filetype plugin on
@@ -121,6 +121,8 @@ abbr help tab help
 imap df <Esc>l
 nnoremap <Esc> <Esc>:w<CR>
 nnoremap <M-i> :only<CR>:vsp<CR>
+nnoremap <C-x>b :Buffers<CR>
+nnoremap <leader>. <C-w><C-w>
 
 nnoremap 2o o<CR>
 nnoremap 2O O<Esc>O
