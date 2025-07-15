@@ -122,6 +122,7 @@ imap df <Esc>l
 nnoremap <Esc> <Esc>:w<CR>
 nnoremap <M-i> :only<CR>:vsp<CR>
 nnoremap <C-x>b :Buffers<CR>
+nnoremap <C-x><C-b> :Buffers<CR>
 nnoremap <leader>. <C-w><C-w>
 
 nnoremap 2o o<CR>
