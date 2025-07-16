@@ -124,6 +124,7 @@ nnoremap <M-i> :only<CR>:vsp<CR>
 nnoremap <C-x>b :Buffers<CR>
 nnoremap <C-x><C-b> :Buffers<CR>
 nnoremap <leader>. <C-w><C-w>
+nnoremap <leader><leader>R :e!<CR>
 
 nnoremap 2o o<CR>
 nnoremap 2O O<Esc>O
