@@ -40,22 +40,6 @@
     "window.zoomLevel": 2,
     "chat.agent.enabled": true,
     "git.autofetch": true,
-    "mcp": {
-        "servers": {
-            "binaryninja-mcp": {
-                "type": "stdio",
-                "command": "uvx",
-                "args": [
-                    "binaryninja-mcp",
-                    "client"
-                ]
-            },
-            "kubectl": {
-                "type": "sse",
-                "url": "http://localhost:8000/sse"
-            }
-        }
-    },
     "makefile.configureOnOpen": true,
     "github.copilot.nextEditSuggestions.enabled": true,
     "vim.easymotion": true,
