@@ -206,7 +206,6 @@ alias upca='uv run pre-commit run -a'
 alias uvt='uv run pytest'
 
 
-alias claude="npx @anthropic-ai/claude-code $@"
 alias em='emacs -nw'
 alias tmx='new_tmux_session'
 
