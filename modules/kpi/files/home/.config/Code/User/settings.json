@@ -60,4 +60,8 @@
     "github.copilot.chat.editor.temporalContext.enabled": true,
     "github.copilot.chat.edits.temporalContext.enabled": true,
     "github.copilot.chat.generateTests.codeLens": true,
+    "yaml.schemas": {
+        "file:///home/kpi/.vscode/extensions/atlassian.atlascode-3.8.6/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+    },
+    "redhat.telemetry.enabled": false,
 }
