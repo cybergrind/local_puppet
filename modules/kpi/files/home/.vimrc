@@ -126,6 +126,8 @@ nnoremap <C-x><C-b> :Buffers<CR>
 nnoremap <leader>. <C-w><C-w>
 nnoremap <leader><leader>R :e!<CR>
 
+nnoremap "p :reg <bar> exec 'normal! "'.input('>').'p'<CR>
+
 nnoremap 2o o<CR>
 nnoremap 2O O<Esc>O
 nnoremap tm :tabm +1<CR>
