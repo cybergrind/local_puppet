@@ -117,16 +117,18 @@ class kpi::packages::macos () {
   $pkgs_nox = [
     'pinentry-mac',
     'gpg',
-    'tmux', 'cmake', 'emacs-plus', 'kubectl', 'nvim',
+    'tmux', 'cmake',
+    # 'emacs-plus',
+    'kubectl', 'nvim',
     'vim', 'ag', 'direnv', 'fd', 'nvm',
     'htop', 'tree', 'npm',
-    'py3cairo', 'gtk+3',
+    'py3cairo', 'gtk+2',
     'xsel', 'kubectx'
   ]
   kpi::install { $pkgs_nox: }
 
   $pkgs_cask = [
-    'nikitabobko/tap/aerospace',
+    # 'nikitabobko/tap/aerospace',
   ]
 
   kpi::install::macos { $pkgs_cask: cask => true }

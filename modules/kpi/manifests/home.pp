@@ -52,18 +52,18 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
     # group => $user,
     require            => [ User[$user] ],
   }
-  ## additional directory for macos
-  if $facts['os']['family'] == 'Darwin' {
-    file { "${home}/.config":
-    ensure             => directory,
-    recurse            => remote,
-    source             => 'puppet:///modules/kpi/osx_home',
-    source_permissions => 'use',
-    owner              => $user,
-    # group => $user,
-    require            => [ User[$user] ],
-    }
-  }
+  # ## additional directory for macos
+  # if $facts['os']['family'] == 'Darwin' {
+  #   file { "${home}/.config":
+  #   ensure             => directory,
+  #   recurse            => remote,
+  #   source             => 'puppet:///modules/kpi/osx_home',
+  #   source_permissions => 'use',
+  #   owner              => $user,
+  #   # group => $user,
+  #   require            => [ File[$home] ],
+  #   }
+  # }
 
   # exec { '/bin/sbt gen-ensime exit':
   #   unless => "/bin/test -e ${home}/.sbt/0.13/plugins/target",
@@ -75,7 +75,6 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
   kpi::home_repo {"${user}-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
   kpi::home_repo {"${user}-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
   kpi::home_symlinks {"${user}-symlinks": user=>$user}
-  kpi::home::vim_setup {"${user}-vim": user=>$user}
 
   exec { 'pip3 install --user dot-tools':
     creates  => "${home}/.local/bin/release.py",
@@ -308,21 +307,3 @@ define kpi::home_repo($user, $dir, $repo){
   }
 }
 
-define kpi::home::vim_setup($user, $dir=undef){
-  $home = $dir ? {
-    undef => $kpi::home::home_dir,
-    default => $dir,
-  }
-
-  file {"${home}/.config/nvim":
-    ensure => directory,
-    owner  => $user,
-  }
-  -> file {"${home}/.config/nvim/init.vim":
-    source => 'puppet:///modules/kpi/home/.vimrc',
-    owner  => $user,
-  }
-
-  # "[$user] please run vim +PlugInstall +qall"
-
-}

@@ -40,3 +40,11 @@ node 'cybergrinds-macbook-pro.local' {
     home_dir => '/Users/kpi'
   }
 }
+
+node 'cybergrinds-macbook-pro.tail6384d.ts.net' {
+  include kpi::base_devel
+  class {'kpi::home':
+    user => 'kpi',
+    home_dir => '/Users/kpi'
+  }
+}
