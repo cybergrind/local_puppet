@@ -21,7 +21,6 @@ class kpi::base_devel () {
       kpi::install { $tools: }
       file {"/root": ensure => directory}
 
-      kpi::home::vim_setup {"vim-root": user=>"root", dir=>"/root"}
     }
     'Darwin': {
     }
