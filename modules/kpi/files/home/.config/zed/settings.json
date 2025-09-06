@@ -22,7 +22,7 @@
   "theme": "One Dark",
   "vim_mode": true,
   "buffer_font_family": "Fira Code",
-  "assistant": {
+  "agent": {
     "always_allow_tool_actions": true,
     "default_model": {
       "provider": "copilot_chat",
@@ -34,11 +34,9 @@
         "model": "deepseek-coder"
       }
     ],
-    "version": "2"
   },
   "language_models": {
     "openai": {
-      "version": "1",
       "available_models": [
         {
           "name": "deepseek-coder",
