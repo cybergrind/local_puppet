@@ -1,5 +1,6 @@
 -- Leader key
 vim.g.mapleader = ","
+vim.g.EasyMotion_leader_key = ",l"
 
 
 require("config.lazy")
@@ -66,7 +67,7 @@ keymap("n", "<M-i>", ":only<CR>:vsp<CR>")
 keymap("n", "<C-x>b", ":Buffers<CR>")
 keymap("n", "<C-x><C-b>", ":Buffers<CR>")
 keymap("n", "<leader>.", "<C-w><C-w>")
-keymap("n", "<leader><leader>R", ":e!<CR>")
+keymap({"n", "v"}, "<leader><leader>R", ":e!<CR>")
 keymap("n", '"p', ':reg <bar> exec \'normal! "\'.input(\'>\').\'p\'<CR>')
 keymap("n", "2o", "o<CR>")
 keymap("n", "2O", "O<Esc>O")
