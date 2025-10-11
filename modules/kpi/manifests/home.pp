@@ -124,11 +124,6 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
       content => epp('kpi/chromium-flags.conf.epp', {}),
       owner => $user
     }
-    file { "${kpi::home::home_dir}/.config/brave-flags.conf":
-      ensure  => file,
-      content => epp('kpi/chromium-flags.conf.epp', {}),
-      owner => $user
-    }
   }
 }
 
