@@ -9,6 +9,7 @@ require("config.lazy")
 -- Basic settings
 local opt = vim.opt
 opt.compatible = false
+opt.mouse = ""
 opt.tabstop = 4
 opt.softtabstop = 4
 opt.shiftwidth = 4
