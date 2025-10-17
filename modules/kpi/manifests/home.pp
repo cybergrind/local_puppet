@@ -111,9 +111,10 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
   unless $facts['os']['family'] == 'windows' {
     kpi::home_repo {"${user}-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
     kpi::home_repo {"${user}-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
+    kpi::home_repo {"${user}-fzf": user=>$user, dir=>'.fzf', repo=>'junegunn/fzf'}
     kpi::home_symlinks {"${user}-symlinks": user=>$user}
 
-    exec { 'pip3 install --user dot-tools':
+    exec { 'uv tool install dot-tools':
       creates  => "${home}/.local/bin/release.py",
       provider => shell,
       cwd      => $home,
