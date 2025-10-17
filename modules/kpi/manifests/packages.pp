@@ -91,11 +91,41 @@ class kpi::packages::sway () {
   kpi::install { $pkgs_sway: } 
 }
 
+class kpi::packages::windows () {
+  # Ensure Chocolatey is installed
+  include chocolatey
+
+  # Essential tools for Windows
+  $essential = [
+    'git',
+    '7zip',
+    'pwsh',  # PowerShell Core
+  ]
+  kpi::install { $essential: }
+
+  # Editor packages
+  $editors = [
+    'vscode',
+    'zed',
+  ]
+  kpi::install { $editors: }
+
+  # Optional development tools
+  $dev_tools = [
+    'nodejs',
+    'python',
+  ]
+  # Uncomment if needed:
+  # kpi::install { $dev_tools: }
+}
+
 class kpi::packages () {
   if $facts['os']['family'] == 'Archlinux' {
     class {'kpi::packages::linux':}
     # class {'kpi::packages::sway':}
     class {'kpi::packages::hyprland':}
+  } elsif $facts['os']['family'] == 'windows' {
+    class {'kpi::packages::windows':}
   } else {
     class {'kpi::packages::macos':}
   }

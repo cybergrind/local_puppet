@@ -48,12 +48,45 @@ define kpi::install::linux () {
   }
 }
 
+define kpi::install::windows ($bin=undef) {
+  info("Install ${name} on Windows")
+
+  include chocolatey
+
+  case $bin {
+    undef: {
+      package {$name:
+        ensure   => installed,
+        provider => chocolatey,
+      }
+    }
+    'noinstall': {}
+    'skip': {
+      package {$name:
+        ensure   => installed,
+        provider => chocolatey,
+      }
+    }
+    default: {
+      exec {$name:
+        creates => $bin,
+        command => "choco install -y ${name}",
+        provider => powershell,
+      }
+    }
+  }
+}
+
 define kpi::install ($bin=undef, $tap=false, $cask=false) {
   if $facts['os']['family'] == 'Darwin' {
     kpi::install::macos{$name:
       bin => $bin,
       tap => $tap,
       cask => $cask,
+    }
+  } elsif $facts['os']['family'] == 'windows' {
+    kpi::install::windows{$name:
+      bin => $bin,
     }
   } else {
     kpi::install::linux{$name:}
