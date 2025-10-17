@@ -5,6 +5,10 @@ $hiDPI = false
 $use_wayland = true
 $use_ksnip = false
 
+$sshj_spec = undef
+$hostname = undef
+$skip_user = false
+
 node 'home' {
   include kpi::base_devel
   class {'kpi::home': }
@@ -46,5 +50,26 @@ node 'cybergrinds-macbook-pro.tail6384d.ts.net' {
   class {'kpi::home':
     user => 'kpi',
     home_dir => '/Users/kpi'
+  }
+}
+
+node 'ww' {
+  # Windows host - lightweight config with editor setups
+  $skip_user = true
+  include kpi::packages::windows
+
+  class {'kpi::home':
+    user => 'kpi',
+    home_dir => 'C:/Users/kpi'
+  }
+}
+
+node 'ww-wsl' {
+  # WSL host - full development environment
+  include kpi::base_devel
+
+  class {'kpi::home':
+    user => 'kpi',
+    home_dir => '/home/kpi'
   }
 }

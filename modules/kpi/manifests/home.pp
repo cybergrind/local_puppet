@@ -27,30 +27,65 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
   if $facts['os']['family'] == 'Archinux' {
     $managehome = true
     $groups = [ 'wheel', 'audio', 'docker' ]
+  } elsif $facts['os']['family'] == 'windows' {
+    # Windows users are managed by the OS
+    $managehome = false
+    $groups = []
   } else {
     $managehome = false
     $groups = []
   }
 
-  user { $user:
-    ensure     => present,
-    managehome => $managehome,
-    groups     => $groups,
-    shell      => '/bin/zsh',
-    require    => [ Class[kpi::packages::system] ]
+  unless $skip_user {
+    user { $user:
+      ensure     => present,
+      managehome => $managehome,
+      groups     => $groups,
+      shell      => '/bin/zsh',
+      require    => [ Class[kpi::packages::system] ]
+    }
   }
 
 
   $home = $kpi::home::home_dir
 
-  file { $home:
-    ensure             => directory,
-    recurse            => remote,
-    source             => 'puppet:///modules/kpi/home',
-    source_permissions => 'use',
-    owner              => $user,
-    # group => $user,
-    require            => [ User[$user] ],
+  if $facts['os']['family'] == 'windows' {
+    # On Windows, deploy config files to AppData and user home
+    file { "${home}/.config":
+      ensure             => directory,
+      recurse            => remote,
+      source             => 'puppet:///modules/kpi/home/.config',
+      source_permissions => 'use',
+    }
+    # Deploy specific config files for VSCode and Zed
+    file { "${home}/AppData/Roaming/Code/User":
+      ensure             => directory,
+      recurse            => remote,
+      source             => 'puppet:///modules/kpi/home/.config/Code/User',
+      source_permissions => 'use',
+    }
+  } else {
+    # Linux/macOS
+    if $skip_user {
+      file { $home:
+        ensure             => directory,
+        recurse            => remote,
+        source             => 'puppet:///modules/kpi/home',
+        source_permissions => 'use',
+        owner              => $user,
+        # group => $user,
+      }
+    } else {
+      file { $home:
+        ensure             => directory,
+        recurse            => remote,
+        source             => 'puppet:///modules/kpi/home',
+        source_permissions => 'use',
+        owner              => $user,
+        # group => $user,
+        require            => [ User[$user] ],
+      }
+    }
   }
   # ## additional directory for macos
   # if $facts['os']['family'] == 'Darwin' {
@@ -72,57 +107,62 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
   #   require => [ File[$home] ],
   # }
 
-  kpi::home_repo {"${user}-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
-  kpi::home_repo {"${user}-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
-  kpi::home_symlinks {"${user}-symlinks": user=>$user}
+  # Linux/macOS specific operations
+  unless $facts['os']['family'] == 'windows' {
+    kpi::home_repo {"${user}-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
+    kpi::home_repo {"${user}-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
+    kpi::home_symlinks {"${user}-symlinks": user=>$user}
 
-  exec { 'pip3 install --user dot-tools':
-    creates  => "${home}/.local/bin/release.py",
-    provider => shell,
-    cwd      => $home,
-    user     => $user
-  }
-
-  File[$home] -> kpi::home::tmux_setup {"${user}-tmux":
-    user => $user,
-  }
-
-  if $facts['os']['family'] == 'Archlinux' and $sshj_spec != undef {
-    File[$home] -> kpi::home::sshj {"${user}-sshj":
-      user => $user,
-    }
-  }
-
-  if $facts['os']['family'] == 'Archlinux' {
-    File[$home] -> kpi::home::hyprland {"${user}-hyprland":
-      user => $user,
-    }
-  }
-
-  if $facts['os']['family'] == 'ArchLinux' and $hiDPI {
-    kpi::home::hi_dpi {"${user}-hidpi":
-      user => $user,
-    }
-  }
-
-  if $facts['os']['family'] == 'ArchLinux' and $user == 'kpi' {
-    # helm env
-    exec { "install helm diff":
-      command => "helm plugin install https://github.com/databus23/helm-diff",
-      creates => "${home}/.local/share/helm/plugins/helm-diff/bin/diff",
-      require => Kpi::Install['helm'],
-      user => $user,
+    exec { 'pip3 install --user dot-tools':
+      creates  => "${home}/.local/bin/release.py",
       provider => shell,
-      cwd => $home,
+      cwd      => $home,
+      user     => $user
+    }
+
+    File[$home] -> kpi::home::tmux_setup {"${user}-tmux":
+      user => $user,
+    }
+
+    if $facts['os']['family'] == 'Archlinux' and $sshj_spec != undef {
+      File[$home] -> kpi::home::sshj {"${user}-sshj":
+        user => $user,
+      }
+    }
+
+    if $facts['os']['family'] == 'Archlinux' {
+      File[$home] -> kpi::home::hyprland {"${user}-hyprland":
+        user => $user,
+      }
     }
   }
 
+  unless $facts['os']['family'] == 'windows' {
+    if $facts['os']['family'] == 'ArchLinux' and $hiDPI {
+      kpi::home::hi_dpi {"${user}-hidpi":
+        user => $user,
+      }
+    }
 
-  if $facts['os']['family'] == 'ArchLinux' {
-    file { "${kpi::home::home_dir}/.config/chrome-flags.conf":
-      ensure  => file,
-      content => epp('kpi/chromium-flags.conf.epp', {}),
-      owner => $user
+    if $facts['os']['family'] == 'ArchLinux' and $user == 'kpi' {
+      # helm env
+      exec { "install helm diff":
+        command => "helm plugin install https://github.com/databus23/helm-diff",
+        creates => "${home}/.local/share/helm/plugins/helm-diff/bin/diff",
+        require => Kpi::Install['helm'],
+        user => $user,
+        provider => shell,
+        cwd => $home,
+      }
+    }
+
+
+    if $facts['os']['family'] == 'ArchLinux' {
+      file { "${kpi::home::home_dir}/.config/chrome-flags.conf":
+        ensure  => file,
+        content => epp('kpi/chromium-flags.conf.epp', {}),
+        owner => $user
+      }
     }
   }
 }
