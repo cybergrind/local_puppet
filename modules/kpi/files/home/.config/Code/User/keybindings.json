@@ -124,5 +124,15 @@
     {
         "key": "ctrl+shift+m",
         "command": "workbench.action.toggleMaximizedPanel"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "-editor.action.outdentLines",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "shift+f",
+        "command": "workbench.action.quickOpen",
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert'"
     }
 ]

@@ -96,16 +96,8 @@ class kpi::packages::windows () {
   $essential = [
     'git',
     '7zip',
-    'pwsh',  # PowerShell Core
   ]
   kpi::install { $essential: }
-
-  # Editor packages
-  $editors = [
-    'vscode',
-    'zed',
-  ]
-  kpi::install { $editors: }
 
   # Optional development tools
   $dev_tools = [
