@@ -51,8 +51,6 @@ define kpi::install::linux () {
 define kpi::install::windows ($bin=undef) {
   info("Install ${name} on Windows")
 
-  include chocolatey
-
   case $bin {
     undef: {
       package {$name:

@@ -92,9 +92,6 @@ class kpi::packages::sway () {
 }
 
 class kpi::packages::windows () {
-  # Ensure Chocolatey is installed
-  include chocolatey
-
   # Essential tools for Windows
   $essential = [
     'git',
