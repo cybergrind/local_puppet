@@ -55,14 +55,27 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
       ensure             => directory,
       recurse            => remote,
       source             => 'puppet:///modules/kpi/home/.config',
-      source_permissions => 'use',
+      source_permissions => ignore,
     }
-    # Deploy specific config files for VSCode and Zed
+    # Deploy specific config files for VSCode
     file { "${home}/AppData/Roaming/Code/User":
       ensure             => directory,
       recurse            => remote,
       source             => 'puppet:///modules/kpi/home/.config/Code/User',
-      source_permissions => 'use',
+      source_permissions => ignore,
+    }
+    # Deploy specific config files for Zed
+    file { "${home}/AppData/Roaming/Zed":
+      ensure             => directory,
+      recurse            => remote,
+      source             => 'puppet:///modules/kpi/home/.config/zed',
+      source_permissions => ignore,
+    }
+    # Deploy git config
+    file { "${home}/.gitconfig":
+      ensure             => file,
+      source             => 'puppet:///modules/kpi/home/.gitconfig',
+      source_permissions => ignore,
     }
   } else {
     # Linux/macOS
