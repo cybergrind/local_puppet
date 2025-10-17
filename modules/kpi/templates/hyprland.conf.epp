@@ -17,8 +17,8 @@
 # See https://wiki.hyprland.org/Configuring/Monitors/
 #monitor=,preferred,auto,auto
 
-<% if $hostname == 'xx' { -%>
-# epp: check hostname == xx
+<% if $node_hostname == 'xx' { -%>
+# epp: check node_hostname == xx
 #monitor = DP-1, 2560x1440, 0x0, 1, transform, 3
 #monitor = DP-2, 2560x1440@144, 1440x0, 1
 
@@ -39,7 +39,7 @@ workspace=10,monitor:DP-1
 windowrulev2 = float, workspace:10
 windowrulev2 = size 100% 050%, workspace:10
 <% } else { -%>
-# epp: check hostname != xx
+# epp: check node_hostname != xx
 <% } -%>
 
 ###################

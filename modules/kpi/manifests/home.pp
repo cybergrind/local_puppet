@@ -201,7 +201,7 @@ define kpi::home::sshj($user){
   -> file { "${kpi::home::home_dir}/.local/share/systemd/user/sshj.service":
     ensure  => file,
     content => epp('kpi/sshj.epp', {
-      host => $hostname,
+      host => $node_hostname,
       sshj_spec => $sshj_spec
     })
   }
@@ -245,7 +245,7 @@ define kpi::home_symlinks($user){
     mode   => '0600',
   }
 
-  if $keys {
+  if $keys and $facts['os']['family'] != 'windows' {
     kpi::home::keys_links {$user:}
   }
 
