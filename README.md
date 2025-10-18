@@ -124,7 +124,7 @@ export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"
 By default should already be set from keys. On new node it won't be set until keys are monted.
 
 ```bash
-FACTER_SSHJ_SPEC=something ./run
+FACTER_SSHJ_FACT=something ./run
 ```
 
 ### coding snippets
