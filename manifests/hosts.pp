@@ -7,6 +7,13 @@ $use_ksnip = false
 
 $node_hostname = undef
 $skip_user = false
+$sshj_spec = if $facts['sshj_fact'] and $facts['sshj_fact'] != '' {
+  $facts['sshj_fact']
+} elsif $facts['sshj_spec'] and $facts['sshj_spec'] != '' {
+  $facts['sshj_spec']
+} else {
+  undef
+}
 
 node 'home' {
   include kpi::base_devel

@@ -54,12 +54,17 @@ if [[ -f ~/.keys/env ]]; then
     source ~/.keys/common_env
 fi
 
-if [[ ! -z $FACTER_SSHJ_SPEC ]]; then
+sshj_fact="${FACTER_SSHJ_FACT:-}"
+if [[ -z $sshj_fact && -n $FACTER_SSHJ_SPEC ]]; then
+    sshj_fact="$FACTER_SSHJ_SPEC"
+fi
+
+if [[ -n $sshj_fact ]]; then
     if [[ $OSTYPE == 'darwin'* ]]; then
-        export FACTER_SSHJ_SPEC=${FACTER_SSHJ_SPEC}
+        export FACTER_SSHJ_FACT="$sshj_fact"
         export PUPPET_APPLY="puppet apply -v"
     else
-        export PUPPET_APPLY="sudo FACTER_SSHJ_SPEC=${FACTER_SSHJ_SPEC} puppet apply -v"
+        export PUPPET_APPLY="sudo FACTER_SSHJ_FACT=${sshj_fact} puppet apply -v"
     fi
 fi
 
