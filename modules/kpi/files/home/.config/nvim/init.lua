@@ -58,7 +58,6 @@ vim.cmd("abbr help tab help")
 local keymap = vim.keymap.set
 
 -- Insert mode mappings
-keymap("i", "df", "<Esc>l")
 keymap("i", "<C-j>", "<C-n>")
 keymap("i", "<C-k>", "<C-p>")
 
