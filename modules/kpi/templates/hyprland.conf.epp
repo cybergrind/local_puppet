@@ -208,6 +208,8 @@ debug {
     # commented to fix brave
     # # fix gamescope
     # full_cm_proto = true
+    # logs
+    # disable_logs = false
 }
 
 
