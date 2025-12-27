@@ -388,6 +388,10 @@ function bcc_tools {
 bindkey \^U backward-kill-line
 
 HAS_FZF=$(which fzf)
+HISTFILE=~/.zsh_history
+setopt HIST_REDUCE_BLANKS        # remove superfluous blanks before recording entry.
+setopt SHARE_HISTORY             # share history between all sessions.
+setopt HIST_IGNORE_ALL_DUPS      # delete old recorded entry if new entry is a duplicate.
 
 if [ -n "$HAS_FZF" ]; then
     export FZF_DEFAULT_OPTS='--height 80% --border'
