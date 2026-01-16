@@ -208,8 +208,6 @@ class kpi::packages::linux () {
     'slock', 'xorg-xinput',
     # sound
     'helvum',
-    # notifications
-    'mate-notification-daemon',
   ]
 
   kpi::install { $pkgs:

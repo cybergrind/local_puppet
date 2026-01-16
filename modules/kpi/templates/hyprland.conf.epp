@@ -36,8 +36,8 @@ workspace=8,monitor:DP-2
 workspace=9,monitor:DP-2
 workspace=10,monitor:DP-1
 
-windowrulev2 = float, workspace:10
-windowrulev2 = size 100% 050%, workspace:10
+windowrule = float on, match:workspace 10
+windowrule = size 100% 050%, match:workspace 10
 <% } else { -%>
 # epp: check node_hostname != xx
 <% } -%>
@@ -373,36 +373,37 @@ bindl = , XF86AudioPrev, exec, playerctl previous
 # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
 # See https://wiki.hyprland.org/Configuring/Workspace-Rules/ for workspace rules
 
-windowrulev2 = float, class:.*
-# move under toolbar
-windowrulev2 = move 0 22, class:brave-browser
-windowrulev2 = move 0 22, class:kitty
-windowrulev2 = move 0 22, class:steam
+windowrule = float on, match:class .*
 
-windowrulev2 = float, class:com.github.hluk.copyq
-windowrulev2 = immediate, class:(steam_app_.+)
-windowrulev2 = float, class:org.qbittorrent.qBittorrent
+# move under toolbar
+windowrule = move 0 22, match:class ^brave-browser$
+windowrule = move 0 22, match:class ^kitty$
+windowrule = move 0 22, match:class ^steam$
+
+windowrule = float on, match:class ^com\.github\.hluk\.copyq$
+windowrule = immediate on, match:class ^steam_app_.+$
+windowrule = float on, match:class ^org\.qbittorrent\.qBittorrent$
 
 # bitwarden
-windowrulev2 = float, title:(_crx_)(.*)
-windowrulev2 = float, class:feh
+windowrule = float on, match:title ^_crx_.*$
+windowrule = float on, match:class ^feh$
 
 <% if $use_ksnip == true { -%>
 bind = , Pause, exec, /home/kpi/.local/bin/snip_screenshot.sh
 <% } -%>
-windowrulev2 = float, class:org.ksnip.ksnip
-windowrulev2 = maximize, class:org.ksnip.ksnip
+windowrule = float on, match:class ^org\.ksnip\.ksnip$
+windowrule = maximize on, match:class ^org\.ksnip\.ksnip$
 
 ## flameshot
 <% if $use_ksnip == false { -%>
 bind = , Pause, exec, XDG_CURRENT_DESKTOP=sway flameshot gui
 <% } -%>
-windowrulev2 = noanim, class:^(flameshot)$
-windowrulev2 = float, class:^(flameshot)$
-windowrulev2 = move -2560 0, class:^(flameshot)$
-windowrulev2 = pin, class:^(flameshot)$
+windowrule = no_anim on, match:class ^flameshot$
+windowrule = float on, match:class ^flameshot$
+windowrule = move -2560 0, match:class ^flameshot$
+windowrule = pin on, match:class ^flameshot$
 
-windowrulev2 = monitor 1, class:^(flameshot)$
+windowrule = monitor 1, match:class ^flameshot$
 
 ## copyq
 
@@ -417,7 +418,7 @@ bind = $mainMod, V, exec, copyq -e "toggle()"
 # windowrulev2 = float,class:^(kitty)$,title:^(kitty)$
 
 # Ignore maximize requests from apps. You'll probably like this.
-# windowrulev2 = suppressevent maximize, class:.*
+# windowrule = suppressevent maximize, match:class .*
 
 # Fix some dragging issues with XWayland
-windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
+windowrule = no_focus on, match:class ^$, match:title ^$, match:xwayland 1, match:float 1, match:fullscreen 0, match:pin 0
