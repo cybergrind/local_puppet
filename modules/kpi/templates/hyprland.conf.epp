@@ -383,6 +383,7 @@ windowrule = move 0 22, match:class ^steam$
 windowrule = float on, match:class ^com\.github\.hluk\.copyq$
 windowrule = immediate on, match:class ^steam_app_.+$
 windowrule = float on, match:class ^org\.qbittorrent\.qBittorrent$
+windowrule = pin on, match:title .* wants to save
 
 # bitwarden
 windowrule = float on, match:title ^_crx_.*$
