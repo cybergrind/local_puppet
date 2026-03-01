@@ -6,7 +6,7 @@ return {
 	},
 	{
 		'preservim/nerdtree',
-		cmd = 'NERDTreeToggle',
+		cmd = { 'NERDTreeToggle', 'NERDTreeFind' },
 	},
 	{
 		'ctrlpvim/ctrlp.vim',
