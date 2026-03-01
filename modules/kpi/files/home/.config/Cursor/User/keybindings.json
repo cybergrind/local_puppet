@@ -1,0 +1,177 @@
+// Place your key bindings in this file to override the defaults
+[
+    // --- Vim extension overrides ---
+
+    {
+        "key": "ctrl+j",
+        "command": "-extension.vim_ctrl+j",
+        "when": "editorTextFocus && vim.active && vim.use<C-j> && !inDebugRepl"
+    },
+    {
+        "key": "ctrl+p",
+        "command": "-extension.vim_ctrl+p",
+        "when": "editorTextFocus && vim.active && vim.use<C-p> && !inDebugRepl"
+    },
+    {
+        "key": "ctrl+p",
+        "command": "-extension.vim_ctrl+p",
+        "when": "editorTextFocus && vim.active && vim.use<C-p> && !inDebugRepl || vim.active && vim.use<C-p> && !inDebugRepl && vim.mode == 'CommandlineInProgress' || vim.active && vim.use<C-p> && !inDebugRepl && vim.mode == 'SearchInProgressMode'"
+    },
+
+    // --- Ctrl+J: toggle editor <-> terminal / escape sidebar ---
+
+    {
+        "key": "ctrl+j",
+        "command": "selectNextSuggestion",
+        "when": "editorTextFocus && suggestWidgetVisible"
+    },
+    {
+        "key": "ctrl+j",
+        "command": "workbench.action.terminal.focus",
+        "when": "editorTextFocus && !suggestWidgetVisible"
+    },
+    {
+        "key": "ctrl+j",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "terminalFocus"
+    },
+    {
+        "key": "ctrl+j",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "sideBarFocus"
+    },
+
+    // --- Vim-style sidebar navigation (l=right to editor, h=collapse) ---
+
+    {
+        "key": "l",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "sideBarFocus && !inputFocus"
+    },
+    {
+        "key": "escape",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "sideBarFocus"
+    },
+    {
+        "key": "escape",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "panelFocus && !terminalFocus"
+    },
+
+    // --- Ctrl+[ and Ctrl+] escape / save (matching Neovim <Esc> behavior) ---
+    // Insert/Visual: escape to normal. Normal: save. Double-tap from insert = escape + save.
+
+    {
+        "key": "ctrl+[",
+        "command": "-editor.action.outdentLines",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+]",
+        "command": "-editor.action.indentLines",
+        "when": "editorTextFocus && !editorReadonly"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "extension.vim_escape",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Insert'"
+    },
+    {
+        "key": "ctrl+]",
+        "command": "extension.vim_escape",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Insert'"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "extension.vim_escape",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Visual'"
+    },
+    {
+        "key": "ctrl+]",
+        "command": "extension.vim_escape",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Visual'"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "workbench.action.files.save",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Normal'"
+    },
+    {
+        "key": "ctrl+]",
+        "command": "workbench.action.files.save",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Normal'"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "closeReferenceSearch",
+        "when": "inReferenceSearchEditor && !config.editor.stablePeek"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "workbench.action.toggleSidebarVisibility",
+        "when": "searchViewletFocus && !inputBoxFocus"
+    },
+    {
+        "key": "ctrl+[",
+        "command": "search.focus.nextInputBox",
+        "when": "inSearchEditor && inputBoxFocus || inputBoxFocus && searchViewletVisible"
+    },
+
+    // --- Disable default Ctrl+P quickOpen (F and ff are used instead) ---
+
+    {
+        "key": "ctrl+p",
+        "command": "workbench.action.quickOpen"
+    },
+
+    // --- Ctrl+Shift+M: maximize panel ---
+
+    {
+        "key": "ctrl+shift+m",
+        "command": "-workbench.actions.view.problems",
+        "when": "workbench.panel.markers.view.active"
+    },
+    {
+        "key": "ctrl+shift+m",
+        "command": "workbench.action.toggleMaximizedPanel"
+    },
+
+    // --- Ctrl+C in terminal: send interrupt ---
+
+    {
+        "key": "ctrl+c",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": { "text": "\u0003" },
+        "when": "terminalFocus"
+    },
+
+    // --- AceJump (EasyMotion equivalent) ---
+
+    {
+        "key": "alt+space",
+        "command": "extension.aceJump"
+    },
+
+    // --- Cursor AI bindings (preserved) ---
+
+    {
+        "key": "ctrl+shift+i",
+        "command": "aipopup.action.modal.generate",
+        "when": "editorFocus && !composerBarIsVisible && !composerControlPanelIsVisible"
+    },
+    {
+        "key": "ctrl+k",
+        "command": "-aipopup.action.modal.generate",
+        "when": "editorFocus && !composerBarIsVisible && !composerControlPanelIsVisible"
+    },
+    {
+        "key": "ctrl+shift+k",
+        "command": "-aipopup.action.modal.generate",
+        "when": "editorFocus && !composerBarIsVisible && !composerControlPanelIsVisible"
+    },
+    {
+        "key": "ctrl+i",
+        "command": "composerMode.agent"
+    }
+]
