@@ -1,0 +1,139 @@
+{
+    "dart.sdkPath": "/home/kpi/devel/flutter/bin/cache/dart-sdk",
+    "dart.flutterSdkPath": "/home/kpi/devel/flutter",
+    "debug.console.fontSize": 18,
+    "[dart]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.rulers": [
+            80
+        ],
+        "editor.selectionHighlight": false,
+        "editor.suggest.snippetsPreventQuickSuggestions": false,
+        "editor.suggestSelection": "first",
+        "editor.tabCompletion": "onlySnippets",
+        "editor.wordBasedSuggestions": "off"
+    },
+    "python.analysis.typeCheckingMode": "strict",
+    "explorer.confirmDelete": false,
+    "editor.multiCursorModifier": "alt",
+    "git.allowForcePush": true,
+    "git.confirmForcePush": false,
+    "python.languageServer": "None",
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook"
+    },
+    "notebook.cellToolbarLocation": {
+        "default": "right",
+        "jupyter-notebook": "left"
+    },
+    "editor.inlineSuggest.enabled": true,
+    "remote.SSH.remotePlatform": {
+        "sandbox.pintql.csb": "linux"
+    },
+    "svelte.enable-ts-plugin": true,
+    "svelte.plugin.svelte.note-new-transformation": false,
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "svelte.plugin.svelte.defaultScriptLanguage": "ts",
+    "svelte.plugin.svelte.format.config.singleQuote": true,
+    "javascript.format.semicolons": "remove",
+    "javascript.preferences.quoteStyle": "single",
+    "prettier.documentSelectors": [
+        "*.svelte"
+    ],
+    "svelte.plugin.svelte.format.config.printWidth": 100,
+    "[python]": {
+        "editor.formatOnType": true
+    },
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false
+    },
+    "window.zoomLevel": 2,
+    "cursor.cpp.disabledLanguages": [
+        "plaintext",
+        "markdown",
+        "scminput"
+    ],
+    "cursorpyright.analysis.typeCheckingMode": "strict",
+
+    "vim.leader": ",",
+    "vim.easymotion": true,
+    "vim.hlsearch": true,
+    "vim.incsearch": true,
+    "vim.ignorecase": true,
+    "vim.smartcase": true,
+    "vim.timeout": 500,
+    "vim.handleKeys": {
+        "<C-j>": false
+    },
+
+    "vim.normalModeKeyBindingsNonRecursive": [
+        { "before": ["J"], "after": ["L"] },
+        { "before": ["K"], "after": ["H"] },
+        { "before": ["H"], "after": ["g", "T"] },
+        { "before": ["L"], "after": ["g", "t"] },
+        { "before": ["<leader>", "."], "after": ["<C-w>", "<C-w>"] },
+        { "before": ["2", "o"], "after": ["o", "\n"] },
+        { "before": ["2", "O"], "after": ["O", "<Esc>", "O"] },
+        { "before": ["<C-h>"], "commands": [":noh"] },
+        { "before": ["Z", "X"], "commands": ["workbench.action.quit"] },
+
+        { "before": ["<Esc>"], "commands": [":w"] },
+        { "before": ["F"], "commands": ["workbench.action.quickOpen"] },
+        { "before": ["f", "f"], "commands": ["workbench.action.quickOpen"] },
+        { "before": ["f", "t"], "commands": ["workbench.action.gotoSymbol"] },
+        { "before": ["f", "b"], "commands": ["workbench.action.showAllEditors"] },
+        { "before": ["f", "c"], "commands": ["workbench.files.action.showActiveFileInExplorer"] },
+        { "before": ["f", "p"], "commands": ["workbench.action.findInFiles"] },
+        { "before": ["f", "s"], "commands": ["extension.aceJump"] },
+        { "before": ["f", "l"], "commands": ["extension.aceJump.line"] },
+        { "before": ["<leader>", " "], "commands": ["extension.aceJump"] },
+        { "before": ["<leader>", "a"], "commands": ["workbench.action.findInFiles"] },
+
+        { "before": ["<C-p>"], "commands": ["workbench.action.quickOpen"] },
+        { "before": ["<C-m>"], "commands": ["outline.focus"] },
+
+        { "before": ["<Space>", "h"], "commands": ["workbench.action.focusLeftGroup"] },
+        { "before": ["<Space>", "l"], "commands": ["workbench.action.focusRightGroup"] },
+        { "before": ["<Space>", "j"], "commands": ["workbench.action.focusBelowGroup"] },
+        { "before": ["<Space>", "k"], "commands": ["workbench.action.focusAboveGroup"] },
+
+        { "before": ["<M-i>"], "commands": ["workbench.action.closeOtherEditors", "workbench.action.splitEditorRight"] },
+        { "before": ["t", "m"], "commands": ["workbench.action.moveEditorRightInGroup"] },
+        { "before": ["t", "M"], "commands": ["workbench.action.moveEditorLeftInGroup"] },
+
+        { "before": ["<leader>", "1"], "commands": ["workbench.action.openEditorAtIndex1"] },
+        { "before": ["<leader>", "2"], "commands": ["workbench.action.openEditorAtIndex2"] },
+        { "before": ["<leader>", "3"], "commands": ["workbench.action.openEditorAtIndex3"] },
+        { "before": ["<leader>", "4"], "commands": ["workbench.action.openEditorAtIndex4"] },
+        { "before": ["<leader>", "5"], "commands": ["workbench.action.openEditorAtIndex5"] },
+        { "before": ["<leader>", "6"], "commands": ["workbench.action.openEditorAtIndex6"] },
+        { "before": ["<leader>", "7"], "commands": ["workbench.action.openEditorAtIndex7"] },
+        { "before": ["<leader>", "8"], "commands": ["workbench.action.openEditorAtIndex8"] },
+        { "before": ["<leader>", "9"], "commands": ["workbench.action.openEditorAtIndex9"] },
+        { "before": ["<leader>", "0"], "commands": ["workbench.action.lastEditorInGroup"] },
+
+        { "before": ["<leader>", "<leader>", "y"], "after": ["\"", "+", "y"] },
+        { "before": ["<leader>", "<leader>", "Y"], "after": ["\"", "+", "y", "g", "_"] },
+        { "before": ["<leader>", "<leader>", "y", "y"], "after": ["\"", "+", "y", "y"] },
+        { "before": ["<leader>", "<leader>", "p"], "after": ["\"", "+", "p"] },
+        { "before": ["<leader>", "<leader>", "P"], "after": ["\"", "+", "P"] },
+
+        { "before": ["<F4>"], "commands": ["workbench.action.openSettingsJson"] }
+    ],
+
+    "vim.insertModeKeyBindings": [
+        { "before": ["<C-k>"], "commands": ["selectPrevSuggestion"] }
+    ],
+
+    "vim.visualModeKeyBindingsNonRecursive": [
+        { "before": ["<leader>", "<leader>", "y"], "after": ["\"", "+", "y"] },
+        { "before": ["<leader>", "<leader>", "p"], "after": ["\"", "+", "p"] },
+        { "before": ["<leader>", "<leader>", "P"], "after": ["\"", "+", "P"] }
+    ]
+}
