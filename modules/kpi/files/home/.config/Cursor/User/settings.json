@@ -60,6 +60,7 @@
         "scminput"
     ],
     "cursorpyright.analysis.typeCheckingMode": "strict",
+    "keyboard.dispatch": "keyCode",
 
     "vim.leader": ",",
     "vim.easymotion": true,
@@ -127,7 +128,7 @@
         { "before": ["<F4>"], "commands": ["workbench.action.openSettingsJson"] }
     ],
 
-    "vim.insertModeKeyBindings": [
+    "vim.insertModeKeyBindingsNonRecursive": [
         { "before": ["<C-k>"], "commands": ["selectPrevSuggestion"] }
     ],
 

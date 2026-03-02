@@ -59,8 +59,7 @@
         "when": "panelFocus && !terminalFocus"
     },
 
-    // --- Ctrl+[ and Ctrl+] escape / save (matching Neovim <Esc> behavior) ---
-    // Insert/Visual: escape to normal. Normal: save. Double-tap from insert = escape + save.
+    // --- Ctrl+[: escape on linux (copied from working VSCode config) ---
 
     {
         "key": "ctrl+[",
@@ -68,17 +67,7 @@
         "when": "editorTextFocus && !editorReadonly"
     },
     {
-        "key": "ctrl+]",
-        "command": "-editor.action.indentLines",
-        "when": "editorTextFocus && !editorReadonly"
-    },
-    {
         "key": "ctrl+[",
-        "command": "extension.vim_escape",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Insert'"
-    },
-    {
-        "key": "ctrl+]",
         "command": "extension.vim_escape",
         "when": "editorTextFocus && vim.active && vim.mode == 'Insert'"
     },
@@ -88,19 +77,15 @@
         "when": "editorTextFocus && vim.active && vim.mode == 'Visual'"
     },
     {
-        "key": "ctrl+]",
-        "command": "extension.vim_escape",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Visual'"
-    },
-    {
         "key": "ctrl+[",
-        "command": "workbench.action.files.save",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Normal'"
-    },
-    {
-        "key": "ctrl+]",
-        "command": "workbench.action.files.save",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Normal'"
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+                "extension.vim_escape",
+                "workbench.action.files.save"
+            ]
+        },
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert'"
     },
     {
         "key": "ctrl+[",
@@ -109,16 +94,22 @@
     },
     {
         "key": "ctrl+[",
-        "command": "workbench.action.toggleSidebarVisibility",
-        "when": "searchViewletFocus && !inputBoxFocus"
-    },
-    {
-        "key": "ctrl+[",
         "command": "search.focus.nextInputBox",
         "when": "inSearchEditor && inputBoxFocus || inputBoxFocus && searchViewletVisible"
     },
+    {
+        "key": "ctrl+[",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+                "workbench.action.toggleSidebarVisibility"
+            ]
+        },
+        "when": "searchViewletFocus && !inputBoxFocus"
+    },
 
-    // --- Disable default Ctrl+P quickOpen (F and ff are used instead) ---
+
+    // --- Ctrl+P: quick open (default behavior) ---
 
     {
         "key": "ctrl+p",
