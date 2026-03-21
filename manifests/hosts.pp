@@ -37,6 +37,12 @@ node 'xx' {
   class {'kpi::home': }
 }
 
+node 'yy' {
+  include kpi::base_devel
+  $node_hostname = 'yy'
+  class {'kpi::home': }
+}
+
 node 'zz' {
   $hiDPI = true
   include kpi::base_devel
