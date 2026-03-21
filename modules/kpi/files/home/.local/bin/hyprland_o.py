@@ -52,9 +52,10 @@ def move_active_window(monitors_list):
             hyprctl(['dispatch', 'movetoworkspace', str(to_workspace)], is_json=False)
             hyprctl(['dispatch', 'bringactivetotop'], is_json=False)
 
-            monitor_width = monitor['width']
+            scale = monitor.get('scale', 1)
+            monitor_width = int(monitor['width'] / scale)
             if monitor['transform'] in (1, 3):
-                monitor_width = monitor['height']
+                monitor_width = int(monitor['height'] / scale)
             monitor_right_x = monitor['x'] + monitor_width
 
             curr_info = hyprctl('activewindow')
@@ -90,21 +91,18 @@ def maximize_current():
     active_params = hyprctl('activewindow')
     for monitor in monitors:
         if monitor['focused']:
-            monitor_width = monitor['width']
-            monitor_height = monitor['height'] - TOP_BAR_SIZE
+            scale = monitor.get('scale', 1)
+            monitor_width = int(monitor['width'] / scale)
+            monitor_height = int(monitor['height'] / scale) - TOP_BAR_SIZE
             if monitor['transform'] in (1, 3):
-                monitor_width = monitor['height']
-                monitor_height = monitor['width'] - TOP_BAR_SIZE
+                monitor_width = int(monitor['height'] / scale)
+                monitor_height = int(monitor['width'] / scale) - TOP_BAR_SIZE
             left_x = monitor['x']
             left_y = TOP_BAR_SIZE
-            delta_x = left_x - active_params['at'][0]
-            delta_y = left_y - active_params['at'][1]
-            delta_width = monitor_width - active_params['size'][0]
-            delta_height = monitor_height - active_params['size'][1]
-            log.debug(f'{delta_x=} {delta_y=} {delta_width=} {delta_height=}')
-
-            hyprctl(['dispatch', 'moveactive', f'{delta_x} {delta_y}'], is_json=False)
-            hyprctl(['dispatch', 'resizeactive', f'{delta_width} {delta_height}'], is_json=False)
+            address = active_params['address']
+            log.debug(f'moving active window to {left_x} {left_y} and resizing to {monitor_width} {monitor_height}')
+            hyprctl(['dispatch', 'resizewindowpixel', f'exact {monitor_width} {monitor_height},address:{address}'], is_json=False)
+            hyprctl(['dispatch', 'movewindowpixel', f'exact {left_x} {left_y},address:{address}'], is_json=False)
             return
 
 
