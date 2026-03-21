@@ -24,15 +24,15 @@ class kpi::packages::system::linux () {
     source => 'https://aur.archlinux.org/yay-bin.git',
     user => 'yay',
   }
-  ~> exec { "makepkg -f && cp yay-*.pkg.tar.xz yay.tar.xz":
+  ~> exec { "makepkg -f && cp yay_*.tar.gz yay.tar.gz":
     user => 'yay',
     cwd => '/home/yay/yay-bin',
     environment => ['HOME=/home/yay'],
     provider => shell,
-    creates => '/home/yay/yay-bin/yay.tar.xz',
+    creates => '/home/yay/yay-bin/yay.tar.gz',
     #refreshonly => true,
   }
-  ~> exec { 'pacman -U --noconfirm /home/yay/yay-bin/yay.tar.xz':
+  ~> exec { 'pacman -U --noconfirm /home/yay/yay-bin/yay.tar.gz':
     user => 'root',
     provider => shell,
     #unless => "/usr/bin/pacman -Qk ${name}",
@@ -69,6 +69,7 @@ class kpi::packages::system::linux () {
 class kpi::packages::hyprland () {
   $pkgs = [
     'hyprland', 'rofi-wayland', 'rofi-calc',
+    'waybar',
     'uwsm',
     'wl-clipboard',
     'hyprpolkitagent',
@@ -202,7 +203,7 @@ class kpi::packages::linux () {
     'xsel', 'flameshot', 'copyq',
     'dunst', # required for flameshot
     'network-manager-applet',
-    'gtk2', 'freerdp', 'jq', 'yq',
+    'freerdp', 'jq', 'yq',
     'pcmanfm', 'k9s',
     'ruff', 'aws-cli',
     'slock', 'xorg-xinput',
@@ -226,13 +227,13 @@ class kpi::packages::optional () {
         'direnv',
         'lm_sensors', 'lshw', 'hdparm', 'tk',
         'pavucontrol', 'pipewire-pulse', 'pasystray',
-        'xscreensaver', 'teamviewer',
+        'xscreensaver',
         'inotify-tools',
         # development
         'python-virtualenv', 'whois', 'bind-tools', # dig
         'python-pip', 'flake8', 'python-uv',
         'postgresql-libs',
-        'nvm', 'pnpm-bin',
+        'nvm',
       ]
     }
     'Darwin': {
