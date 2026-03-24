@@ -1,0 +1,19 @@
+# VS Code Extensions
+# Install all: code --install-extension < extensions.txt (per line)
+# Or use: ./install-extensions.sh
+
+vscodevim.vim
+lucax88x.codeacejumper
+ryuta46.multi-command
+esbenp.prettier-vscode
+svelte.svelte-vscode
+rust-lang.rust-analyzer
+github.copilot
+github.copilot-chat
+ms-python.python
+ms-python.vscode-pylance
+ms-python.debugpy
+ms-toolsai.jupyter
+ms-vscode-remote.remote-ssh
+redhat.vscode-yaml
+atlassian.atlascode
