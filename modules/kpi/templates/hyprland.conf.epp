@@ -356,6 +356,9 @@ bindm = $mainMod, mouse:273, resizewindow
 bind = $mainMod SHIFT, comma, movecurrentworkspacetomonitor, l
 bind = $mainMod SHIFT, period, movecurrentworkspacetomonitor, r
 
+# toggle external monitor HDMI-A-1 dpms
+bindl = $mainMod SHIFT, R, exec, /home/kpi/.local/bin/hyprland_toggle_monitor.sh
+
 # Laptop multimedia keys for volume and LCD brightness
 bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
 bindel = ,XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
