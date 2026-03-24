@@ -401,7 +401,8 @@ windowrule = maximize on, match:class ^org\.ksnip\.ksnip$
 
 ## flameshot
 <% if $use_ksnip == false { -%>
-bind = , Pause, exec, XDG_CURRENT_DESKTOP=sway flameshot gui
+# bind = , Pause, exec, XDG_CURRENT_DESKTOP=sway flameshot gui
+bind = , Pause, exec, QT_SCALE_FACTOR=0.75 XDG_CURRENT_DESKTOP=sway flameshot gui --region 2560x1440+0+0
 <% } -%>
 windowrule = no_anim on, match:class ^flameshot$
 windowrule = float on, match:class ^flameshot$
