@@ -245,6 +245,7 @@ spawn-at-startup "waybar" "-c" "/home/kpi/.config/waybar/config-niri.jsonc"
 spawn-at-startup "copyq" "--start-server"
 spawn-sh-at-startup "/home/kpi/.local/bin/monitor_clipboard_copyq.sh &"
 spawn-at-startup "dunst"
+spawn-sh-at-startup "swayidle -w timeout 300 'swaylock -f' timeout 600 'niri msg action power-off-monitors' before-sleep 'swaylock -f'"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -523,5 +524,5 @@ binds {
     Mod+Shift+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
     // Power off monitors
-    Mod+Shift+P { power-off-monitors; }
+    Mod+Shift+R allow-when-locked=true { spawn-sh "niri msg action power-off-monitors && sleep 0.4 && niri msg action power-on-monitors"; }
 }
