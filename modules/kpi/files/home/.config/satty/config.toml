@@ -4,5 +4,14 @@ early-exit = true
 output-filename = "/tmp/Screenshots/annotated-%Y-%m-%d_%H-%M-%S.png"
 annotation-size-factor = 0.5
 
+# Custom colours for the colour palette
 [color-palette]
-first = "#ff0000"
+# These will be shown in the toolbar for quick selection
+palette = [
+    "#ff0000",
+    "#ffa500",
+    "#2E8B57",
+    "#ff1493",
+    "#ffd700",
+    "#008000",
+]
