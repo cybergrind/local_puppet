@@ -84,7 +84,7 @@ class kpi::packages::niri () {
   $pkgs = [
     'niri', 'xwayland-satellite',
     'satty',
-    'swaybg', 'swaylock',
+    'swaybg', 'swaylock', 'swayidle',
     'xdg-desktop-portal-gnome',
   ]
   kpi::install { $pkgs: }
