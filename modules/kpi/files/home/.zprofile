@@ -1,6 +1,12 @@
 # fixes unicode issues over ssh
 export LC_ALL=en_US.UTF-8
 
+if [ "$(hostname)" = "yy" ]; then
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export DRI_PRIME=1
+fi
+
 if [ -z "$WAYLAND_DISPLAY" ] && [ -n "$XDG_VTNR" ] && [ "$XDG_VTNR" -eq 1 ] ; then
     export SDL_VIDEODRIVER=wayland,x11
     export _JAVA_AWT_WM_NONREPARENTING=1
