@@ -14,6 +14,7 @@ input {
         }
 
         // Enable numlock on startup, omitting this setting disables it.
+        track-layout "window"
         numlock
     }
 
@@ -221,16 +222,16 @@ layout {
     }
 }
 
-workspace "10" {}
-workspace "9" {}
-workspace "8" {}
-workspace "7" {}
-workspace "6" {}
-workspace "5" {}
-workspace "4" {}
-workspace "3" {}
-workspace "2" {}
-workspace "1" {}
+workspace "1" { open-on-output "HDMI-A-1"; }
+workspace "2" { open-on-output "HDMI-A-1"; }
+workspace "3" { open-on-output "HDMI-A-1"; }
+workspace "4" { open-on-output "HDMI-A-1"; }
+workspace "5" { open-on-output "HDMI-A-1"; }
+workspace "6" { open-on-output "HDMI-A-1"; }
+workspace "7" { open-on-output "HDMI-A-1"; }
+workspace "8" { open-on-output "HDMI-A-1"; }
+workspace "9" { open-on-output "HDMI-A-1"; }
+workspace "10" { open-on-output "eDP-1"; }
 
 // Add lines like this to spawn processes at startup.
 // Note that running niri as a session supports xdg-desktop-autostart,
@@ -238,6 +239,8 @@ workspace "1" {}
 // See the binds section below for more spawn examples.
 
 // This line starts waybar, a commonly used bar for Wayland compositors.
+spawn-at-startup "xwayland-satellite"
+spawn-at-startup "swaybg" "-m" "fill" "-i" "/usr/share/hypr/wall0.png"
 spawn-at-startup "waybar" "-c" "/home/kpi/.config/waybar/config-niri.jsonc"
 spawn-at-startup "copyq" "--start-server"
 spawn-sh-at-startup "/home/kpi/.local/bin/monitor_clipboard_copyq.sh &"
@@ -256,7 +259,7 @@ prefer-no-csd
 // You can change the path where screenshots are saved.
 // A ~ at the front will be expanded to the home directory.
 // The path is formatted with strftime(3) to give you the screenshot date and time.
-screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+screenshot-path "/tmp/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 
 // You can also set this to null to disable saving screenshots to disk.
 // screenshot-path null
@@ -333,6 +336,7 @@ binds {
 
     Mod+Q       { spawn "kitty"; }
     Mod+Return  { spawn "kitty"; }
+    Mod+Shift+Return { spawn-sh "kitty & sleep 0.3 && niri msg action consume-window-into-column"; }
     Mod+Shift+C { close-window; }
     Mod+E       { spawn "pcmanfm"; }
     Mod+R       { spawn-sh "rofi -show combi -modes combi -combi-modes 'calc:~/.local/bin/rofi_show_calc.sh,kill:~/.local/bin/rofi_kill.sh,window,run,drun'"; }
@@ -374,29 +378,25 @@ binds {
     // Screenshots
     /////////////////////
 
+    // Native screenshots (no edit)
     Print      { screenshot; }
     Ctrl+Print { screenshot-screen; }
     Alt+Print  { screenshot-window; }
-    Pause      { screenshot; }
+    //Pause      { screenshot; }
+
+    // Screenshots with satty annotation editor (Shift+Print variants)
+    Pause            { spawn-sh "grim -g \"$(slurp)\" /tmp/screenshot.png && satty --filename /tmp/screenshot.png"; }
 
     /////////////////////
     // Navigation — focus
     /////////////////////
 
-    Mod+Left  { focus-column-left; }
-    Mod+Down  { focus-window-down; }
-    Mod+Up    { focus-window-up; }
-    Mod+Right { focus-column-right; }
     Mod+H     { focus-column-left; }
     Mod+J     { focus-window-down; }
     Mod+K     { focus-window-up; }
     Mod+L     { focus-column-right; }
 
     // Navigation — move window/column
-    Mod+Ctrl+Left  { move-column-left; }
-    Mod+Ctrl+Down  { move-window-down; }
-    Mod+Ctrl+Up    { move-window-up; }
-    Mod+Ctrl+Right { move-column-right; }
     Mod+Ctrl+H     { move-column-left; }
     Mod+Ctrl+J     { move-window-down; }
     Mod+Ctrl+K     { move-window-up; }
@@ -411,19 +411,11 @@ binds {
     // Monitor focus & move (Mod+Shift+arrows/hjkl)
     /////////////////////
 
-    Mod+Shift+Left  { focus-monitor-left; }
-    Mod+Shift+Down  { focus-monitor-down; }
-    Mod+Shift+Up    { focus-monitor-up; }
-    Mod+Shift+Right { focus-monitor-right; }
     Mod+Shift+H     { focus-monitor-left; }
     Mod+Shift+J     { focus-monitor-down; }
     Mod+Shift+K     { focus-monitor-up; }
     Mod+Shift+L     { focus-monitor-right; }
 
-    Mod+Shift+Ctrl+Left  { move-column-to-monitor-left; }
-    Mod+Shift+Ctrl+Down  { move-column-to-monitor-down; }
-    Mod+Shift+Ctrl+Up    { move-column-to-monitor-up; }
-    Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
     Mod+Shift+Ctrl+H     { move-column-to-monitor-left; }
     Mod+Shift+Ctrl+J     { move-column-to-monitor-down; }
     Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
