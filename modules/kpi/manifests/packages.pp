@@ -80,6 +80,15 @@ class kpi::packages::hyprland () {
   ]
   kpi::install { $pkgs: }
 }
+class kpi::packages::niri () {
+  $pkgs = [
+    'niri', 'xwayland-satellite',
+    'satty',
+    'swaybg', 'swaylock',
+    'xdg-desktop-portal-gnome',
+  ]
+  kpi::install { $pkgs: }
+}
 class kpi::packages::sway () {
   $pkgs_sway = [
     'sway', 'swaylock',
@@ -114,6 +123,7 @@ class kpi::packages () {
     class {'kpi::packages::linux':}
     # class {'kpi::packages::sway':}
     class {'kpi::packages::hyprland':}
+    class {'kpi::packages::niri':}
   } elsif $facts['os']['family'] == 'windows' {
     class {'kpi::packages::windows':}
   } else {

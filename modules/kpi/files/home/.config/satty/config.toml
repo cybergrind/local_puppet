@@ -1,0 +1,8 @@
+[general]
+copy-command = "wl-copy"
+early-exit = true
+output-filename = "/tmp/Screenshots/annotated-%Y-%m-%d_%H-%M-%S.png"
+annotation-size-factor = 0.5
+
+[color-palette]
+first = "#ff0000"
