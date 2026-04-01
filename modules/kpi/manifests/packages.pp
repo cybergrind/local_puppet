@@ -177,7 +177,7 @@ class kpi::packages::linux () {
     'net-tools', 'mtr', 'nmap', 'openbsd-netcat', 'bwm-ng', 'ipset',
     'unzip', 'pigz', 'fzf', 'p7zip',
     'powertop',
-    'uctags-git', 'vim-plug-git',
+    'ctags', 'vim-plug-git',
     'networkmanager-openvpn',
     'networkmanager',
     'kubectx',
