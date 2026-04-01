@@ -148,6 +148,22 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
       File[$home] -> kpi::home::hyprland {"${user}-hyprland":
         user => $user,
       }
+
+      exec { 'tmux-service enable':
+        user        => $user,
+        command     => '/bin/systemctl --user enable tmux',
+        environment => ["XDG_RUNTIME_DIR=/run/user/${user_uid}"],
+        provider    => shell,
+        creates     => "${home}/.config/systemd/user/default.target.wants/tmux.service",
+        require     => File[$home],
+      }
+      -> exec { 'tmux-service start':
+        user        => $user,
+        command     => '/bin/systemctl --user start tmux',
+        environment => ["XDG_RUNTIME_DIR=/run/user/${user_uid}"],
+        provider    => shell,
+        unless      => '/bin/systemctl --user is-active tmux',
+      }
     }
   }
 
