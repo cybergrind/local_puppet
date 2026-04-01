@@ -210,6 +210,7 @@ alias em='emacs -nw'
 alias tmx='new_tmux_session'
 
 alias lsg='ls -lah | ag -i $1'
+alias pag='ps aux | ag -i'
 
 alias hz1="mk_ssh_screen hz1 gitlab"
 alias 9p='mk_ssh_screen_pf 9p proj 9090:localhost:9090'
