@@ -162,7 +162,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
         command     => '/bin/systemctl --user start tmux',
         environment => ["XDG_RUNTIME_DIR=/run/user/${user_uid}"],
         provider    => shell,
-        unless      => '/bin/systemctl --user is-active tmux',
+        unless      => '/usr/bin/tmux -L wk has-session -t wk 2>/dev/null',
       }
     }
   }

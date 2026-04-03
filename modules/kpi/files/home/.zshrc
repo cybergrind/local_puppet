@@ -179,23 +179,23 @@ function findi {
 
 
 function new_tmux_session {
-    # 0 - start base session
-    # 1 - name
-    # 2 - config
-    # 3 - socket name
+    # 0 - attach to wk session
+    # 1 - name (nested on default socket)
+    # 2 - name, config
+    # 3 - name, config, socket
     case $# in
         0)
-            new_tmux_session wk ~/.config/tmux/tmux2.conf wk;;
+            tmux -L wk -f ~/.config/tmux/tmux2.conf new-session -A -t wk;;
         1)
-            tmux -L default new-session -A -t $1;;
+            TMUX='' tmux -L default new-session -A -t $1;;
         2)
-            tmux -f $2 -L $1 new -A -t $1;;
+            TMUX='' tmux -f $2 -L $1 new-session -A -t $1;;
         3)
-            tmux -L $3 -f $2 -L $1 new -A -t $1;;
+            TMUX='' tmux -L $3 -f $2 new-session -A -t $1;;
     esac;
 }
 function _new_tmux_session {
-    local values=( $(tmux -L default list-sessions -F "#S") )
+    local values=( $(tmux -L wk list-sessions -F "#S" 2>/dev/null) $(tmux -L default list-sessions -F "#S" 2>/dev/null) )
     reply=( $values )
 }
 compctl -K _new_tmux_session new_tmux_session
