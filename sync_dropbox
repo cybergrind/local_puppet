@@ -1,1 +1,0 @@
-rsync -avzr --delete . ~/Yandex.Disk/local_puppet

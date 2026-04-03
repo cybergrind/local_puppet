@@ -101,7 +101,10 @@ def maximize_current():
             left_y = TOP_BAR_SIZE
             address = active_params['address']
             log.debug(f'moving active window to {left_x} {left_y} and resizing to {monitor_width} {monitor_height}')
-            hyprctl(['dispatch', 'resizewindowpixel', f'exact {monitor_width} {monitor_height},address:{address}'], is_json=False)
+            hyprctl(
+                ['dispatch', 'resizewindowpixel', f'exact {monitor_width} {monitor_height},address:{address}'],
+                is_json=False,
+            )
             hyprctl(['dispatch', 'movewindowpixel', f'exact {left_x} {left_y},address:{address}'], is_json=False)
             return
 

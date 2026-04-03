@@ -2,14 +2,12 @@
 
 # xscreensaver-command -deactivate
 # xprop -id $(xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5) _NET_WM_NAME
-import sys
 import subprocess
+import sys
 import time
 
 
-STOPWORDS = [
-    'twitch', 'youtube', 'mplayer', 'stepmania'
-]
+STOPWORDS = ['twitch', 'youtube', 'mplayer', 'stepmania']
 
 wname = "xprop -id $(xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5) WM_NAME"
 stop_saver = 'xscreensaver-command -deactivate'
@@ -17,7 +15,7 @@ stop_saver = 'xscreensaver-command -deactivate'
 
 def perform_check():
     desc = subprocess.check_output(wname, shell=True).decode('utf8').lower()
-    print('wname: {}'.format(desc))
+    print(f'wname: {desc}')
     for word in STOPWORDS:
         if word in desc:
             print('Disable screensaver')
@@ -31,6 +29,7 @@ def main():
     while True:
         perform_check()
         time.sleep(120)
+
 
 if __name__ == '__main__':
     main()
