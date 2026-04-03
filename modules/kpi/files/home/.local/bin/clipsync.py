@@ -6,17 +6,21 @@
 import subprocess
 import traceback
 
+
 ##############################################################################
 #                           Utility Functions
 ##############################################################################
+
 
 def command_exists(cmd):
     """Check if a command is available in PATH."""
     return subprocess.run(['which', cmd], capture_output=True).returncode == 0
 
+
 def decode_utf8(data: bytes) -> str:
     """Decode bytes to string (UTF-8) safely (replace errors)."""
     return data.decode('utf-8', errors='replace').rstrip('\x00')
+
 
 def normalize_text(data: bytes) -> bytes:
     """
@@ -28,26 +32,27 @@ def normalize_text(data: bytes) -> bytes:
     s = s.strip('\r\n')
     return s.encode('utf-8', errors='replace')
 
+
 def is_text_mime(mime: str) -> bool:
     """Check if the MIME type indicates textual data."""
     if mime.startswith('text/'):
         return True
-    if mime in ('UTF8_STRING', 'STRING'):
-        return True
-    return False
+    return mime in ('UTF8_STRING', 'STRING')
+
 
 ##############################################################################
 #                  Wayland Clipboard (wl-copy / wl-paste)
 ##############################################################################
 
+
 def list_wayland_targets() -> list[str]:
     """Get the list of MIME types from the Wayland clipboard."""
     try:
-        out = subprocess.run(['wl-paste', '-l'],
-                             capture_output=True, timeout=0.5, check=True)
+        out = subprocess.run(['wl-paste', '-l'], capture_output=True, timeout=0.5, check=True)
         return decode_utf8(out.stdout).splitlines()
-    except:
+    except Exception:
         return []
+
 
 def pick_wayland_mime() -> str:
     """
@@ -65,9 +70,9 @@ def pick_wayland_mime() -> str:
     # 1) text/uri-list
     if 'text/uri-list' in targets:
         return 'text/uri-list'
-#     # 2) text/html
-#     if 'text/html' in targets:
-#         return 'text/html'
+    #     # 2) text/html
+    #     if 'text/html' in targets:
+    #         return 'text/html'
     # 3) image/*
     for t in targets:
         if t.startswith('image/'):
@@ -83,17 +88,18 @@ def pick_wayland_mime() -> str:
         return 'UTF8_STRING'
     return 'text/plain;charset=utf-8'
 
+
 def get_wayland_clipboard() -> tuple[bytes, str]:
     """Return (raw_data, mime) from Wayland clipboard."""
     mime = pick_wayland_mime()
     try:
-        out = subprocess.run(['wl-paste', '-t', mime],
-                             capture_output=True, timeout=0.8)
+        out = subprocess.run(['wl-paste', '-t', mime], capture_output=True, timeout=0.8)
         data = out.stdout
         return (data, mime)
-    except:
+    except Exception:
         traceback.print_exc()
         return (b'', '')
+
 
 def set_wayland_clipboard(data: bytes, mime: str):
     """
@@ -102,28 +108,28 @@ def set_wayland_clipboard(data: bytes, mime: str):
     Otherwise use the original MIME (e.g., image/png).
     """
     try:
-        if is_text_mime(mime):
-            chosen_mime = 'text/plain;charset=utf-8'
-        else:
-            chosen_mime = mime
+        chosen_mime = 'text/plain;charset=utf-8' if is_text_mime(mime) else mime
         subprocess.run(['wl-copy', '-t', chosen_mime], input=data, check=True)
-    except:
+    except Exception:
         traceback.print_exc()
+
 
 ##############################################################################
 #                  X11 Clipboard (xclip)
 ##############################################################################
 
+
 def list_x11_targets() -> list[str]:
     """Get the list of MIME types from the X11 clipboard."""
     try:
-        out = subprocess.run(['xclip', '-selection', 'clipboard',
-                              '-o', '-t', 'TARGETS'],
-                             capture_output=True, timeout=0.5, check=True)
+        out = subprocess.run(
+            ['xclip', '-selection', 'clipboard', '-o', '-t', 'TARGETS'], capture_output=True, timeout=0.5, check=True
+        )
         decoded = decode_utf8(out.stdout)
         return decoded.splitlines()
-    except:
+    except Exception:
         return []
+
 
 def pick_x11_mime() -> str:
     """
@@ -140,8 +146,8 @@ def pick_x11_mime() -> str:
 
     if 'text/uri-list' in targets:
         return 'text/uri-list'
-#     if 'text/html' in targets:
-#         return 'text/html'
+    #     if 'text/html' in targets:
+    #         return 'text/html'
     if 'image/png' in targets:
         return 'image/png'
     if 'image/jpeg' in targets:
@@ -157,18 +163,18 @@ def pick_x11_mime() -> str:
         return 'UTF8_STRING'
     return 'text/plain;charset=utf-8'
 
+
 def get_x11_clipboard() -> tuple[bytes, str]:
     """Return (raw_data, mime) from X11 clipboard."""
     mime = pick_x11_mime()
     try:
-        out = subprocess.run(['xclip', '-selection', 'clipboard',
-                              '-o', '-t', mime],
-                             capture_output=True, timeout=0.8)
+        out = subprocess.run(['xclip', '-selection', 'clipboard', '-o', '-t', mime], capture_output=True, timeout=0.8)
         data = out.stdout
         return (data, mime)
-    except:
+    except Exception:
         traceback.print_exc()
         return (b'', '')
+
 
 def set_x11_clipboard(data: bytes, mime: str):
     """
@@ -180,15 +186,15 @@ def set_x11_clipboard(data: bytes, mime: str):
       no text target is provided for an image. Use 'xclip -o -t image/png' instead.
     """
     try:
-        subprocess.run(["xclip", "-selection", "clipboard",
-                        "-t", mime],
-                       input=data, check=True)
-    except:
+        subprocess.run(['xclip', '-selection', 'clipboard', '-t', mime], input=data, check=True)
+    except Exception:
         traceback.print_exc()
+
 
 ##############################################################################
 #                            Main Loop
 ##############################################################################
+
 
 def main():
     # Check required tools
@@ -197,13 +203,11 @@ def main():
             print(f"Error: '{tool}' not found in PATH.")
             return
 
-    print("Starting Wayland ↔ X11 clipboard sync...")
+    print('Starting Wayland ↔ X11 clipboard sync...')
 
-    # Store the last known data (bytes) + MIME for both sides
+    # Store the last known data (bytes) for both sides
     last_w_data = b''
-    last_w_mime = ''
     last_x_data = b''
-    last_x_mime = ''
 
     while True:
         # clipnotify will wake up on any clipboard change
@@ -215,59 +219,44 @@ def main():
         x_raw, x_mime = get_x11_clipboard()
 
         # Normalize text data to reduce duplicates
-        if is_text_mime(w_mime) and w_raw:
-            w_norm = normalize_text(w_raw)
-        else:
-            w_norm = w_raw
+        w_norm = normalize_text(w_raw) if is_text_mime(w_mime) and w_raw else w_raw
+        x_norm = normalize_text(x_raw) if is_text_mime(x_mime) and x_raw else x_raw
 
-        if is_text_mime(x_mime) and x_raw:
-            x_norm = normalize_text(x_raw)
-        else:
-            x_norm = x_raw
-
-        w_changed = (w_norm != b'' and w_norm != last_w_data)
-        x_changed = (x_norm != b'' and x_norm != last_x_data)
+        w_changed = w_norm != b'' and w_norm != last_w_data
+        x_changed = x_norm != b'' and x_norm != last_x_data
 
         if w_changed and not x_changed:
             # Wayland changed
             if w_norm != last_x_data:
-                print(f"[Wayland -> X11] MIME={w_mime}")
+                print(f'[Wayland -> X11] MIME={w_mime}')
                 set_x11_clipboard(w_norm, w_mime)
                 last_x_data = w_norm
-                last_x_mime = w_mime
 
             last_w_data = w_norm
-            last_w_mime = w_mime
 
         elif x_changed and not w_changed:
             # X11 changed
             if x_norm != last_w_data:
-                print(f"[X11 -> Wayland] MIME={x_mime}")
+                print(f'[X11 -> Wayland] MIME={x_mime}')
                 set_wayland_clipboard(x_norm, x_mime)
                 last_w_data = x_norm
-                last_w_mime = x_mime
 
             last_x_data = x_norm
-            last_x_mime = x_mime
 
         elif w_changed and x_changed:
             # Both changed - pick Wayland priority
-            print(f"[Conflict] Both changed. Preferring Wayland -> X11 (MIME={w_mime})")
+            print(f'[Conflict] Both changed. Preferring Wayland -> X11 (MIME={w_mime})')
             if w_norm != last_x_data:
                 set_x11_clipboard(w_norm, w_mime)
                 last_x_data = w_norm
-                last_x_mime = w_mime
             last_w_data = w_norm
-            last_w_mime = w_mime
 
         else:
             # Possibly no real difference or empty data
             if w_norm != b'':
                 last_w_data = w_norm
-                last_w_mime = w_mime
             if x_norm != b'':
                 last_x_data = x_norm
-                last_x_mime = x_mime
 
 
 if __name__ == '__main__':

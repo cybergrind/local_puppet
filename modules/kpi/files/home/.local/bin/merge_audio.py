@@ -6,10 +6,9 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import List, Optional, Union
 
 
-def find_matching_audio_file(video_stem: str, audio_files: List[Path]) -> Optional[Path]:
+def find_matching_audio_file(video_stem: str, audio_files: list[Path]) -> Path | None:
     """Find the best matching audio file for a given video file stem."""
     # First, try exact match
     for audio_file in audio_files:
@@ -29,21 +28,21 @@ def find_matching_audio_file(video_stem: str, audio_files: List[Path]) -> Option
 
 
 def merge_audio_to_video(
-    video_dir: Union[str, Path],
-    audio_dir: Union[str, Path],
-    tmp_dir: Optional[Union[str, Path]] = None,
+    video_dir: str | Path,
+    audio_dir: str | Path,
+    tmp_dir: str | Path | None = None,
     track_name: str = 'Russian',
     dry_run: bool = False,
 ) -> None:
-    video_formats: List[str] = ['.mp4', '.mkv', '.avi', '.mov']  # Extend as needed
-    audio_formats: List[str] = ['.mp3', '.mka', '.aac', '.flac']  # Extend as needed
+    video_formats: list[str] = ['.mp4', '.mkv', '.avi', '.mov']  # Extend as needed
+    audio_formats: list[str] = ['.mp3', '.mka', '.aac', '.flac']  # Extend as needed
 
     # Convert to Path objects
     video_dir = Path(video_dir)
     audio_dir = Path(audio_dir)
 
-    video_files: List[Path] = [f for f in video_dir.iterdir() if f.is_file() and f.suffix.lower() in video_formats]
-    audio_files: List[Path] = [f for f in audio_dir.iterdir() if f.is_file() and f.suffix.lower() in audio_formats]
+    video_files: list[Path] = [f for f in video_dir.iterdir() if f.is_file() and f.suffix.lower() in video_formats]
+    audio_files: list[Path] = [f for f in audio_dir.iterdir() if f.is_file() and f.suffix.lower() in audio_formats]
 
     if not video_files:
         logging.warning('No video files found in the video directory.')
@@ -74,7 +73,7 @@ def merge_audio_to_video(
         logging.info(f"Found matching audio file '{matching_audio_file.name}' for video '{video_file.name}'")
 
         # Prepare mkvmerge input arguments: start with video file
-        inputs: List[str] = [str(video_file)]
+        inputs: list[str] = [str(video_file)]
 
         # Add only the matching audio file
         inputs.extend(['--track-name', f'0:{track_name}', str(matching_audio_file)])
@@ -82,7 +81,7 @@ def merge_audio_to_video(
         # Output filename in tmp dir, with .mkv extension
         output_tmp_file: Path = tmp_path / f'{base_name}_merged.mkv'
 
-        command: List[str] = ['mkvmerge', '-o', str(output_tmp_file), *inputs]
+        command: list[str] = ['mkvmerge', '-o', str(output_tmp_file), *inputs]
         cmd_str = ' '.join(command)
 
         if dry_run:

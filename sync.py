@@ -5,7 +5,6 @@ import logging
 import os
 import shutil
 from pathlib import Path
-from subprocess import run
 
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s [%(levelname)s] %(name)s: %(message)s')
