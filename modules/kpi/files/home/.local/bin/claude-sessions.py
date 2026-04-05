@@ -15,6 +15,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import ClassVar
 
+from rich.text import Text as RichText
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal
@@ -135,8 +136,10 @@ class SessionItem(ListItem):
 
     def compose(self) -> ComposeResult:
         s = self.session
-        label = f'{format_time(s["started_at"]):>8}  {truncate(s["first_user_message"], 60)}'
-        yield Static(label)
+        time_str = format_time(s['started_at'])
+        msg = truncate(s['first_user_message'], 60)
+        label = f'{time_str:>8}  {msg}'
+        yield Static(label, markup=False)
 
 
 class SessionsApp(App):
@@ -203,23 +206,29 @@ class SessionsApp(App):
         s = self.sessions[idx]
         self._selected_session_id = s['session_id']
 
-        lines: list[str] = []
-        lines.append(f'[bold]Session:[/] {s["session_id"]}')
-        lines.append(f'[bold]Started:[/] {s["started_at"].strftime("%Y-%m-%d %H:%M:%S UTC")}')
-        lines.append('')
-        lines.append('[bold underline]First message:[/]')
-        lines.append(s['first_user_message'][:2000])
-        lines.append('')
-        lines.append('[bold underline]Latest messages:[/]')
+        text = RichText()
+        text.append('Session: ', style='bold')
+        text.append(s['session_id'])
+        text.append('\n')
+        text.append('Started: ', style='bold')
+        text.append(s['started_at'].strftime('%Y-%m-%d %H:%M:%S UTC'))
+        text.append('\n\n')
+        text.append('First message:\n', style='bold underline')
+        text.append(s['first_user_message'][:2000])
+        text.append('\n\n')
+        text.append('Latest messages:\n', style='bold underline')
 
         for m in s['last_messages']:
-            role = '[bold cyan]You:[/]' if m['type'] == 'user' else '[bold green]Claude:[/]'
-            text = truncate(m['content'], 500) if m['content'] else '(empty)'
-            lines.append(f'{role} {text}')
-            lines.append('')
+            if m['type'] == 'user':
+                text.append('You: ', style='bold cyan')
+            else:
+                text.append('Claude: ', style='bold green')
+            content = truncate(m['content'], 500) if m['content'] else '(empty)'
+            text.append(content)
+            text.append('\n\n')
 
         detail = self.query_one('#right', Static)
-        detail.update('\n'.join(lines))
+        detail.update(text)
 
     def action_cursor_down(self) -> None:
         lv = self.query_one('#left', ListView)
