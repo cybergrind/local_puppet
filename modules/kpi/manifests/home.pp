@@ -149,6 +149,12 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
         user => $user,
       }
 
+      exec { 'enable-linger':
+        command  => "/bin/loginctl enable-linger ${user}",
+        provider => shell,
+        unless   => "/bin/loginctl show-user ${user} | /bin/grep -q Linger=yes",
+      }
+
       exec { 'tmux-service enable':
         user        => $user,
         command     => '/bin/systemctl --user enable tmux',
