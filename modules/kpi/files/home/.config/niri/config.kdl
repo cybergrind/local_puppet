@@ -254,6 +254,12 @@ hotkey-overlay {
     skip-at-startup
 }
 
+gestures {
+    hot-corners {
+        off
+    }
+}
+
 // Clients omit their client-side decorations if possible.
 prefer-no-csd
 
@@ -378,12 +384,6 @@ binds {
     /////////////////////
     // Screenshots
     /////////////////////
-
-    // Native screenshots (no edit)
-    Print      { screenshot; }
-    Ctrl+Print { screenshot-screen; }
-    Alt+Print  { screenshot-window; }
-    //Pause      { screenshot; }
 
     // Screenshots with satty annotation editor (Shift+Print variants)
     Pause            { spawn-sh "grim -g \"$(slurp)\" /tmp/screenshot.png && satty --filename /tmp/screenshot.png"; }
