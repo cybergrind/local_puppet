@@ -169,7 +169,7 @@ class kpi::packages::macos () {
 class kpi::packages::linux () {
   $pkgs_nox = [
     'zsh', 'zsh-completions',
-    'gnome-keyring', 'libgnome-keyring', 'kwallet',
+    'gnome-keyring', 'libgnome-keyring', 'kwallet', 'kwallet-pam',
     'tmux', 'encfs', 'iotop', 'btop', 'atop',
     'inetutils',
     'pv', 'pwgen', 'rsync', 'strace',
