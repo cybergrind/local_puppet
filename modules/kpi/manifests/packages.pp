@@ -76,7 +76,8 @@ class kpi::packages::hyprland () {
     'ksnip', 'slurp', 'grim',
     'hypridle', 'hyprlock',
     'xdg-desktop-portal-hyprland',
-    'xdg-desktop-portal-gtk'
+    'xdg-desktop-portal-gtk',
+    'gamescope',
   ]
   kpi::install { $pkgs: }
 }
