@@ -87,6 +87,7 @@ class kpi::packages::niri () {
     'satty',
     'swaybg', 'swaylock', 'swayidle',
     'xdg-desktop-portal-gnome',
+    'xdg-desktop-portal-wlr',
   ]
   kpi::install { $pkgs: }
 }
