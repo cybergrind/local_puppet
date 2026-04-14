@@ -1,0 +1,2 @@
+# Disable PS4/PS5 controller touchpad from acting as a mouse
+ACTION=="add|change", KERNEL=="event*", ATTRS{id/vendor}=="054c", ENV{ID_INPUT_TOUCHPAD}=="1", ENV{LIBINPUT_IGNORE_DEVICE}="1"

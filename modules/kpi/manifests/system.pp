@@ -20,6 +20,11 @@ class kpi::system {
         unless  => '/usr/bin/getcap /usr/bin/gamescope | /usr/bin/grep -q cap_sys_nice',
         require => [ Kpi::Install['gamescope'] ],
       }
+
+      # Disable PS4/PS5 controller touchpad from acting as a mouse
+      file { '/etc/udev/rules.d/99-ds4-touchpad.rules':
+        source => 'puppet:///modules/kpi/99-ds4-touchpad.rules',
+      }
     }
   }
 }
