@@ -246,6 +246,7 @@ spawn-at-startup "copyq" "--start-server"
 spawn-sh-at-startup "/home/kpi/.local/bin/monitor_clipboard_copyq.sh &"
 spawn-at-startup "dunst"
 spawn-sh-at-startup "swayidle -w timeout 300 'swaylock -f' timeout 600 'niri msg action power-off-monitors' before-sleep 'swaylock -f'"
+spawn-at-startup "flameshot"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -310,6 +311,11 @@ window-rule {
 
 window-rule {
     match app-id=r#"^org\.qbittorrent\.qBittorrent$"#
+    open-floating true
+}
+
+window-rule {
+    match title="^NotificationsWindow$"
     open-floating true
 }
 
@@ -386,7 +392,10 @@ binds {
     /////////////////////
 
     // Screenshots with satty annotation editor (Shift+Print variants)
-    Pause            { spawn-sh "grim -g \"$(slurp)\" /tmp/screenshot.png && satty --filename /tmp/screenshot.png"; }
+    // Pause            { spawn-sh "grim -g \"$(slurp)\" /tmp/screenshot.png && satty --filename /tmp/screenshot.png"; }
+    //
+
+    Pause { spawn-sh "flameshot gui"; }
 
     /////////////////////
     // Navigation — focus
