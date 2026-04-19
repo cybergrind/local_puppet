@@ -206,7 +206,7 @@ class kpi::packages::linux () {
     'pkgfile', 'kitty',
     'awesome', 'vicious',
     'virtualbox',
-    'mupdf', 'xpdf', 'feh',
+    'mupdf', 'xpdf', 'feh', 'chafa',
     'qbittorrent',
     'google-chrome',
     'yandex-disk', 'helm',
