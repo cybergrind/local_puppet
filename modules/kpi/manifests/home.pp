@@ -85,6 +85,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
         recurse            => remote,
         source             => 'puppet:///modules/kpi/home',
         source_permissions => 'use',
+        ignore             => ['__pycache__', '*.pyc'],
         owner              => $user,
         # group => $user,
       }
@@ -94,6 +95,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
         recurse            => remote,
         source             => 'puppet:///modules/kpi/home',
         source_permissions => 'use',
+        ignore             => ['__pycache__', '*.pyc'],
         owner              => $user,
         # group => $user,
         require            => [ User[$user] ],
