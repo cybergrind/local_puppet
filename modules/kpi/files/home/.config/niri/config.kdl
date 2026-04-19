@@ -361,6 +361,7 @@ binds {
     // Copyq clipboard
     Mod+V       { spawn-sh "copyq -e 'toggle()'"; }
     Ctrl+Alt+H  { spawn-sh "copyq -e 'toggle()'"; }
+    Ctrl+Alt+G  { spawn-sh "wl-paste | ~/.local/bin/trim_trailing.py | wl-copy"; }
 
     // Session
     Mod+Shift+M { quit; }

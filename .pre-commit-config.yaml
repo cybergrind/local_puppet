@@ -3,6 +3,7 @@
 
 exclude: ".git|.venv"
 default_stages: [pre-commit]
+files: "modules/kpi/files/home/.local/|."
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -14,7 +15,8 @@ repos:
       - id: check-ast
       - id: check-yaml
       - id: check-json
-        exclude: '(Code|Cursor)/User/|\.config/zed/'
+        exclude:
+          "modules/kpi/files/home/.config/(Code|zed|Cursor)"
       - id: check-toml
       - id: check-xml
       - id: check-symlinks
@@ -30,3 +32,12 @@ repos:
         args: [--fix, --preview]
         types: [python]
       - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: pyrefly-check
+        name: pyrefly-check
+        entry: uv run pyrefly check
+        language: system
+        pass_filenames: false
+        types: [python]
