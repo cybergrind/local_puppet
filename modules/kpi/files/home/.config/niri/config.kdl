@@ -403,7 +403,7 @@ binds {
     // Screenshots
     /////////////////////
 
-    Pause { spawn-sh "grim -o HDMI-A-1 - | satty --filename -"; }
+    Pause { spawn-sh "grim -t ppm -o HDMI-A-1 - | satty --initial-tool=crop --filename -"; }
     // Pause { spawn-sh "flameshot gui"; }
 
     // Screenshots with satty annotation editor (Shift+Print variants)
