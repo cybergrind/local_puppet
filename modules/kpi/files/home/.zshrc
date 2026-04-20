@@ -231,7 +231,6 @@ alias kev="kubectl get events --sort-by='.metadata.creationTimestamp' -A"
 
 alias allowme='wd wcm; ./venv/bin/python src/allow_me.py; cd -'
 
-
 export PATH=`echo ~/.local/bin`:`echo ~/go/bin`:`echo ~`/bin:/opt/android-sdk/platform-tools/:$PATH
 # Customize to your needs...
 
@@ -398,7 +397,7 @@ if [ -n "$HAS_FZF" ]; then
     export FZF_DEFAULT_OPTS='--height 80% --border'
     export FZF_DEFAULT_COMMAND='ag --hidden --silent --ignore .git -f -g ""'
     export FZF_CTRL_T_COMMAND='ag --hidden --silent --ignore .git -f -g ""'
-    source < $(fzf --zsh)
+    source <(fzf --zsh)
 else
 	echo "NO FZF"
 fi
