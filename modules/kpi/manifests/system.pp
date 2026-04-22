@@ -25,6 +25,22 @@ class kpi::system {
       file { '/etc/udev/rules.d/99-ds4-touchpad.rules':
         source => 'puppet:///modules/kpi/99-ds4-touchpad.rules',
       }
+
+      $shutdown_timeout = "[Manager]\nDefaultTimeoutStopSec=40s\n"
+
+      file { '/etc/systemd/system.conf.d':
+        ensure => directory,
+      }
+      -> file { '/etc/systemd/system.conf.d/50-shutdown-timeout.conf':
+        content => $shutdown_timeout,
+      }
+
+      file { '/etc/systemd/user.conf.d':
+        ensure => directory,
+      }
+      -> file { '/etc/systemd/user.conf.d/50-shutdown-timeout.conf':
+        content => $shutdown_timeout,
+      }
     }
   }
 }
