@@ -239,6 +239,7 @@ workspace "10" { open-on-output "eDP-1"; }
 // See the binds section below for more spawn examples.
 
 // This line starts waybar, a commonly used bar for Wayland compositors.
+spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE"
 spawn-at-startup "xwayland-satellite"
 spawn-at-startup "swaybg" "-m" "fill" "-i" "/usr/share/hypr/wall0.png"
 spawn-at-startup "waybar" "-c" "/home/kpi/.config/waybar/config-niri.jsonc"
