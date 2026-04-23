@@ -245,6 +245,7 @@ spawn-at-startup "waybar" "-c" "/home/kpi/.config/waybar/config-niri.jsonc"
 spawn-at-startup "copyq" "--start-server"
 spawn-sh-at-startup "/home/kpi/.local/bin/monitor_clipboard_copyq.sh &"
 spawn-at-startup "dunst"
+spawn-sh-at-startup "~/.local/bin/satty_wrapper.py --daemon"
 spawn-sh-at-startup "swayidle -w timeout 300 'swaylock -f' timeout 600 'niri msg action power-off-monitors' before-sleep 'swaylock -f'"
 // spawn-at-startup "flameshot"
 
@@ -403,8 +404,8 @@ binds {
     // Screenshots
     /////////////////////
 
-    Pause       { spawn-sh "grim -t ppm -o HDMI-A-1 - | satty --initial-tool=crop --filename -"; }
-    Shift+Pause { spawn-sh "grim -t ppm -o eDP-1 -    | satty --initial-tool=crop --filename -"; }
+    Pause       { spawn-sh "grim -t ppm -o HDMI-A-1 - | ~/.local/bin/satty_wrapper.py"; }
+    Shift+Pause { spawn-sh "grim -t ppm -o eDP-1 -    | ~/.local/bin/satty_wrapper.py"; }
     // Pause { spawn-sh "flameshot gui"; }
 
     // Screenshots with satty annotation editor (Shift+Print variants)
