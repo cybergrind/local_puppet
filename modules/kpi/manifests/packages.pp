@@ -8,7 +8,7 @@ class kpi::packages::system() {
 
 
 class kpi::packages::system::linux () {
-  $system = [ 'sudo', 'openssh', 'base-devel' ]
+  $system = [ 'sudo', 'openssh', 'base-devel', 'go' ]
   package { $system:
     require => [ Class[kpi::repos] ]
   }
@@ -18,26 +18,26 @@ class kpi::packages::system::linux () {
     managehome => true,
     require => [ Package[$system] ],
   }
-  -> vcsrepo {'/home/yay/yay-bin/':
+  -> vcsrepo {'/home/yay/yay/':
     ensure => latest,
     provider => git,
-    source => 'https://aur.archlinux.org/yay-bin.git',
+    source => 'https://github.com/Jguer/yay.git',
     user => 'yay',
   }
-  ~> exec { "makepkg -f && cp yay_*.tar.gz yay.tar.gz":
+  ~> exec { 'build yay':
+    command => 'make',
     user => 'yay',
-    cwd => '/home/yay/yay-bin',
+    cwd => '/home/yay/yay',
     environment => ['HOME=/home/yay'],
     provider => shell,
-    creates => '/home/yay/yay-bin/yay.tar.gz',
-    #refreshonly => true,
+    refreshonly => true,
   }
-  ~> exec { 'pacman -U --noconfirm /home/yay/yay-bin/yay.tar.gz':
+  ~> exec { 'install yay':
+    command => 'make PREFIX=/usr install',
     user => 'root',
+    cwd => '/home/yay/yay',
     provider => shell,
-    #unless => "/usr/bin/pacman -Qk ${name}",
-    creates => '/usr/bin/yay',
-    #refreshonly => true,
+    refreshonly => true,
   }
 
   file { '/etc/sudoers.d/yay':
