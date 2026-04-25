@@ -61,8 +61,6 @@ setw -g clock-mode-style 24
 
 set -g history-limit 15000
 
-set -ga update-environment "WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE"
-
 # End of same path
 
 # Unique part

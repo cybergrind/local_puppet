@@ -22,6 +22,21 @@ if [[ -f ~/.keys/env ]]; then
     source ~/.keys/common_env
 fi
 
+# Wayland/niri env recovery — tmux panes and other long-running shells lose these
+# when the niri session restarts (NIRI_SOCKET embeds the compositor PID).
+function _kpi_load_wayland_env {
+    local sock=( /run/user/${UID}/niri.wayland-*.sock(NOm) )
+    [[ ${#sock} -eq 0 ]] && return
+    export NIRI_SOCKET="${sock[1]}"
+    export WAYLAND_DISPLAY="${${sock[1]:t:r}#niri.}"
+    WAYLAND_DISPLAY="${WAYLAND_DISPLAY%.*}"
+    export XDG_SESSION_TYPE=wayland
+    export XDG_BACKEND=wayland
+    export QT_QPA_PLATFORM=wayland
+    export SDL_VIDEODRIVER=wayland,x11
+}
+_kpi_load_wayland_env
+
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
