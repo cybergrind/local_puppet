@@ -247,6 +247,7 @@ spawn-at-startup "copyq" "--start-server"
 spawn-sh-at-startup "/home/kpi/.local/bin/monitor_clipboard_copyq.sh &"
 spawn-at-startup "dunst"
 spawn-sh-at-startup "~/.local/bin/satty_wrapper.py --daemon"
+spawn-sh-at-startup "~/.local/bin/niri_outputs_watcher.py"
 spawn-sh-at-startup "swayidle -w timeout 300 'swaylock -f' timeout 600 'niri msg action power-off-monitors' before-sleep 'swaylock -f'"
 // spawn-at-startup "flameshot"
 
@@ -366,6 +367,8 @@ binds {
     Mod+Shift+C { close-window; }
     Mod+E       { spawn "pcmanfm"; }
     Mod+R       { spawn-sh "rofi -show combi -modes combi -combi-modes 'calc:~/.local/bin/rofi_show_calc.sh,kill:~/.local/bin/rofi_kill.sh,window,run,drun'"; }
+
+    Mod+Shift+D { spawn-sh "~/.local/bin/niri_outputs.py"; }
 
     Mod+Space   { toggle-window-floating; }
     Mod+F       { fullscreen-window; }
