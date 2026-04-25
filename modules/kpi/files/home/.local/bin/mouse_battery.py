@@ -8,7 +8,6 @@ import sys
 from pathlib import Path
 
 
-
 POWER_SUPPLY = Path('/sys/class/power_supply')
 
 
