@@ -328,9 +328,11 @@ window-rule {
 }
 
 window-rule {
-    match app-id=r#"^com\.gabm\.satty$"#
+    match app-id=r#"^com\.gabm\.satty(\.daemon)?$"#
     open-floating true
-    open-on-output "HDMI-A-1"
+    min-width 2520
+    min-height 1400
+    default-floating-position x=0 y=0 relative-to="top-left"
 }
 
 // Example: block out two password managers from screen capture.
@@ -408,8 +410,8 @@ binds {
     // Screenshots
     /////////////////////
 
-    Pause       { spawn-sh "grim -t ppm -o HDMI-A-1 - | ~/.local/bin/satty_wrapper.py"; }
-    Shift+Pause { spawn-sh "grim -t ppm -o eDP-1 -    | ~/.local/bin/satty_wrapper.py"; }
+    Pause       { spawn-sh "grim -o HDMI-A-1 - | ~/.local/bin/satty_wrapper.py"; }
+    Shift+Pause { spawn-sh "grim -o eDP-1 -    | ~/.local/bin/satty_wrapper.py"; }
     // Pause { spawn-sh "flameshot gui"; }
 
     // Screenshots with satty annotation editor (Shift+Print variants)

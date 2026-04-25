@@ -72,3 +72,15 @@ set -x
 ${PUPPET_APPLY} \
     --modulepath `pwd`/modules${PUPPET_MODULES} \
     manifests/hosts.pp $@
+{ set +x; } 2>/dev/null
+
+if [[ $OSTYPE != darwin* ]] && command -v niri_outputs.py >/dev/null 2>&1; then
+    niri_pid=$(pgrep -x niri | head -1)
+    if [[ -n $niri_pid ]]; then
+        runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+        niri_socket=$(ls -1t "$runtime_dir"/niri.wayland-*."$niri_pid".sock 2>/dev/null | head -1)
+        if [[ -n $niri_socket ]]; then
+            NIRI_SOCKET="$niri_socket" niri_outputs.py || true
+        fi
+    fi
+fi
