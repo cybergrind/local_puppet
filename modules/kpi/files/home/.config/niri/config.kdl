@@ -222,16 +222,35 @@ layout {
     }
 }
 
-workspace "1" { open-on-output "HDMI-A-1"; }
-workspace "2" { open-on-output "HDMI-A-1"; }
-workspace "3" { open-on-output "HDMI-A-1"; }
-workspace "4" { open-on-output "HDMI-A-1"; }
-workspace "5" { open-on-output "HDMI-A-1"; }
-workspace "6" { open-on-output "HDMI-A-1"; }
-workspace "7" { open-on-output "HDMI-A-1"; }
-workspace "8" { open-on-output "HDMI-A-1"; }
-workspace "9" { open-on-output "HDMI-A-1"; }
+// Render on the NVIDIA dGPU because both external monitors (HDMI-A-1, DP-5)
+// are wired to it. Default rendering on the AMD iGPU triggers an
+// explicit-sync bug on the cross-GPU scanout hand-off, where one external
+// briefly shows the other's framebuffer. See
+// https://github.com/YaLTeR/niri/issues/3079
+debug {
+    render-drm-device "/dev/dri/by-path/pci-0000:01:00.0-render"
+}
+
+// The two regions below are rewritten by ~/.local/bin/niri_outputs.py based
+// on which external monitor(s) are currently connected. Edit defaults here;
+// the script will overwrite them on next run.
+// niri_outputs.py: OUTPUTS START
+output "HDMI-A-1" { position x=0 y=0; }
+output "DP-5" { position x=2560 y=0; }
+// niri_outputs.py: OUTPUTS END
+
+// niri_outputs.py: WORKSPACES START
+workspace "1" { open-on-output "DP-5"; }
+workspace "2" { open-on-output "DP-5"; }
+workspace "3" { open-on-output "DP-5"; }
+workspace "4" { open-on-output "DP-5"; }
+workspace "5" { open-on-output "DP-5"; }
+workspace "6" { open-on-output "DP-5"; }
+workspace "7" { open-on-output "DP-5"; }
+workspace "8" { open-on-output "DP-5"; }
+workspace "9" { open-on-output "DP-5"; }
 workspace "10" { open-on-output "eDP-1"; }
+// niri_outputs.py: WORKSPACES END
 
 // Add lines like this to spawn processes at startup.
 // Note that running niri as a session supports xdg-desktop-autostart,
@@ -410,8 +429,10 @@ binds {
     // Screenshots
     /////////////////////
 
-    Pause       { spawn-sh "grim -o HDMI-A-1 - | ~/.local/bin/satty_wrapper.py"; }
-    Shift+Pause { spawn-sh "grim -o eDP-1 -    | ~/.local/bin/satty_wrapper.py"; }
+// niri_outputs.py: SCREENSHOTS START
+    Pause       { spawn-sh "grim -o DP-5 - | ~/.local/bin/satty_wrapper.py"; }
+    Shift+Pause { spawn-sh "grim -o eDP-1 - | ~/.local/bin/satty_wrapper.py"; }
+// niri_outputs.py: SCREENSHOTS END
     // Pause { spawn-sh "flameshot gui"; }
 
     // Screenshots with satty annotation editor (Shift+Print variants)

@@ -1,14 +1,26 @@
 #!/usr/bin/env python3
-"""Swap HDMI-A-1 <-> DP-5 in ~/.config/niri/config.kdl to match
-whichever external output is currently connected, then move any
+"""Configure niri outputs and workspaces in ~/.config/niri/config.kdl based
+on which external monitor(s) are currently connected, then move any
 already-created named workspaces to their target monitor.
 
-Niri only honours `open-on-output` when a workspace is first
-created, so after a config reload existing workspaces stay put
-unless we move them explicitly.
+Three profiles:
+- HDMI-A-1 only: workspaces 1-9 on HDMI-A-1, workspace 10 on eDP-1.
+                 Pause -> HDMI-A-1, Shift+Pause -> eDP-1.
+- DP-5 only:     workspaces 1-9 on DP-5, workspace 10 on eDP-1.
+                 Pause -> DP-5, Shift+Pause -> eDP-1.
+- Both externals: HDMI-A-1 placed left of DP-5, workspaces 1-9 on DP-5,
+                  workspace 10 on HDMI-A-1. eDP-1 stays on but gets no
+                  pinned workspaces. Pause -> DP-5, Shift+Pause -> HDMI-A-1.
 
-Puppet owns this file, so `./run` reverts the swap — re-run the
-script after each puppet apply.
+The script rewrites three marker-delimited regions in config.kdl:
+`niri_outputs.py: OUTPUTS / WORKSPACES / SCREENSHOTS START/END`.
+
+Niri only honours `open-on-output` when a workspace is first created, so
+after a config reload existing workspaces stay put unless we move them
+explicitly.
+
+Puppet owns config.kdl, so `./run` reverts the dynamic rewrite — re-run
+this script after each puppet apply.
 """
 
 import functools
@@ -18,19 +30,39 @@ import subprocess
 import sys
 from collections.abc import Callable
 from contextlib import contextmanager
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Literal, NamedTuple, TypedDict, overload
+from typing import Any, Literal, TypedDict, overload
 
 
 CONFIG_PATH = Path.home() / '.config' / 'niri' / 'config.kdl'
-HDMI_OUTPUT = 'HDMI-A-1'
-DP_OUTPUT = 'DP-5'
+HDMI = 'HDMI-A-1'
+DP = 'DP-5'
+LAPTOP = 'eDP-1'
+WORKSPACE_COUNT = 10
+
+OUTPUTS_REGION_RE = re.compile(
+    r'(// niri_outputs\.py: OUTPUTS START\n).*?(^// niri_outputs\.py: OUTPUTS END)',
+    re.DOTALL | re.MULTILINE,
+)
+WORKSPACES_REGION_RE = re.compile(
+    r'(// niri_outputs\.py: WORKSPACES START\n).*?(^// niri_outputs\.py: WORKSPACES END)',
+    re.DOTALL | re.MULTILINE,
+)
+SCREENSHOTS_REGION_RE = re.compile(
+    r'(// niri_outputs\.py: SCREENSHOTS START\n).*?(^// niri_outputs\.py: SCREENSHOTS END)',
+    re.DOTALL | re.MULTILINE,
+)
 WORKSPACE_RULE_RE = re.compile(r'workspace\s+"([^"]+)"\s*\{\s*open-on-output\s+"([^"]+)"')
 
 
-class OutputSwap(NamedTuple):
-    active: str
-    stale: str
+@dataclass(frozen=True)
+class Profile:
+    name: str
+    output_blocks: list[str]
+    workspaces: list[tuple[str, str]]  # [(workspace name, output)]
+    screenshot_primary: str  # Pause
+    screenshot_secondary: str  # Shift+Pause
 
 
 class Workspace(TypedDict):
@@ -68,31 +100,94 @@ def notify_on_error(title: str) -> Callable:
 
 @notify_on_error('niri outputs')
 def main() -> int:
-    connected = connected_outputs()
-    swap = pick_active_external(connected)
+    outputs = niri_query('outputs')
+    connected = {name for name, info in outputs.items() if info.get('logical')}
+    profile = pick_profile(connected, outputs)
 
     with focus_preserved():
-        swap_summary = rewrite_config(swap)
+        change_summary = rewrite_config(profile)
         moves_done = align_workspaces_to_config(available=connected)
 
-    notify('niri config', f'{swap_summary}, moved {moves_done} workspace(s)')
+    notify('niri config', f'{profile.name}: {change_summary}, moved {moves_done} workspace(s)')
     return 0
 
 
-def pick_active_external(connected: set[str]) -> OutputSwap:
-    if HDMI_OUTPUT in connected and DP_OUTPUT not in connected:
-        return OutputSwap(active=HDMI_OUTPUT, stale=DP_OUTPUT)
-    if DP_OUTPUT in connected and HDMI_OUTPUT not in connected:
-        return OutputSwap(active=DP_OUTPUT, stale=HDMI_OUTPUT)
-    raise OutputSelectionError(f'need exactly one of {HDMI_OUTPUT} or {DP_OUTPUT} connected')
+def pick_profile(connected: set[str], outputs: dict[str, OutputInfo]) -> Profile:
+    has_hdmi = HDMI in connected
+    has_dp = DP in connected
+    if has_hdmi and has_dp:
+        hdmi_width = logical_width(outputs[HDMI])
+        return Profile(
+            name=f'{HDMI} + {DP}',
+            output_blocks=[
+                f'output "{HDMI}" {{ position x=0 y=0; }}',
+                f'output "{DP}" {{ position x={hdmi_width} y=0; }}',
+            ],
+            workspaces=[*[(str(i), DP) for i in range(1, WORKSPACE_COUNT)], (str(WORKSPACE_COUNT), HDMI)],
+            screenshot_primary=DP,
+            screenshot_secondary=HDMI,
+        )
+    if has_hdmi:
+        return Profile(
+            name=f'{HDMI} only',
+            output_blocks=[],
+            workspaces=default_workspaces(HDMI),
+            screenshot_primary=HDMI,
+            screenshot_secondary=LAPTOP,
+        )
+    if has_dp:
+        return Profile(
+            name=f'{DP} only',
+            output_blocks=[],
+            workspaces=default_workspaces(DP),
+            screenshot_primary=DP,
+            screenshot_secondary=LAPTOP,
+        )
+    raise OutputSelectionError(f'need {HDMI} or {DP} connected')
 
 
-def rewrite_config(swap: OutputSwap) -> str:
+def default_workspaces(external: str) -> list[tuple[str, str]]:
+    pairs = [(str(i), external) for i in range(1, WORKSPACE_COUNT)]
+    pairs.append((str(WORKSPACE_COUNT), LAPTOP))
+    return pairs
+
+
+def rewrite_config(profile: Profile) -> str:
     text = CONFIG_PATH.read_text()
-    if swap.stale not in text:
-        return f'already using {swap.active}'
-    CONFIG_PATH.write_text(text.replace(swap.stale, swap.active))
-    return f'{swap.stale} → {swap.active}'
+    new_text = replace_region(text, OUTPUTS_REGION_RE, render_outputs(profile.output_blocks), 'OUTPUTS')
+    new_text = replace_region(new_text, WORKSPACES_REGION_RE, render_workspaces(profile.workspaces), 'WORKSPACES')
+    new_text = replace_region(
+        new_text,
+        SCREENSHOTS_REGION_RE,
+        render_screenshots(profile.screenshot_primary, profile.screenshot_secondary),
+        'SCREENSHOTS',
+    )
+    if new_text == text:
+        return 'unchanged'
+    CONFIG_PATH.write_text(new_text)
+    return 'rewritten'
+
+
+def render_outputs(blocks: list[str]) -> str:
+    return ''.join(f'{line}\n' for line in blocks)
+
+
+def render_workspaces(pairs: list[tuple[str, str]]) -> str:
+    return ''.join(f'workspace "{name}" {{ open-on-output "{output}"; }}\n' for name, output in pairs)
+
+
+def render_screenshots(primary: str, secondary: str) -> str:
+    return (
+        f'    Pause       {{ spawn-sh "grim -o {primary} - | ~/.local/bin/satty_wrapper.py"; }}\n'
+        f'    Shift+Pause {{ spawn-sh "grim -o {secondary} - | ~/.local/bin/satty_wrapper.py"; }}\n'
+    )
+
+
+def replace_region(text: str, region_re: re.Pattern[str], body: str, label: str) -> str:
+    match = region_re.search(text)
+    if not match:
+        raise OutputSelectionError(f'{label} markers not found in {CONFIG_PATH}')
+    return f'{text[: match.start()]}{match.group(1)}{body}{match.group(2)}{text[match.end() :]}'
 
 
 def align_workspaces_to_config(*, available: set[str]) -> int:
@@ -103,8 +198,15 @@ def align_workspaces_to_config(*, available: set[str]) -> int:
 # ---------- helpers --------------------------------------------------------
 
 
-def connected_outputs() -> set[str]:
-    return {name for name, info in niri_query('outputs').items() if info.get('logical')}
+def logical_width(info: 'OutputInfo') -> int:
+    """Logical (scaled) width niri reports for a connected output. Niri
+    auto-rearranges all outputs when any explicit position overlaps another,
+    so neighbour positions must use the actual logical width — not a
+    hard-coded one. See `niri msg outputs` for the source of truth."""
+    logical = info.get('logical')
+    if not logical or 'width' not in logical:
+        raise OutputSelectionError('output has no logical geometry — is it connected?')
+    return int(logical['width'])
 
 
 def parse_workspace_plan(config_text: str, available_outputs: set[str]) -> list[tuple[str, str, int]]:
