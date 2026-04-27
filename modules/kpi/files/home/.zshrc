@@ -247,7 +247,8 @@ alias kev="kubectl get events --sort-by='.metadata.creationTimestamp' -A"
 
 alias allowme='wd wcm; ./venv/bin/python src/allow_me.py; cd -'
 
-export PATH=`echo ~/.local/bin`:`echo ~/go/bin`:`echo ~`/bin:/opt/android-sdk/platform-tools/:$PATH
+typeset -U path
+path=(~/.local/bin ~/go/bin ~/bin $path)
 # Customize to your needs...
 
 function active-window-id {
