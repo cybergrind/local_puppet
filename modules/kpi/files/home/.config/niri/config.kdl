@@ -222,14 +222,15 @@ layout {
     }
 }
 
-// Render on the NVIDIA dGPU because both external monitors (HDMI-A-1, DP-5)
-// are wired to it. Default rendering on the AMD iGPU triggers an
-// explicit-sync bug on the cross-GPU scanout hand-off, where one external
-// briefly shows the other's framebuffer. See
-// https://github.com/YaLTeR/niri/issues/3079
-debug {
-    render-drm-device "/dev/dri/by-path/pci-0000:01:00.0-render"
-}
+// On hybrid-GPU hosts where externals all live on a non-default GPU,
+// niri_outputs.py emits a `debug { render-drm-device "..." }` line below to
+// pin the renderer onto the externals' GPU. Workaround for niri #3079
+// (cross-GPU dmabuf scanout drops explicit sync on some drivers). On
+// single-GPU hosts the region stays empty. niri reads render-drm-device
+// once at startup, so a full restart is needed for changes here to apply.
+// niri_outputs.py: RENDER START
+debug { render-drm-device "/dev/dri/by-path/pci-0000:01:00.0-render"; }
+// niri_outputs.py: RENDER END
 
 // The two regions below are rewritten by ~/.local/bin/niri_outputs.py based
 // on which external monitor(s) are currently connected. Edit defaults here;
