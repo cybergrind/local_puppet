@@ -12,12 +12,18 @@ Three profiles:
                   workspace 10 on HDMI-A-1. eDP-1 stays on but gets no
                   pinned workspaces. Pause -> DP-5, Shift+Pause -> HDMI-A-1.
 
-The script rewrites three marker-delimited regions in config.kdl:
-`niri_outputs.py: OUTPUTS / WORKSPACES / SCREENSHOTS START/END`.
+The script rewrites four marker-delimited regions in config.kdl:
+`niri_outputs.py: OUTPUTS / WORKSPACES / SCREENSHOTS / RENDER START/END`.
 
 Niri only honours `open-on-output` when a workspace is first created, so
 after a config reload existing workspaces stay put unless we move them
 explicitly.
+
+The RENDER region pins niri's renderer to the GPU that owns the connected
+external monitors on hybrid-GPU hosts (works around niri issue #3079
+where cross-GPU dmabuf scanout drops explicit sync). On single-GPU hosts
+the region stays empty.  `render-drm-device` is read once at niri startup
+— rewrites are not picked up by `niri msg action reload-config`.
 
 Puppet owns config.kdl, so `./run` reverts the dynamic rewrite — re-run
 this script after each puppet apply.
@@ -53,7 +59,13 @@ SCREENSHOTS_REGION_RE = re.compile(
     r'(// niri_outputs\.py: SCREENSHOTS START\n).*?(^// niri_outputs\.py: SCREENSHOTS END)',
     re.DOTALL | re.MULTILINE,
 )
+RENDER_REGION_RE = re.compile(
+    r'(// niri_outputs\.py: RENDER START\n).*?(^// niri_outputs\.py: RENDER END)',
+    re.DOTALL | re.MULTILINE,
+)
 WORKSPACE_RULE_RE = re.compile(r'workspace\s+"([^"]+)"\s*\{\s*open-on-output\s+"([^"]+)"')
+DRM_BY_PATH = Path('/dev/dri/by-path')
+DRM_SYSFS = Path('/sys/class/drm')
 
 
 @dataclass(frozen=True)
@@ -103,9 +115,10 @@ def main() -> int:
     outputs = niri_query('outputs')
     connected = {name for name, info in outputs.items() if info.get('logical')}
     profile = pick_profile(connected, outputs)
+    render_device = detect_render_device(connected)
 
     with focus_preserved():
-        change_summary = rewrite_config(profile)
+        change_summary = rewrite_config(profile, render_device)
         moves_done = align_workspaces_to_config(available=connected)
 
     notify('niri config', f'{profile.name}: {change_summary}, moved {moves_done} workspace(s)')
@@ -152,7 +165,7 @@ def default_workspaces(external: str) -> list[tuple[str, str]]:
     return pairs
 
 
-def rewrite_config(profile: Profile) -> str:
+def rewrite_config(profile: Profile, render_device: str | None) -> str:
     text = CONFIG_PATH.read_text()
     new_text = replace_region(text, OUTPUTS_REGION_RE, render_outputs(profile.output_blocks), 'OUTPUTS')
     new_text = replace_region(new_text, WORKSPACES_REGION_RE, render_workspaces(profile.workspaces), 'WORKSPACES')
@@ -162,6 +175,7 @@ def rewrite_config(profile: Profile) -> str:
         render_screenshots(profile.screenshot_primary, profile.screenshot_secondary),
         'SCREENSHOTS',
     )
+    new_text = replace_region(new_text, RENDER_REGION_RE, render_render(render_device), 'RENDER')
     if new_text == text:
         return 'unchanged'
     CONFIG_PATH.write_text(new_text)
@@ -183,6 +197,12 @@ def render_screenshots(primary: str, secondary: str) -> str:
     )
 
 
+def render_render(device: str | None) -> str:
+    if device is None:
+        return ''
+    return f'debug {{ render-drm-device "{device}"; }}\n'
+
+
 def replace_region(text: str, region_re: re.Pattern[str], body: str, label: str) -> str:
     match = region_re.search(text)
     if not match:
@@ -196,6 +216,40 @@ def align_workspaces_to_config(*, available: set[str]) -> int:
 
 
 # ---------- helpers --------------------------------------------------------
+
+
+def detect_render_device(connected: set[str]) -> str | None:
+    """Pick a stable by-path render node when the host has multiple GPUs and
+    all connected externals share one of them; otherwise return None and let
+    niri choose. Workaround for niri issue #3079: when niri renders on a
+    different GPU than the one driving a scanout connector, the cross-GPU
+    dmabuf hand-off can drop explicit sync and produce visible glitches.
+    Pinning the renderer to the externals' GPU avoids that hand-off."""
+    if not DRM_BY_PATH.exists():
+        return None
+    render_links = sorted(DRM_BY_PATH.glob('pci-*-render'))
+    if len(render_links) < 2:
+        return None  # single GPU — niri's default is already correct
+    card_to_render: dict[int, Path] = {}
+    for render_link in render_links:
+        card_link = render_link.with_name(render_link.name.replace('-render', '-card'))
+        if not card_link.exists():
+            continue
+        target = card_link.resolve().name  # e.g. 'card0'
+        if target.startswith('card') and target[4:].isdigit():
+            card_to_render[int(target[4:])] = render_link
+    external_cards: set[int] = set()
+    for output in connected:
+        if output.startswith('eDP'):
+            continue  # laptop panel — not the source of the cross-GPU bug
+        for card_idx in card_to_render:
+            status = DRM_SYSFS / f'card{card_idx}-{output}' / 'status'
+            if status.exists() and status.read_text().strip() == 'connected':
+                external_cards.add(card_idx)
+                break
+    if len(external_cards) != 1:
+        return None
+    return str(card_to_render[external_cards.pop()])
 
 
 def logical_width(info: 'OutputInfo') -> int:
