@@ -17,7 +17,7 @@ class kpi::base_devel () {
       $editors = ['emacs-nox', 'vim', 'emacs-python-mode']
       kpi::install { $editors: }
 
-      $tools = ['git', 'docker', 'docker-compose']
+      $tools = ['git', 'docker', 'docker-buildx', 'docker-compose']
       kpi::install { $tools: }
       file {"/root": ensure => directory}
 
