@@ -188,6 +188,7 @@ class kpi::packages::linux () {
     # alternatives
     'the_silver_searcher', 'fd', 'xh',
     'eza', 'bat', 'ripgrep',
+    'playerctl', 'spotify-player',
   ]
   kpi::install { $pkgs_nox:
     require => [Class[kpi::packages::system]],
