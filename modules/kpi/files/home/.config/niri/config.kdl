@@ -355,6 +355,13 @@ window-rule {
     default-floating-position x=0 y=0 relative-to="top-left"
 }
 
+// Satty's secondary dialogs (e.g. "Choose Annotation Size") use app-id "satty",
+// distinct from the main canvas's "com.gabm.satty[.daemon]". Float without size constraints.
+window-rule {
+    match app-id=r#"^satty$"#
+    open-floating true
+}
+
 // Example: block out two password managers from screen capture.
 // (This example rule is commented out with a "/-" in front.)
 /-window-rule {
