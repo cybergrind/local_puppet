@@ -148,7 +148,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
 
     if $facts['os']['family'] == 'Archlinux' and $node_hostname != undef {
       File[$home] -> class { 'kpi::tailscale_priv':
-        auth_key_path => "${home}/.keys/.ts-auth.key",
+        user_key_path => "${home}/.keys/.ts-auth.key",
       }
     }
 
