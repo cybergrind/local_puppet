@@ -2,7 +2,9 @@
 # distro-managed work tailscaled. Each daemon needs its own state, socket, TUN
 # and UDP port so they don't collide.
 class kpi::tailscale_priv (
-  String $auth_key_path = "${kpi::home::home_dir}/.keys/.ts-auth.key",
+  String $user          = 'kpi',
+  String $user_key_path = "${kpi::home::home_dir}/.keys/.ts-auth.key",
+  String $auth_key_path = '/root/.keys/.ts-auth.key',
   String $hostname      = "${node_hostname}-priv",
   Integer $port         = 41642,
   String $tun           = 'tspriv0',
@@ -67,6 +69,43 @@ class kpi::tailscale_priv (
     enable => true,
   }
 
+  # Stage the pre-auth key in root's home so the puppet-driven `up` exec
+  # reads it without crossing user boundaries. Two-step because the user's
+  # key may live on per-user encfs/FUSE — root cannot read those, but the
+  # owning user can. We do the read as ${user} into /tmp (via puppet's
+  # `user =>`), then root installs it into /root/.keys with correct mode
+  # and removes the staging file.
+  $staged_key = '/tmp/.tspriv-auth.key.staging'
+
+  file { '/root/.keys':
+    ensure => directory,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0700',
+  }
+
+  # Step 1: as ${user}, copy the (possibly encfs-mounted) key into /tmp
+  # with restrictive mode. Skipped when the root copy is already in place
+  # so we don't pointlessly stage on every run.
+  exec { 'tailscale-priv stage-from-user':
+    command  => "/usr/bin/install -m 0600 ${user_key_path} ${staged_key}",
+    user     => $user,
+    creates  => $auth_key_path,
+    onlyif   => "/usr/bin/test -s ${user_key_path}",
+    provider => shell,
+  }
+
+  # Step 2: as root, install the staged copy into /root/.keys (root:root,
+  # 0600) and remove the staging file. Conditional on the staged file
+  # actually existing — if step 1 was skipped (root copy already present),
+  # this is a no-op too.
+  exec { 'tailscale-priv stage-auth-key':
+    command  => "/usr/bin/install -m 0600 -o root -g root ${staged_key} ${auth_key_path} && /bin/rm -f ${staged_key}",
+    onlyif   => "/usr/bin/test -s ${staged_key}",
+    provider => shell,
+    require  => [File['/root/.keys'], Exec['tailscale-priv stage-from-user']],
+  }
+
   # One-shot login using the pre-auth key. Idempotent via a durable sentinel.
   # If you ever wipe ${state_dir}, also delete the sentinel.
   $auth_sentinel = "${state_dir}/.puppet-authed"
@@ -89,7 +128,7 @@ class kpi::tailscale_priv (
     command  => "/usr/bin/tailscale --socket=${socket} up --auth-key=\"$(cat ${auth_key_path})\" --hostname=${hostname} --accept-dns=false --ssh && /usr/bin/touch ${auth_sentinel}",
     creates  => $auth_sentinel,
     provider => shell,
-    require  => Exec['tailscale-priv mark-authed'],
+    require  => [Exec['tailscale-priv mark-authed'], Exec['tailscale-priv stage-auth-key']],
   }
 
   # Maintain runtime prefs after enrol. `tailscale up` only fires on first
