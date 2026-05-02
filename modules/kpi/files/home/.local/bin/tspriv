@@ -1,0 +1,3 @@
+#!/bin/sh
+# Talk to the private tailscaled instance instead of the system (work) one.
+exec /usr/bin/tailscale --socket=/run/tailscale-priv/tailscaled.sock "$@"
