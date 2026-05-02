@@ -62,7 +62,7 @@ class kpi::tailscale_priv (
     refreshonly => true,
   }
 
-  -> service { 'tailscaled-priv':
+  ~> service { 'tailscaled-priv':
     ensure => running,
     enable => true,
   }
