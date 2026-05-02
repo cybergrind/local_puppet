@@ -20,15 +20,20 @@ class kpi::tailscale_priv (
     After=network-pre.target NetworkManager.service systemd-resolved.service
 
     [Service]
-    # Keep this daemon out of host DNS. The work tailscaled is the sole owner
-    # of /etc/resolv.conf and the resolved link config; if this daemon's DNS
-    # manager autodetects "direct" mode it will overwrite resolv.conf and
-    # restart systemd-resolved, wiping the work tailnet's split DNS routes.
-    # Enforcement is via systemd sandboxing: the kernel/systemd refuse the
-    # writes regardless of what the daemon's DNS manager tries to do.
+    # Keep this daemon out of host DNS. The work tailscaled is the sole
+    # owner of /etc/resolv.conf and the resolved link config. In "direct"
+    # DNS mode tailscaled would (a) overwrite /etc/resolv.conf and
+    # (b) shell out to `systemctl restart systemd-resolved`, both of which
+    # clobber the work tailnet's split DNS. We block both paths:
+    #   - BindReadOnlyPaths makes /etc/resolv.conf unwritable in this
+    #     unit's mount namespace.
+    #   - NoExecPaths prevents the daemon from fork-execing systemctl,
+    #     so the resolved-restart path can't fire.
+    # We deliberately leave D-Bus and resolved sockets accessible: Tailscale
+    # SSH spawns user sessions via PAM/logind over D-Bus, and blocking that
+    # silently breaks incoming SSH connections.
     BindReadOnlyPaths=/etc/resolv.conf
-    InaccessiblePaths=-/run/dbus/system_bus_socket
-    InaccessiblePaths=-/run/systemd/resolve
+    NoExecPaths=/usr/bin/systemctl
     ExecStart=/usr/sbin/tailscaled --state=${state_dir}/tailscaled.state --socket=${socket} --port=${port} --tun=${tun}
     ExecStopPost=/usr/sbin/tailscaled --cleanup --socket=${socket}
 
