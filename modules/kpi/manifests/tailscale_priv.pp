@@ -9,10 +9,11 @@ class kpi::tailscale_priv (
   Integer $port         = 41642,
   String $tun           = 'tspriv0',
 ) {
-  $state_dir   = '/var/lib/tailscale-priv'
-  $runtime_dir = '/run/tailscale-priv'
-  $socket      = "${runtime_dir}/tailscaled.sock"
-  $unit        = '/etc/systemd/system/tailscaled-priv.service'
+  $state_dir        = '/var/lib/tailscale-priv'
+  $runtime_dir      = '/run/tailscale-priv'
+  $socket           = "${runtime_dir}/tailscaled.sock"
+  $unit             = '/etc/systemd/system/tailscaled-priv.service'
+  $ensure_up_script = '/usr/local/sbin/tailscale-priv-ensure-up'
 
   $unit_content = @("UNIT"/L)
     [Unit]
@@ -37,6 +38,12 @@ class kpi::tailscale_priv (
     BindReadOnlyPaths=/etc/resolv.conf
     NoExecPaths=/usr/bin/systemctl
     ExecStart=/usr/sbin/tailscaled --state=${state_dir}/tailscaled.state --socket=${socket} --port=${port} --tun=${tun}
+    # Self-heal: if the daemon comes up needing login (node key expired, control
+    # plane requested re-auth, fresh state dir), re-run `tailscale up` with the
+    # pre-staged auth key. No-op when BackendState is Running with no AuthURL,
+    # so it's safe to run on every start. `-` prefix swallows failures so a
+    # missing key file or transient localapi error doesn't take the unit down.
+    ExecStartPost=-${ensure_up_script} ${socket} ${auth_key_path} ${hostname}
     ExecStopPost=/usr/sbin/tailscaled --cleanup --socket=${socket}
 
     Restart=on-failure
@@ -53,10 +60,19 @@ class kpi::tailscale_priv (
     WantedBy=multi-user.target
     | UNIT
 
+  file { $ensure_up_script:
+    ensure => file,
+    source => 'puppet:///modules/kpi/tailscale-priv-ensure-up',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+
   file { $unit:
     ensure  => file,
     content => $unit_content,
     mode    => '0644',
+    require => File[$ensure_up_script],
   }
 
   ~> exec { 'systemd reload tailscaled-priv':
