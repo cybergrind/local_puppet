@@ -480,6 +480,11 @@ binds {
     Mod+Shift+Ctrl+K     { move-column-to-monitor-up; }
     Mod+Shift+Ctrl+L     { move-column-to-monitor-right; }
 
+    Mod+Shift+Ctrl+Y     { move-window-to-monitor-left; }
+    Mod+Shift+Ctrl+U     { move-window-to-monitor-down; }
+    Mod+Shift+Ctrl+I     { move-window-to-monitor-up; }
+    Mod+Shift+Ctrl+O     { move-window-to-monitor-right; }
+
     // Move workspace to another monitor (matching Hyprland Mod+Shift+comma/period)
     Mod+Shift+Comma  { move-workspace-to-monitor-left; }
     Mod+Shift+Period { move-workspace-to-monitor-right; }
