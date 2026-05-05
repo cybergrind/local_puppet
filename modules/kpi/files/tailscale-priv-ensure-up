@@ -1,0 +1,48 @@
+#!/bin/sh
+# Re-runs `tailscale up` against the private tailscaled if (and only if) the
+# daemon needs login. Invoked from tailscaled-priv.service ExecStartPost so a
+# `systemctl restart tailscaled-priv` (or a fresh `./run`) self-heals the
+# common failure modes: node key expired, control plane requested re-auth,
+# state dir wiped.
+#
+# Args: <socket> <auth-key-path> <hostname>
+# Idempotent: exits 0 without touching the daemon when BackendState is Running
+# and no AuthURL is pending.
+
+set -u
+
+socket=$1
+auth_key_path=$2
+hostname=$3
+
+# Bootstrap race: puppet may not have staged the key yet on a brand-new host.
+# Bail quietly so the unit start still succeeds; puppet's own `tailscale up`
+# exec covers that path.
+[ -s "$auth_key_path" ] || exit 0
+
+# Wait for localapi to come up after daemon start.
+i=0
+while [ $i -lt 10 ]; do
+    /usr/bin/tailscale --socket="$socket" status >/dev/null 2>&1 && break
+    i=$((i + 1))
+    sleep 1
+done
+
+s=$(/usr/bin/tailscale --socket="$socket" status --json 2>/dev/null || true)
+
+# Healthy = Running backend AND no pending auth URL. Anything else (NeedsLogin,
+# NoState, or Running-but-asked-to-reauth) → run `up`.
+case "$s" in
+    *'"BackendState":"Running"'*)
+        case "$s" in
+            *'"AuthURL":"http'*) ;;  # auth URL pending → fall through to `up`
+            *) exit 0 ;;
+        esac
+        ;;
+esac
+
+exec /usr/bin/tailscale --socket="$socket" up \
+    --auth-key="$(/usr/bin/cat "$auth_key_path")" \
+    --hostname="$hostname" \
+    --accept-dns=false \
+    --ssh
