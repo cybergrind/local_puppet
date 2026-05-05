@@ -7,7 +7,7 @@ class kpi::tailscale_priv (
   String $auth_key_path = '/root/.keys/.ts-auth.key',
   String $hostname      = "${node_hostname}-priv",
   Integer $port         = 41642,
-  String $tun           = 'tspriv0',
+  String $socks5_addr   = 'localhost:1055',
 ) {
   $state_dir        = '/var/lib/tailscale-priv'
   $runtime_dir      = '/run/tailscale-priv'
@@ -23,21 +23,19 @@ class kpi::tailscale_priv (
     After=network-pre.target NetworkManager.service systemd-resolved.service
 
     [Service]
-    # Keep this daemon out of host DNS. The work tailscaled is the sole
-    # owner of /etc/resolv.conf and the resolved link config. In "direct"
-    # DNS mode tailscaled would (a) overwrite /etc/resolv.conf and
-    # (b) shell out to `systemctl restart systemd-resolved`, both of which
-    # clobber the work tailnet's split DNS. We block both paths:
-    #   - BindReadOnlyPaths makes /etc/resolv.conf unwritable in this
-    #     unit's mount namespace.
-    #   - NoExecPaths prevents the daemon from fork-execing systemctl,
-    #     so the resolved-restart path can't fire.
-    # We deliberately leave D-Bus and resolved sockets accessible: Tailscale
-    # SSH spawns user sessions via PAM/logind over D-Bus, and blocking that
-    # silently breaks incoming SSH connections.
-    BindReadOnlyPaths=/etc/resolv.conf
-    NoExecPaths=/usr/bin/systemctl
-    ExecStart=/usr/sbin/tailscaled --state=${state_dir}/tailscaled.state --socket=${socket} --port=${port} --tun=${tun}
+    # Userspace-networking mode: the daemon runs its own gVisor netstack
+    # instead of installing a kernel TUN. This avoids the routing-table-52
+    # collision that two kernel-mode tailscaleds on the same host inflict on
+    # each other (both daemons claim 100.100.100.100/32 in table 52, both
+    # use fwmark 0x80000, last writer wins → host DNS lands at the wrong
+    # daemon → netstack TX path wedges over time). See TS_HANDOFF.md.
+    #
+    # Outbound from host: `tspriv ssh/nc <peer>` via the LocalAPI socket,
+    # or any process via ALL_PROXY=socks5://${socks5_addr}.
+    # Inbound from peers: the netstack proxies all TCP on the tailnet IP to
+    # 127.0.0.1:<port> on this host, so any service bound to localhost is
+    # reachable as <hostname>-priv:<port> from the priv tailnet.
+    ExecStart=/usr/sbin/tailscaled --state=${state_dir}/tailscaled.state --socket=${socket} --port=${port} --tun=userspace-networking --socks5-server=${socks5_addr}
     # Self-heal: if the daemon comes up needing login (node key expired, control
     # plane requested re-auth, fresh state dir), re-run `tailscale up` with the
     # pre-staged auth key. No-op when BackendState is Running with no AuthURL,
@@ -75,15 +73,19 @@ class kpi::tailscale_priv (
     require => File[$ensure_up_script],
   }
 
+  # Use raw `systemctl` execs instead of the `service` resource because
+  # Puppet's systemd provider auto-detection is flaky on some of our hosts
+  # ("Provider systemd is not functional on this host"), even where systemd
+  # is up and running. systemctl shells out the same way either way.
   ~> exec { 'systemd reload tailscaled-priv':
-    command     => '/bin/systemctl daemon-reload',
+    command     => '/bin/systemctl daemon-reload && /bin/systemctl restart tailscaled-priv',
     refreshonly => true,
   }
 
-  ~> service { 'tailscaled-priv':
-    ensure   => running,
-    enable   => true,
-    provider => 'systemd',
+  exec { 'tailscaled-priv enable+start':
+    command => '/bin/systemctl enable --now tailscaled-priv',
+    unless  => '/bin/systemctl is-active tailscaled-priv && /bin/systemctl is-enabled tailscaled-priv',
+    require => [File[$unit], Exec['systemd reload tailscaled-priv']],
   }
 
   # Stage the pre-auth key in root's home so the puppet-driven `up` exec
@@ -138,11 +140,15 @@ class kpi::tailscale_priv (
     onlyif   => "for i in 1 2 3 4 5 6 7 8 9 10; do /usr/bin/tailscale --socket=${socket} ip -4 >/dev/null 2>&1 && exit 0; sleep 1; done; exit 1",
     unless   => "/usr/bin/test -f ${auth_sentinel}",
     provider => shell,
-    require  => Service['tailscaled-priv'],
+    require  => Exec['tailscaled-priv enable+start'],
   }
 
+  # In userspace-networking mode the daemon installs no kernel netfilter
+  # rules, so --netfilter-mode is moot. We drop it from `up`/`set` (kept in
+  # the historical record via the sentinel bump v2 → v3, which forces `set`
+  # to re-fire on hosts that had the old flags applied).
   exec { 'tailscale-priv up':
-    command  => "/usr/bin/tailscale --socket=${socket} up --auth-key=\"$(cat ${auth_key_path})\" --hostname=${hostname} --accept-dns=false --netfilter-mode=off --ssh && /usr/bin/touch ${auth_sentinel}",
+    command  => "/usr/bin/tailscale --socket=${socket} up --auth-key=\"$(cat ${auth_key_path})\" --hostname=${hostname} --accept-dns=false --ssh && /usr/bin/touch ${auth_sentinel}",
     creates  => $auth_sentinel,
     provider => shell,
     require  => [Exec['tailscale-priv mark-authed'], Exec['tailscale-priv stage-auth-key']],
@@ -152,9 +158,9 @@ class kpi::tailscale_priv (
   # auth, so flag changes (e.g. enabling --ssh on a host enrolled before the
   # flag existed) need to be applied via `tailscale set`. Sentinel file makes
   # it idempotent; bump the suffix if you ever change the flags below.
-  $flags_sentinel = "${state_dir}/.puppet-flags-v2"
+  $flags_sentinel = "${state_dir}/.puppet-flags-v3"
   exec { 'tailscale-priv set':
-    command  => "/usr/bin/tailscale --socket=${socket} set --ssh --netfilter-mode=off && /usr/bin/touch ${flags_sentinel}",
+    command  => "/usr/bin/tailscale --socket=${socket} set --ssh && /usr/bin/touch ${flags_sentinel}",
     creates  => $flags_sentinel,
     provider => shell,
     require  => Exec['tailscale-priv up'],
