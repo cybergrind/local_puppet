@@ -81,8 +81,9 @@ class kpi::tailscale_priv (
   }
 
   ~> service { 'tailscaled-priv':
-    ensure => running,
-    enable => true,
+    ensure   => running,
+    enable   => true,
+    provider => 'systemd',
   }
 
   # Stage the pre-auth key in root's home so the puppet-driven `up` exec
@@ -141,7 +142,7 @@ class kpi::tailscale_priv (
   }
 
   exec { 'tailscale-priv up':
-    command  => "/usr/bin/tailscale --socket=${socket} up --auth-key=\"$(cat ${auth_key_path})\" --hostname=${hostname} --accept-dns=false --ssh && /usr/bin/touch ${auth_sentinel}",
+    command  => "/usr/bin/tailscale --socket=${socket} up --auth-key=\"$(cat ${auth_key_path})\" --hostname=${hostname} --accept-dns=false --netfilter-mode=off --ssh && /usr/bin/touch ${auth_sentinel}",
     creates  => $auth_sentinel,
     provider => shell,
     require  => [Exec['tailscale-priv mark-authed'], Exec['tailscale-priv stage-auth-key']],
@@ -151,9 +152,9 @@ class kpi::tailscale_priv (
   # auth, so flag changes (e.g. enabling --ssh on a host enrolled before the
   # flag existed) need to be applied via `tailscale set`. Sentinel file makes
   # it idempotent; bump the suffix if you ever change the flags below.
-  $flags_sentinel = "${state_dir}/.puppet-flags-v1"
+  $flags_sentinel = "${state_dir}/.puppet-flags-v2"
   exec { 'tailscale-priv set':
-    command  => "/usr/bin/tailscale --socket=${socket} set --ssh && /usr/bin/touch ${flags_sentinel}",
+    command  => "/usr/bin/tailscale --socket=${socket} set --ssh --netfilter-mode=off && /usr/bin/touch ${flags_sentinel}",
     creates  => $flags_sentinel,
     provider => shell,
     require  => Exec['tailscale-priv up'],
