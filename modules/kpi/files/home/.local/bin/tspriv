@@ -1,3 +1,39 @@
 #!/bin/sh
 # Talk to the private tailscaled instance instead of the system (work) one.
+
+if [ "$1" = "proxy-help" ]; then
+    cat <<'EOF'
+The priv tailscaled exposes a SOCKS5 proxy at localhost:1055. Use it to
+reach priv peers (e.g. http://zz-priv:8080) from any TCP client. Use
+`socks5h://` so DNS goes through the daemon (resolves *-priv names).
+
+Three ways to plug it in:
+
+  (1) One-off, per command
+      ALL_PROXY=socks5h://localhost:1055 curl http://zz-priv:8080
+      ALL_PROXY=socks5h://localhost:1055 git clone http://zz-priv/repo.git
+
+  (2) Shell wrapper function (add to ~/.zshrc or ~/.bashrc)
+      priv() { ALL_PROXY=socks5h://localhost:1055 "$@"; }
+      # usage:
+      priv curl http://zz-priv:8080
+      priv kubectl --server=https://zz-priv:6443 get pods
+      priv psql -h zz-priv -U app
+
+  (3) Browser via FoxyProxy (Firefox/Chrome extension)
+      Type:    SOCKS5
+      Host:    localhost
+      Port:    1055
+      DNS:     proxy DNS (socks5h)
+      Pattern: *-priv,  *.<priv-tailnet>.ts.net
+      Then http://zz-priv:8080 works in the address bar.
+
+Ad-hoc TCP without env vars:
+      tspriv nc zz-priv 8080      # raw TCP shell
+      tspriv ssh kpi@zz-priv      # SSH
+
+EOF
+    exit 0
+fi
+
 exec /usr/bin/tailscale --socket=/run/tailscale-priv/tailscaled.sock "$@"
