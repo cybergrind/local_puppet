@@ -45,5 +45,4 @@ exec /usr/bin/tailscale --socket="$socket" up \
     --auth-key="$(/usr/bin/cat "$auth_key_path")" \
     --hostname="$hostname" \
     --accept-dns=false \
-    --netfilter-mode=off \
     --ssh
