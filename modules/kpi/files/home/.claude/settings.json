@@ -4,22 +4,6 @@
     "pr": ""
   },
   "includeCoAuthoredBy": false,
-  "enabledPlugins": {
-    "rust-analyzer-lsp@claude-plugins-official": true
-  },
-  "language": "English",
-  "effortLevel": "high",
-  "voice": {
-    "enabled": false,
-    "mode": "hold"
-  },
-  "skipDangerousModePermissionPrompt": true,
-  "skipAutoPermissionPrompt": true,
-  "voiceEnabled": false,
-  "statusLine": {
-    "type": "command",
-    "command": "bash ~/.claude/statusline-command.sh"
-  },
   "hooks": {
     "PreToolUse": [
       {
@@ -32,5 +16,22 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash ~/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "rust-analyzer-lsp@claude-plugins-official": true
+  },
+  "language": "English",
+  "effortLevel": "high",
+  "voice": {
+    "enabled": false,
+    "mode": "hold"
+  },
+  "skipDangerousModePermissionPrompt": true,
+  "skipAutoPermissionPrompt": true,
+  "voiceEnabled": false,
+  "tui": "fullscreen"
 }
