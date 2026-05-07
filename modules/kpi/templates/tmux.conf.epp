@@ -60,6 +60,7 @@ setw -g clock-mode-colour green
 setw -g clock-mode-style 24
 
 set -g history-limit 15000
+set -g extended-keys on
 
 # End of same path
 
