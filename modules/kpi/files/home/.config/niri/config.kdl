@@ -258,17 +258,12 @@ workspace "10" { open-on-output "eDP-1"; }
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
 
-// This line starts waybar, a commonly used bar for Wayland compositors.
-spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE"
+spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start graphical-session.target"
 spawn-at-startup "xwayland-satellite"
-spawn-at-startup "swaybg" "-m" "fill" "-i" "/usr/share/hypr/wall0.png"
-spawn-at-startup "waybar" "-c" "/home/kpi/.config/waybar/config-niri.jsonc"
 spawn-at-startup "copyq" "--start-server"
 spawn-sh-at-startup "/home/kpi/.local/bin/monitor_clipboard_copyq.sh &"
-spawn-at-startup "dunst"
 spawn-sh-at-startup "~/.local/bin/satty_wrapper.py --daemon"
 spawn-sh-at-startup "~/.local/bin/niri_outputs_watcher.py"
-spawn-sh-at-startup "swayidle -w timeout 300 'swaylock -f' timeout 600 'niri msg action power-off-monitors' before-sleep 'swaylock -f'"
 // spawn-at-startup "flameshot"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
@@ -414,7 +409,7 @@ binds {
     Ctrl+Alt+Delete { quit; }
 
     // Lock screen
-    Super+Alt+L { spawn "swaylock"; }
+    Super+Alt+L { spawn "loginctl" "lock-session"; }
 
     /////////////////////
     // Media / hardware keys (matching Hyprland)
