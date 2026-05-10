@@ -158,6 +158,10 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
         user => $user,
       }
 
+      File[$home] -> kpi::home::glimpse {"${user}-glimpse":
+        user => $user,
+      }
+
       exec { 'enable-linger':
         command  => "/bin/loginctl enable-linger ${user}",
         provider => shell,
@@ -275,6 +279,23 @@ define kpi::home::hyprland($user){
     content => epp('kpi/hyprland.conf', {}),
     owner => $user,
     require => File["${kpi::home::home_dir}"]
+  }
+}
+
+define kpi::home::glimpse ($user) {
+  $uid = $user_uid
+  $env = ["XDG_RUNTIME_DIR=/run/user/${uid}"]
+  $services = ['glimpse-shell', 'glimpse-idle', 'glimpse-lock', 'glimpse-sunset', 'glimpse-wallpaper']
+
+  $services.each |String $svc| {
+    exec { "${svc} enable":
+      user        => $user,
+      command     => "/bin/systemctl --user enable ${svc}.service",
+      environment => $env,
+      provider    => shell,
+      unless      => "/bin/systemctl --user is-enabled ${svc}.service",
+      require     => Kpi::Install['glimpse-desktop-bin'],
+    }
   }
 }
 

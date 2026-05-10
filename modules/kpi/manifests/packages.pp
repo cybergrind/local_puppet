@@ -86,11 +86,14 @@ class kpi::packages::niri () {
   $pkgs = [
     'niri', 'xwayland-satellite',
     'satty',
-    'swaybg', 'swaylock', 'swayidle',
     'xdg-desktop-portal-gnome',
     'xdg-desktop-portal-wlr',
   ]
   kpi::install { $pkgs: }
+}
+
+class kpi::packages::glimpse () {
+  kpi::install { 'glimpse-desktop-bin': }
 }
 class kpi::packages::sway () {
   $pkgs_sway = [
@@ -128,6 +131,7 @@ class kpi::packages () {
     # class {'kpi::packages::sway':}
     class {'kpi::packages::hyprland':}
     class {'kpi::packages::niri':}
+    class {'kpi::packages::glimpse':}
   } elsif $kpi::os::is_windows {
     class {'kpi::packages::windows':}
   } else {
