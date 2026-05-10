@@ -1,5 +1,6 @@
 class kpi::system {
-  case $::os['name'] {
+  include kpi::os
+  case $kpi::os::family {
     'Archlinux': {
       file { '/etc/X11/xorg.conf.d/50-synaptics.conf':
         source => 'puppet:///modules/kpi/50-synaptics.conf',

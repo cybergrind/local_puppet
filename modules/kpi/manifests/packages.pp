@@ -1,5 +1,6 @@
 class kpi::packages::system() {
-  if $facts['os']['family'] == 'Archlinux' {
+  include kpi::os
+  if $kpi::os::is_arch {
     class {'kpi::packages::system::linux':}
   } else {
     info("no system for macos")
@@ -121,12 +122,13 @@ class kpi::packages::windows () {
 }
 
 class kpi::packages () {
-  if $facts['os']['family'] == 'Archlinux' {
+  include kpi::os
+  if $kpi::os::is_arch {
     class {'kpi::packages::linux':}
     # class {'kpi::packages::sway':}
     class {'kpi::packages::hyprland':}
     class {'kpi::packages::niri':}
-  } elsif $facts['os']['family'] == 'windows' {
+  } elsif $kpi::os::is_windows {
     class {'kpi::packages::windows':}
   } else {
     class {'kpi::packages::macos':}
@@ -233,7 +235,8 @@ class kpi::packages::linux () {
 }
 
 class kpi::packages::optional () {
-  case $::os['name'] {
+  include kpi::os
+  case $kpi::os::family {
     'Archlinux': {
       $pkgs = [
         'direnv',
