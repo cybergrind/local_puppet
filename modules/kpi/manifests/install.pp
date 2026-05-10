@@ -76,13 +76,14 @@ define kpi::install::windows ($bin=undef) {
 }
 
 define kpi::install ($bin=undef, $tap=false, $cask=false) {
-  if $facts['os']['family'] == 'Darwin' {
+  include kpi::os
+  if $kpi::os::is_darwin {
     kpi::install::macos{$name:
       bin => $bin,
       tap => $tap,
       cask => $cask,
     }
-  } elsif $facts['os']['family'] == 'windows' {
+  } elsif $kpi::os::is_windows {
     kpi::install::windows{$name:
       bin => $bin,
     }

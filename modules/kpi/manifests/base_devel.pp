@@ -1,4 +1,5 @@
 class kpi::base_devel () {
+  include kpi::os
   include kpi::packages
   include kpi::packages::system
   include kpi::packages::optional
@@ -9,7 +10,7 @@ class kpi::base_devel () {
 
   # $scala = [ 'jdk', 'scala', 'scala-docs', 'sbt', 'java-jline' ]
   # kpi::install { $scala: }
-  case $::os['name'] {
+  case $kpi::os::family {
     'Archlinux': {
       $other = [ 'go', 'nodejs', 'npm', 'yarn', 'jdk']
       kpi::install { $other: }

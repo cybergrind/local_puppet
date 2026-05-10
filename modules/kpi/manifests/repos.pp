@@ -1,5 +1,6 @@
 class kpi::repos () {
-  case $::os['name'] {
+  include kpi::os
+  case $kpi::os::family {
     'Archlinux': {
       # file { '/etc/pacman.conf':
       #   source => 'puppet:///modules/kpi/pacman.conf',

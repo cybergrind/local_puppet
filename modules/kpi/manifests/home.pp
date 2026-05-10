@@ -23,11 +23,12 @@ define kpi::home::rfile ($user, $source) {
 }
 
 class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
+  include kpi::os
 
-  if $facts['os']['family'] == 'Archinux' {
+  if $kpi::os::is_arch {
     $managehome = true
     $groups = [ 'wheel', 'audio', 'docker' ]
-  } elsif $facts['os']['family'] == 'windows' {
+  } elsif $kpi::os::is_windows {
     # Windows users are managed by the OS
     $managehome = false
     $groups = []
@@ -49,7 +50,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
 
   $home = $kpi::home::home_dir
 
-  if $facts['os']['family'] == 'windows' {
+  if $kpi::os::is_windows {
     # On Windows, deploy config files to AppData and user home
     file { "${home}/.config":
       ensure             => directory,
@@ -123,7 +124,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
   # }
 
   # Linux/macOS specific operations
-  unless $facts['os']['family'] == 'windows' {
+  unless $kpi::os::is_windows {
     kpi::home_repo {"${user}-emacs": user=>$user, dir=>'.emacs.d', repo=>'cybergrind/emacs_config'}
     kpi::home_repo {"${user}-zsh": user=>$user, dir=>'.oh-my-zsh', repo=>'robbyrussell/oh-my-zsh'}
     kpi::home_repo {"${user}-fzf": user=>$user, dir=>'.fzf', repo=>'junegunn/fzf'}
@@ -140,19 +141,19 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
       user => $user,
     }
 
-    if $facts['os']['family'] == 'Archlinux' and $sshj_spec != undef {
+    if $kpi::os::is_arch and $sshj_spec != undef {
       File[$home] -> kpi::home::sshj {"${user}-sshj":
         user => $user,
       }
     }
 
-    if $facts['os']['family'] == 'Archlinux' and $node_hostname != undef {
+    if $kpi::os::is_arch and $node_hostname != undef {
       File[$home] -> class { 'kpi::tailscale_priv':
         user_key_path => "${home}/.keys/.ts-auth.key",
       }
     }
 
-    if $facts['os']['family'] == 'Archlinux' {
+    if $kpi::os::is_arch {
       File[$home] -> kpi::home::hyprland {"${user}-hyprland":
         user => $user,
       }
@@ -181,8 +182,8 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
     }
   }
 
-  unless $facts['os']['family'] == 'windows' {
-    if $facts['os']['family'] == 'ArchLinux' and $hiDPI {
+  unless $kpi::os::is_windows {
+    if $kpi::os::is_arch and $hiDPI {
       kpi::home::hi_dpi {"${user}-hidpi":
         user => $user,
       }
@@ -201,7 +202,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
     # }
 
 
-    if $facts['os']['family'] == 'ArchLinux' {
+    if $kpi::os::is_arch {
       file { "${kpi::home::home_dir}/.config/chrome-flags.conf":
         ensure  => file,
         content => epp('kpi/chromium-flags.conf.epp', {}),
@@ -288,7 +289,7 @@ define kpi::home_symlinks($user){
     mode   => '0600',
   }
 
-  if $keys and $facts['os']['family'] != 'windows' {
+  if $keys and !$kpi::os::is_windows {
     kpi::home::keys_links {$user:}
   }
 
