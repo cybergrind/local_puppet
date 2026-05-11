@@ -42,6 +42,14 @@ class kpi::system {
       -> file { '/etc/systemd/user.conf.d/50-shutdown-timeout.conf':
         content => $shutdown_timeout,
       }
+
+      file { '/etc/systemd/system/lock-before-sleep.service':
+        source => 'puppet:///modules/kpi/lock-before-sleep.service',
+      }
+      ~> exec { 'enable lock-before-sleep':
+        command => '/bin/systemctl enable lock-before-sleep.service',
+        unless  => '/bin/systemctl is-enabled lock-before-sleep.service',
+      }
     }
   }
 }

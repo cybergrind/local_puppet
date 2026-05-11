@@ -1,0 +1,10 @@
+[Unit]
+Description=Lock all sessions before sleep
+Before=sleep.target suspend.target hibernate.target suspend-then-hibernate.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/loginctl lock-sessions
+
+[Install]
+WantedBy=sleep.target suspend.target hibernate.target suspend-then-hibernate.target
