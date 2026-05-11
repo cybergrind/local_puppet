@@ -18,9 +18,9 @@ display = "workspaces"
 appearance = "labels"
 
 [applets.notifications]
-# label = "{count}"
+label = "{count}"
 tooltip = "{count} notifications"
-badge_style = "count"
+badge_style = "none"
 popup_timeout_ms = 2500
 popup_visible_limit = 1
 popup_position = "top_right"
