@@ -15,13 +15,13 @@ city_name = "Minsk"
 [applets.workspaces-pager]
 extends = "pager"
 display = "workspaces"
-appearance = "numbers"
+appearance = "labels"
 
 [applets.notifications]
 # label = "{count}"
 tooltip = "{count} notifications"
 badge_style = "count"
-popup_timeout_ms = 1500
+popup_timeout_ms = 2500
 popup_visible_limit = 1
 popup_position = "top_right"
 popup_margin_x = 0

@@ -285,7 +285,7 @@ define kpi::home::hyprland($user){
 define kpi::home::glimpse ($user) {
   $uid = $user_uid
   $env = ["XDG_RUNTIME_DIR=/run/user/${uid}"]
-  $services = ['glimpse-shell', 'glimpse-idle', 'glimpse-lock', 'glimpse-sunset', 'glimpse-wallpaper']
+  $services = ['glimpse-shell', 'glimpse-idle', 'glimpse-lock', 'glimpse-wallpaper']
 
   $services.each |String $svc| {
     exec { "${svc} enable":
