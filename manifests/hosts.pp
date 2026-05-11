@@ -3,7 +3,6 @@ $user_uid = 1000
 $hiDPI = false
 
 $use_wayland = true
-$use_ksnip = false
 
 $node_hostname = undef
 $skip_user = false
