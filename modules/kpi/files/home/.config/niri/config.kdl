@@ -409,7 +409,7 @@ binds {
     Ctrl+Alt+Delete { quit; }
 
     // Lock screen
-    Super+Alt+L { spawn "loginctl" "lock-session"; }
+    Super+Ctrl+L { spawn "loginctl" "lock-session"; }
 
     /////////////////////
     // Media / hardware keys (matching Hyprland)
