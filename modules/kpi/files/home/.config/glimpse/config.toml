@@ -26,3 +26,19 @@ popup_visible_limit = 1
 popup_position = "top_right"
 popup_margin_x = 0
 popup_margin_y = 0
+
+[idle]
+enabled = true
+respect_inhibitors = true
+
+[idle.profiles.ac]
+listeners = [
+  { timeout = 300, on_idle = "loginctl lock-session" },
+  { timeout = 600, on_idle = "niri msg action power-off-monitors" },
+]
+
+[idle.profiles.battery]
+listeners = [
+  { timeout = 300, on_idle = "loginctl lock-session" },
+  { timeout = 600, on_idle = "niri msg action power-off-monitors" },
+]
