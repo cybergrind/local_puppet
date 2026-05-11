@@ -219,7 +219,6 @@ class kpi::packages::linux () {
     'tfswitch-bin',
     # X related
     'xsel', 'flameshot', 'copyq',
-    'dunst', # required for flameshot
     'network-manager-applet',
     'freerdp', 'jq', 'yq',
     'pcmanfm', 'k9s',
