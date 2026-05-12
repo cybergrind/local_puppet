@@ -4,9 +4,9 @@ theme_mode = "auto"
 [[panels]]
 position = "top"
 size = 24
-left = ["workspaces-pager", "pager", "mpris"]
+left = ["workspaces-pager", "pager"]
 center = ["weather", "notifications"]
-right = ["tray", "removable", "clipboard", "keyboard", "privacy", "bluetooth", "network", "brightness", "audio", "battery", "clock"]
+right = ["tray", "removable", "keyboard", "privacy", "bluetooth", "network", "brightness", "audio", "battery", "clock"]
 
 
 [applets.weather]
@@ -15,7 +15,9 @@ city_name = "Minsk"
 [applets.workspaces-pager]
 extends = "pager"
 display = "workspaces"
-appearance = "labels"
+appearance = "numbers"
+active_workspace_label = "{name}"
+inactive_workspace_label = "{name}"
 
 [applets.notifications]
 label = "{count}"
