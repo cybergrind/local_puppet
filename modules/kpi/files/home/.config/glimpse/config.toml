@@ -6,7 +6,7 @@ position = "top"
 size = 24
 left = ["workspaces-pager", "pager"]
 center = ["weather", "notifications"]
-right = ["tray", "removable", "keyboard", "privacy", "bluetooth", "network", "brightness", "audio", "battery", "clock"]
+right = ["idle", "tray", "removable", "keyboard", "privacy", "bluetooth", "network", "brightness", "audio", "battery", "clock"]
 
 
 [applets.weather]
