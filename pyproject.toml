@@ -4,7 +4,7 @@ version = '0.1.0'
 description = 'Stub project'
 authors = [{ name = 'github.com/cybergrind' }]
 license = { text = 'Apache-2.0' }
-requires-python = '>=3.13'
+requires-python = '>=3.14'
 dependencies = [
   'ipython',
 ]
@@ -15,7 +15,7 @@ dev = ['ruff', 'pre-commit>=4.5.1', 'uv>=0.11.1', 'pyrefly', 'pytest']
 
 [tool.ruff]
 line-length = 120
-target-version = 'py313'
+target-version = 'py314'
 indent-width = 4
 exclude = ['.venv', '.git']
 
