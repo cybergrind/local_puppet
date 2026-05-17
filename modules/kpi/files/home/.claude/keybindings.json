@@ -5,8 +5,8 @@
     {
       "context": "Scroll",
       "bindings": {
-        "ctrl+f": "scroll:fullPageDown",
-        "ctrl+b": "scroll:fullPageUp"
+        "ctrl+u": "scroll:halfPageUp",
+        "ctrl+d": "scroll:halfPageDown"
       }
     }
   ]

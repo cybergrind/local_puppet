@@ -12,6 +12,20 @@
           {
             "type": "command",
             "command": "rtk hook claude"
+          },
+          {
+            "type": "command",
+            "command": "/home/kpi/.claude/hooks/bash_sleep_guard.py"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/kpi/.claude/hooks/skill_router.py"
           }
         ]
       }
