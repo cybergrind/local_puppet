@@ -252,7 +252,7 @@ def detect_render_device(connected: set[str]) -> str | None:
     return str(card_to_render[external_cards.pop()])
 
 
-def logical_width(info: 'OutputInfo') -> int:
+def logical_width(info: OutputInfo) -> int:
     """Logical (scaled) width niri reports for a connected output. Niri
     auto-rearranges all outputs when any explicit position overlaps another,
     so neighbour positions must use the actual logical width — not a
