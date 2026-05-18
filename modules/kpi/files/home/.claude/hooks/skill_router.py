@@ -82,7 +82,7 @@ TRIGGERS: list[tuple[re.Pattern[str], str, str]] = [
     ),
     (
         re.compile(r'\bprune\s+redundant\s+tests\b|\bfire\s+pruner\b|\baudit\s+test\s+redundancy\b', re.I),
-        'auditing-test-redundancy',
+        '/audit-test-redundancy',
         'prune redundant tests',
     ),
     (
@@ -131,14 +131,14 @@ TRIGGERS: list[tuple[re.Pattern[str], str, str]] = [
 def _scan_skill_dir(skills_root: Path) -> set[str]:
     try:
         return {p.name for p in skills_root.iterdir() if p.is_dir()}
-    except OSError, FileNotFoundError:
+    except (OSError, FileNotFoundError):
         return set()
 
 
 def _enabled_plugin_paths() -> list[Path]:
     try:
         data = json.loads(PLUGINS_INSTALLED.read_text())
-    except OSError, json.JSONDecodeError:
+    except (OSError, json.JSONDecodeError):
         return []
     out: list[Path] = []
     for entries in (data.get('plugins') or {}).values():
@@ -164,7 +164,7 @@ def available_skills(cwd: str | None) -> set[str]:
 def main() -> int:
     try:
         payload = json.load(sys.stdin)
-    except json.JSONDecodeError, ValueError:
+    except (json.JSONDecodeError, ValueError):
         return 0  # silently no-op rather than block
     prompt = payload.get('prompt') or ''
     if not isinstance(prompt, str):
@@ -177,7 +177,11 @@ def main() -> int:
     matched: list[tuple[str, str]] = []
     seen: set[str] = set()
     for pattern, skill, label in TRIGGERS:
-        if skill in seen or skill not in skills:
+        if skill in seen:
+            continue
+        # Entries that start with '/' route to a slash command, not a Skill —
+        # skip the available-skills membership check for those.
+        if not skill.startswith('/') and skill not in skills:
             continue
         if pattern.search(head):
             matched.append((skill, label))
@@ -187,12 +191,15 @@ def main() -> int:
     lines = [
         '<system-reminder>',
         'Skill-router (UserPromptSubmit hook) matched the following trigger(s) in your prompt.',
-        'Invoke the Skill tool with each named skill BEFORE any other tool call (Read, Bash, Edit, Agent, TaskCreate).',
+        'Invoke the Skill tool with each named skill (or run the named slash command) BEFORE any other tool call (Read, Bash, Edit, Agent, TaskCreate).',
         'Audit context: across 108 recent Android sessions, ~85 loaded zero skills despite exact trigger matches.',
         '',
     ]
     for skill, label in matched:
-        lines.append(f'- trigger {label!r} -> Skill: {skill}')
+        if skill.startswith('/'):
+            lines.append(f'- trigger {label!r} -> run slash command: {skill}')
+        else:
+            lines.append(f'- trigger {label!r} -> Skill: {skill}')
     lines.append('</system-reminder>')
     sys.stdout.write('\n'.join(lines) + '\n')
     return 0
