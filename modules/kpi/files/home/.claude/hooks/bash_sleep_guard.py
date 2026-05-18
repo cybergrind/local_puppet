@@ -32,7 +32,7 @@ LONG_SLEEP_PATTERN = re.compile(r'\bsleep\s+(\d{3,}|[2-9]\d\d)\b')
 def main() -> int:
     try:
         payload = json.load(sys.stdin)
-    except json.JSONDecodeError, ValueError:
+    except (json.JSONDecodeError, ValueError):
         return 0
     if payload.get('tool_name') != 'Bash':
         return 0
