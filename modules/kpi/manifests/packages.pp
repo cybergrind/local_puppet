@@ -208,6 +208,10 @@ class kpi::packages::linux () {
     'otf-openmoji', 'ttf-joypixels', 'ttf-twemoji-color',
     'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev',
     'xorg-xrdb', 'xorg-xev',
+    # GPU drivers (AMD iGPU + 32-bit for Steam/games)
+    'mesa', 'lib32-mesa',
+    'vulkan-radeon', 'lib32-vulkan-radeon',
+    'libva-mesa-driver',
     'xterm', 'xorg-xrandr', 'arandr', 'xorg-xmodmap',
     'pkgfile', 'kitty',
     'awesome', 'vicious',
