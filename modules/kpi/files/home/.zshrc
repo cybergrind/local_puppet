@@ -224,8 +224,8 @@ alias uvt='uv run pytest'
 alias em='emacs -nw'
 alias tmx='new_tmux_session'
 
-alias lsg='ls -lah | ag -i $1'
-alias pag='ps aux | ag -i'
+alias lsg='ls -lah | rg -i $1'
+alias pag='ps aux | rg -i'
 alias rl='readlink -f'
 
 alias hz1="mk_ssh_screen hz1 gitlab"
@@ -413,8 +413,8 @@ setopt HIST_IGNORE_ALL_DUPS      # delete old recorded entry if new entry is a d
 
 if [ -n "$HAS_FZF" ]; then
     export FZF_DEFAULT_OPTS='--height 80% --border'
-    export FZF_DEFAULT_COMMAND='ag --hidden --silent --ignore .git -f -g ""'
-    export FZF_CTRL_T_COMMAND='ag --hidden --silent --ignore .git -f -g ""'
+    export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git"'
+    export FZF_CTRL_T_COMMAND='rg --files --hidden --follow --glob "!.git"'
     source <(fzf --zsh)
 else
 	echo "NO FZF"
