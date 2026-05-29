@@ -66,6 +66,8 @@ keymap("n", "<Esc>", "<Esc>:w<CR>")
 keymap("n", "<M-i>", ":only<CR>:vsp<CR>")
 keymap("n", "<C-x>b", ":Buffers<CR>")
 keymap("n", "<C-x><C-b>", ":Buffers<CR>")
+keymap("n", "<leader>b", ":Buffers<CR>")
+keymap("n", "<C-x>o", "<C-w><C-w>")
 keymap("n", "<leader>.", "<C-w><C-w>")
 keymap({"n", "v"}, "<leader><leader>R", ":e!<CR>")
 keymap("n", '"p', ':reg <bar> exec \'normal! "\'.input(\'>\').\'p\'<CR>')
@@ -95,6 +97,8 @@ keymap("n", "<Space>l", "<C-w>l")
 keymap("n", "<Space>j", "<C-w>j")
 keymap("n", "<Space>k", "<C-w>k")
 keymap("n", "ZX", ":qa<CR>")
+keymap("n", "ZZ", ":qa!<CR>")
+keymap("n", "<C-x><C-c>", ":qa!<CR>")
 
 -- Leader number mappings
 for i = 1, 9 do

@@ -98,6 +98,11 @@ return {
 		'mtscout6/vim-tagbar-css',
 	},
 
+	-- puppet
+	{
+		'rodjek/vim-puppet',
+	},
+
 	-- colors
 	{
 		'damage220/solas.vim',
