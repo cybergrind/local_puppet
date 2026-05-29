@@ -1,3 +1,15 @@
+local function open_file_browser()
+	require('telescope').extensions.file_browser.file_browser({
+		path = '%:p:h',
+		select_buffer = true,
+		hidden = true,
+		grouped = true,
+		respect_gitignore = false,
+		no_ignore = true,
+		follow_symlinks = true,
+	})
+end
+
 return {
 	{
 		'nvim-telescope/telescope.nvim',
@@ -9,15 +21,12 @@ return {
 		keys = {
 			{
 				'<leader>f',
-				function()
-					require('telescope').extensions.file_browser.file_browser({
-						path = '%:p:h',
-						select_buffer = true,
-						hidden = true,
-						grouped = true,
-						respect_gitignore = false,
-					})
-				end,
+				open_file_browser,
+				desc = 'File browser (C-x C-f style)',
+			},
+			{
+				'<C-x><C-f>',
+				open_file_browser,
 				desc = 'File browser (C-x C-f style)',
 			},
 		},
@@ -42,6 +51,8 @@ return {
 						hijack_netrw = false,
 						grouped = true,
 						hidden = true,
+						no_ignore = true,
+						follow_symlinks = true,
 						mappings = {
 							['i'] = {
 								['<BS>'] = backspace_or_parent,
