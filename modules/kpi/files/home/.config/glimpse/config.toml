@@ -1,6 +1,19 @@
 theme = "cyber"
 theme_mode = "auto"
 
+[calendar]
+poll_interval = 600
+
+# Secret iCal feed: the URL is NOT stored here. `calendars/` is a symlink to
+# ~/.keys/glimpse/calendars (deployed by kpi::home::glimpse), and personal.url
+# holds the raw provider URL outside the repo. See docs/calendar.md (sidecars).
+[[calendar.sources]]
+id = "personal"
+type = "ical"
+name = "Personal"
+uri = "file:///home/kpi/.config/glimpse/calendars/personal.url"
+color = "#4285f4"
+
 [[panels]]
 position = "top"
 size = 24
