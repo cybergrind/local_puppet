@@ -98,6 +98,9 @@ keymap("n", "<Space>j", "<C-w>j")
 keymap("n", "<Space>k", "<C-w>k")
 keymap("n", "ZX", ":qa<CR>")
 keymap("n", "ZZ", ":qa!<CR>")
+-- Map <C-c> to itself so it is no longer treated as a bare interrupt while a
+-- chord is pending; this lets the <C-x><C-c> mapping below actually fire.
+keymap("n", "<C-c>", "<C-c>")
 keymap("n", "<C-x><C-c>", ":qa!<CR>")
 
 -- Leader number mappings
