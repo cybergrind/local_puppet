@@ -15,7 +15,7 @@ color = "#4285f4"
 
 [[panels]]
 position = "top"
-size = 24
+size = 16
 left = ["workspaces-pager", "pager"]
 center = ["weather", "notifications"]
 right = ["idle", "tray", "removable", "keyboard", "privacy", "bluetooth", "network", "brightness", "audio", "battery", "clock"]
