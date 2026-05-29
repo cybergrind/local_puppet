@@ -1,6 +1,28 @@
+/* Compact 16px panel.
+ *
+ * `size = 16` in config.toml only calls set_height_request(16), which is a
+ * MINIMUM. GTK grows the panel to its tallest child, so base.css floors keep
+ * it at ~24px. Crush those floors here (this file loads at PRIORITY_USER + 2,
+ * the final say in the cascade):
+ *   - .panel min-height: 2.2em            (base.css, literal -> override directly)
+ *   - .applet/.panel-indicator min-height (base.css, via --indicator-size 22px)
+ *   - indicator vertical padding          (via --indicator-padding-y 4px)
+ *   - icon min size                       (via --indicator-icon-size 22px)
+ */
+:root {
+    --panel-padding-y: 0;
+    --indicator-size: 16px;
+    --indicator-icon-size: 14px;
+    --indicator-padding-y: 0;
+}
+
+.panel {
+    min-height: 16px;
+}
+
 .pager-num {
-    min-width: 22px;
-    min-height: 22px;
+    min-width: 16px;
+    min-height: 16px;
     margin: 0 var(--space-1);
     padding: 0 2px 0 2px;
     border-radius: var(--radius-pill);
@@ -13,8 +35,8 @@
 }
 
 .pager-num label {
-    min-width: 22px;
-    min-height: 22px;
+    min-width: 16px;
+    min-height: 16px;
     font-weight: 500;
     font-size: 0.78rem;
     font-variant-numeric: tabular-nums;
