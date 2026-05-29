@@ -4,6 +4,12 @@
     "pr": ""
   },
   "includeCoAuthoredBy": false,
+  "permissions": {
+    "deny": [
+      "Bash(ocli release)",
+      "Bash(ocli release *)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {

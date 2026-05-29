@@ -287,6 +287,13 @@ define kpi::home::glimpse ($user) {
   $env = ["XDG_RUNTIME_DIR=/run/user/${uid}"]
   $services = ['glimpse-shell', 'glimpse-idle', 'glimpse-lock', 'glimpse-wallpaper']
 
+  # Secret calendar sidecars live in ~/.keys/glimpse/calendars (never committed);
+  # expose them to glimpse via a symlink the committed config.toml references.
+  kpi::home_link { "${user}:.config/glimpse/calendars":
+    target  => '.keys/glimpse/calendars',
+    require => File["${kpi::home::home_dir}"],
+  }
+
   $services.each |String $svc| {
     exec { "${svc} enable":
       user        => $user,
