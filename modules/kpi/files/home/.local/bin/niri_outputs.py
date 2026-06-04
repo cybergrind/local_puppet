@@ -47,6 +47,14 @@ DP = 'DP-5'
 LAPTOP = 'eDP-1'
 WORKSPACE_COUNT = 10
 
+# DP-5 is a 4K LG panel, but its EDID also exposes a native 2560x1440 mode.
+# Driving it at 1440p @ scale 1.0 (instead of the preferred 4K @ auto scale
+# 1.5) sends a real 1440p signal that the monitor's internal scaler stretches
+# to the full panel. Games then see a true 2560x1440 display and allocate VRAM
+# for that, rather than detecting a 4K output behind fractional scaling.
+DP_MODE = '2560x1440'
+DP_SCALE = '1.0'
+
 OUTPUTS_REGION_RE = re.compile(
     r'(// niri_outputs\.py: OUTPUTS START\n).*?(^// niri_outputs\.py: OUTPUTS END)',
     re.DOTALL | re.MULTILINE,
@@ -125,6 +133,15 @@ def main() -> int:
     return 0
 
 
+def dp_output_block(position: str = '') -> str:
+    """DP-5 output block forcing the native 1440p mode at scale 1.0 (see
+    DP_MODE). `position` is an optional extra statement, e.g. 'position x=N y=0;'."""
+    inner = f'mode "{DP_MODE}"; scale {DP_SCALE};'
+    if position:
+        inner = f'{inner} {position}'
+    return f'output "{DP}" {{ {inner} }}'
+
+
 def pick_profile(connected: set[str], outputs: dict[str, OutputInfo]) -> Profile:
     has_hdmi = HDMI in connected
     has_dp = DP in connected
@@ -134,7 +151,7 @@ def pick_profile(connected: set[str], outputs: dict[str, OutputInfo]) -> Profile
             name=f'{HDMI} + {DP}',
             output_blocks=[
                 f'output "{HDMI}" {{ position x=0 y=0; }}',
-                f'output "{DP}" {{ position x={hdmi_width} y=0; }}',
+                dp_output_block(f'position x={hdmi_width} y=0;'),
             ],
             workspaces=[*[(str(i), DP) for i in range(1, WORKSPACE_COUNT)], (str(WORKSPACE_COUNT), HDMI)],
             screenshot_primary=DP,
@@ -151,7 +168,7 @@ def pick_profile(connected: set[str], outputs: dict[str, OutputInfo]) -> Profile
     if has_dp:
         return Profile(
             name=f'{DP} only',
-            output_blocks=[],
+            output_blocks=[dp_output_block()],
             workspaces=default_workspaces(DP),
             screenshot_primary=DP,
             screenshot_secondary=LAPTOP,
