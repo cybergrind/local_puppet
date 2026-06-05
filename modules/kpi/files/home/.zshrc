@@ -215,6 +215,12 @@ function _new_tmux_session {
 }
 compctl -K _new_tmux_session new_tmux_session
 
+function efs {
+	cwd_full=$(pwd)
+	encfs $cwd_full/$1 $cwd_full/$2
+}
+
+
 # UV related
 alias upc='uv run pre-commit run'
 alias upca='uv run pre-commit run -a'
