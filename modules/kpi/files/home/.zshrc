@@ -217,7 +217,12 @@ compctl -K _new_tmux_session new_tmux_session
 
 function efs {
 	cwd_full=$(pwd)
-	encfs $cwd_full/$1 $cwd_full/$2
+    case $# in
+        1)
+            encfs $cwd_full/$1 ;;
+        2)
+            encfs $cwd_full/$1 $cwd_full/$2 ;;
+    esac;
 }
 
 
