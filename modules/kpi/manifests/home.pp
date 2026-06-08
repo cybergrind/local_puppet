@@ -162,6 +162,10 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
         user => $user,
       }
 
+      File[$home] -> kpi::home::disable_localsearch {"${user}-localsearch":
+        user => $user,
+      }
+
       exec { 'enable-linger':
         command  => "/bin/loginctl enable-linger ${user}",
         provider => shell,
@@ -270,6 +274,47 @@ define kpi::home::sshj($user){
     command => "/bin/systemctl --user start sshj",
     creates => "/sys/fs/cgroup/user.slice/user-${uid}.slice/user@${uid}.service/app.slice/sshj.service/",
     provider => shell,
+  }
+}
+
+# localsearch (the renamed tracker-miners) is a hard dependency of nautilus, which
+# is pulled in by xdg-desktop-portal-gnome -> niri. We keep the portal but kill the
+# filesystem indexer: every localsearch D-Bus service delegates through
+# SystemdService=localsearch-*.service, so masking the user units blocks both the
+# XDG autostart and on-demand D-Bus activation.
+define kpi::home::disable_localsearch($user){
+  $uid = $user_uid
+  $units = ['localsearch-3.service', 'localsearch-control-3.service', 'localsearch-writeback-3.service']
+
+  file { "${kpi::home::home_dir}/.config/systemd/user":
+    ensure => directory,
+    owner  => $user,
+  }
+
+  $units.each |String $unit| {
+    file { "${kpi::home::home_dir}/.config/systemd/user/${unit}":
+      ensure  => link,
+      target  => '/dev/null',
+      owner   => $user,
+      require => File["${kpi::home::home_dir}/.config/systemd/user"],
+      notify  => Exec['localsearch daemon-reload'],
+    }
+  }
+
+  exec { 'localsearch daemon-reload':
+    user        => $user,
+    command     => '/bin/systemctl --user daemon-reload',
+    environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
+    provider    => shell,
+    refreshonly => true,
+  }
+  # Stop any indexer already running this session (stop still works on a masked unit).
+  -> exec { 'localsearch stop':
+    user        => $user,
+    command     => "/bin/systemctl --user stop ${join($units, ' ')}",
+    environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
+    provider    => shell,
+    onlyif      => '/bin/systemctl --user is-active --quiet localsearch-3.service',
   }
 }
 
