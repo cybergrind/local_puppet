@@ -1,0 +1,5 @@
+# Start every playback muted (software volume at 0).
+# Use mplayer's own software mixer so the system mixer is left untouched,
+# then press 'm' to toggle mute or '*' / '0' to raise volume when wanted.
+softvol=yes
+volume=0
