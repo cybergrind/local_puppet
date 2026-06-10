@@ -1,0 +1,292 @@
+#!/usr/bin/env -S uv run -q --script
+# /// script
+# requires-python = ">=3.14"
+# dependencies = [
+#   "textual>=1.0",
+# ]
+# ///
+"""TUI to pick a Tailscale exit node, ordered by distance, with estimated latency.
+
+Distance is computed from your preferred DERP region's coordinates (geoip would
+report the active exit node's location, the DERP relay choice is unaffected).
+Latency per node is estimated from one `tailscale netcheck`: your measured RTT
+to the DERP region nearest to that node. Mullvad nodes do not answer direct
+pings unless selected, so this is the best cheap signal available.
+
+Keys: enter=set exit node, x=clear, s=use suggested, a=all nodes/per-city,
+d/l=sort by distance/latency, /=filter, r=refresh, q=quit.
+Run with --dump for a plain-text listing instead of the TUI.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import json
+import math
+import re
+import sys
+from dataclasses import dataclass
+from typing import ClassVar
+
+from textual.app import App, ComposeResult
+from textual.binding import Binding
+from textual.widgets import DataTable, Footer, Input
+
+
+SUGGEST_RE = re.compile(r'Suggested exit node: (\S+?)\.?\s')
+
+
+@dataclass
+class Node:
+    name: str  # DNS name without trailing dot, used for `tailscale set`
+    host: str
+    country: str
+    city: str
+    lat: float | None
+    lon: float | None
+    priority: int
+    online: bool
+    is_exit: bool
+    distance: float | None = None
+    est_ms: float | None = None
+
+
+async def tailscale(*args: str) -> tuple[int, str, str]:
+    proc = await asyncio.create_subprocess_exec(
+        'tailscale', *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    )
+    out, err = await proc.communicate()
+    return proc.returncode or 0, out.decode(), err.decode()
+
+
+def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    h = math.sin((p2 - p1) / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(math.radians(lon2 - lon1) / 2) ** 2
+    return 2 * 6371.0 * math.asin(math.sqrt(h))
+
+
+def parse_nodes(status: dict) -> list[Node]:
+    nodes = []
+    for peer in (status.get('Peer') or {}).values():
+        if not peer.get('ExitNodeOption'):
+            continue
+        loc = peer.get('Location') or {}
+        nodes.append(
+            Node(
+                name=peer['DNSName'].rstrip('.'),
+                host=peer['HostName'],
+                country=loc.get('Country', ''),
+                city=loc.get('City', ''),
+                lat=loc.get('Latitude'),
+                lon=loc.get('Longitude'),
+                priority=loc.get('Priority', 0),
+                online=peer.get('Online', False),
+                is_exit=peer.get('ExitNode', False),
+            )
+        )
+    return nodes
+
+
+async def load_nodes() -> tuple[list[Node], dict[int, tuple[float, float]]]:
+    """Returns exit-node peers with distances filled in, and the DERP region coordinate map."""
+    (_, status_out, _), (_, derp_out, _) = await asyncio.gather(
+        tailscale('status', '--json'), tailscale('debug', 'derp-map')
+    )
+    status = json.loads(status_out)
+    regions: dict[int, tuple[float, float]] = {}
+    my_pos = None
+    try:
+        derp = json.loads(derp_out)
+        for rid, region in (derp.get('Regions') or {}).items():
+            regions[int(rid)] = (region['Latitude'], region['Longitude'])
+            if region.get('RegionCode') == status.get('Self', {}).get('Relay'):
+                my_pos = regions[int(rid)]
+    except json.JSONDecodeError, KeyError:
+        pass
+
+    nodes = parse_nodes(status)
+    if my_pos:
+        for node in nodes:
+            if node.lat is not None:
+                node.distance = haversine(my_pos[0], my_pos[1], node.lat, node.lon)
+    return nodes, regions
+
+
+async def estimate_latencies(nodes: list[Node], regions: dict[int, tuple[float, float]]) -> None:
+    """One netcheck: RTT to the DERP region nearest to each node is its latency estimate."""
+    code, out, _ = await tailscale('netcheck', '--format=json')
+    if code != 0:
+        return
+    latency_ms = {int(rid): ns / 1e6 for rid, ns in (json.loads(out).get('RegionLatency') or {}).items()}
+    measured = {rid: pos for rid, pos in regions.items() if rid in latency_ms}
+    for node in nodes:
+        if node.lat is None or not measured:
+            continue
+        nearest = min(measured, key=lambda rid: haversine(node.lat, node.lon, *measured[rid]))
+        node.est_ms = latency_ms[nearest]
+
+
+def collapse_by_city(nodes: list[Node]) -> list[Node]:
+    """One node per city: prefer online, then the highest Mullvad priority. Locationless nodes pass through."""
+    best: dict[tuple, Node] = {}
+    for node in nodes:
+        key = (node.country, node.city) if node.city else (node.name,)
+        if key not in best or (node.online, node.priority) > (best[key].online, best[key].priority):
+            best[key] = node
+    return list(best.values())
+
+
+def sort_nodes(nodes: list[Node], by: str) -> list[Node]:
+    if by == 'latency':
+        return sorted(nodes, key=lambda n: (n.est_ms is None, n.est_ms or 0, n.distance or 0))
+    # Personal exit nodes have no location; keep them on top, they are usually the interesting ones
+    return sorted(nodes, key=lambda n: (n.lat is not None, n.distance or 0, -n.priority))
+
+
+class ExitNodePicker(App):
+    CSS = """
+    Input { dock: top; }
+    DataTable { height: 1fr; }
+    """
+    BINDINGS: ClassVar = [
+        Binding('q', 'quit', 'quit'),
+        Binding('x', 'clear_exit', 'no exit node'),
+        Binding('s', 'use_suggested', 'suggested'),
+        Binding('a', 'toggle_all', 'all/per-city'),
+        Binding('d', 'sort_distance', 'by distance'),
+        Binding('l', 'sort_latency', 'by latency'),
+        Binding('r', 'refresh', 'refresh'),
+        Binding('slash', 'focus_filter', 'filter', key_display='/'),
+        Binding('escape', 'focus_table', show=False),
+    ]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.nodes: list[Node] = []
+        self.regions: dict[int, tuple[float, float]] = {}
+        self.suggested: str | None = None
+        self.show_all = False
+        self.sort_by = 'distance'
+
+    def compose(self) -> ComposeResult:
+        yield Input(placeholder='filter country / city / node…')
+        yield DataTable(cursor_type='row')
+        yield Footer()
+
+    def on_mount(self) -> None:
+        table = self.query_one(DataTable)
+        table.add_columns('', 'country', 'city', 'node', 'km', '~ms')
+        table.focus()
+        self.title = 'tailscale exit node'
+        self.run_worker(self.load(), exclusive=True)
+
+    async def load(self) -> None:
+        self.sub_title = 'loading…'
+        self.nodes, self.regions = await load_nodes()
+        self.repopulate()
+        self.sub_title = f'{len(self.nodes)} nodes · measuring latency…'
+        await asyncio.gather(self.fetch_suggestion(), estimate_latencies(self.nodes, self.regions))
+        self.repopulate()
+        self.update_subtitle()
+
+    async def fetch_suggestion(self) -> None:
+        _, out, _ = await tailscale('exit-node', 'suggest')
+        if match := SUGGEST_RE.search(out + ' '):
+            self.suggested = match.group(1)
+
+    def update_subtitle(self) -> None:
+        current = next((n.name for n in self.nodes if n.is_exit), None)
+        self.sub_title = f'exit node: {current}' if current else 'no exit node'
+
+    def visible_nodes(self) -> list[Node]:
+        nodes = self.nodes if self.show_all else collapse_by_city(self.nodes)
+        if query := self.query_one(Input).value.strip().lower():
+            nodes = [n for n in nodes if query in f'{n.country} {n.city} {n.name}'.lower()]
+        return sort_nodes(nodes, self.sort_by)
+
+    def repopulate(self) -> None:
+        table = self.query_one(DataTable)
+        previous = table.cursor_row
+        table.clear()
+        for node in self.visible_nodes():
+            marker = '●' if node.is_exit else ('★' if node.name == self.suggested else '')
+            if not node.online:
+                marker = marker or '✗'
+            table.add_row(
+                marker,
+                node.country or '—',
+                node.city or '—',
+                node.host,
+                f'{node.distance:.0f}' if node.distance is not None else '',
+                f'{node.est_ms:.0f}' if node.est_ms is not None else '',
+                key=node.name,
+            )
+        table.move_cursor(row=min(previous, table.row_count - 1))
+
+    async def set_exit_node(self, name: str) -> None:
+        code, _, err = await tailscale('set', f'--exit-node={name}')
+        if code != 0:
+            hint = ' (try: sudo tailscale set --operator=$USER)' if 'denied' in err.lower() else ''
+            self.notify(f'{err.strip()}{hint}', severity='error', timeout=8)
+            return
+        for node in self.nodes:
+            node.is_exit = node.name == name
+        self.repopulate()
+        self.update_subtitle()
+        self.notify(f'exit node: {name or "none"}')
+
+    def on_data_table_row_selected(self, event: DataTable.RowSelected) -> None:
+        if event.row_key.value:
+            self.run_worker(self.set_exit_node(event.row_key.value), exclusive=True)
+
+    def on_input_changed(self, _: Input.Changed) -> None:
+        self.repopulate()
+
+    def on_input_submitted(self, _: Input.Submitted) -> None:
+        self.query_one(DataTable).focus()
+
+    def action_clear_exit(self) -> None:
+        self.run_worker(self.set_exit_node(''), exclusive=True)
+
+    def action_use_suggested(self) -> None:
+        if self.suggested:
+            self.run_worker(self.set_exit_node(self.suggested), exclusive=True)
+        else:
+            self.notify('no suggestion (yet)', severity='warning')
+
+    def action_toggle_all(self) -> None:
+        self.show_all = not self.show_all
+        self.repopulate()
+
+    def action_sort_distance(self) -> None:
+        self.sort_by = 'distance'
+        self.repopulate()
+
+    def action_sort_latency(self) -> None:
+        self.sort_by = 'latency'
+        self.repopulate()
+
+    def action_refresh(self) -> None:
+        self.run_worker(self.load(), exclusive=True)
+
+    def action_focus_filter(self) -> None:
+        self.query_one(Input).focus()
+
+    def action_focus_table(self) -> None:
+        self.query_one(DataTable).focus()
+
+
+async def dump() -> None:
+    nodes, regions = await load_nodes()
+    await estimate_latencies(nodes, regions)
+    for node in sort_nodes(collapse_by_city(nodes), 'distance'):
+        distance = f'{node.distance:7.0f}' if node.distance is not None else '      ?'
+        est = f'{node.est_ms:5.0f}' if node.est_ms is not None else '    ?'
+        print(f'{distance} km {est} ms  {node.country or "—":<16} {node.city or "—":<16} {node.name}')
+
+
+if __name__ == '__main__':
+    if '--dump' in sys.argv:
+        asyncio.run(dump())
+    else:
+        ExitNodePicker().run()
