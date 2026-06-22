@@ -60,3 +60,19 @@
     background: var(--color-warning);
     color: var(--color-accent-fg);
 }
+
+/* Per-workspace hover feedback so it's clear which workspace the pointer will
+   select. Only the item under the cursor gets :hover (siblings do not), unlike
+   the applet-wide .panel-indicator:hover background. */
+.pager-num:hover,
+.pager-dot:hover {
+    background: color-mix(in srgb, currentColor 45%, transparent);
+}
+
+/* Suppress the applet-wide hover background for the pager so the whole strip no
+   longer looks "selected" on hover. Requires the `pager-applet` class added in
+   glimpse-shell — only takes effect once the rebuilt binary is installed. */
+.panel-indicator.pager-applet:hover,
+.panel-indicator.pager-applet:active {
+    background: var(--indicator-bg);
+}
