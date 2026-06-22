@@ -116,6 +116,7 @@ export BROWSER="brave"
 export DIA_DIR=.
 export PKGEXT='.pkg.tar'
 export EMACS_EXTRA_LANGS=1
+export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
 
 #export JAVA_HOME=/usr/lib/jvm/java-8-jdk
 #export JDK_HOME=/usr/lib/jvm/java-8-jdk
