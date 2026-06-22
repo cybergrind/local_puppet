@@ -50,6 +50,19 @@ class kpi::system {
         command => '/bin/systemctl enable lock-before-sleep.service',
         unless  => '/bin/systemctl is-enabled lock-before-sleep.service',
       }
+
+      # Ignore the power button so the cat can't power the machine off.
+      # Powering on is firmware-level and unaffected by this.
+      file { '/etc/systemd/logind.conf.d':
+        ensure => directory,
+      }
+      -> file { '/etc/systemd/logind.conf.d/50-power-button.conf':
+        content => "[Login]\nHandlePowerKey=ignore\nHandlePowerKeyLongPress=ignore\n",
+      }
+      ~> exec { 'restart-logind':
+        command     => '/bin/systemctl restart systemd-logind',
+        refreshonly => true,
+      }
     }
   }
 }
