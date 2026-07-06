@@ -1,0 +1,6 @@
+{
+    "name": "TV Hub",
+    "version": "1.0.0",
+    "parameter": "content:http://tv.lan/msx/hub.json",
+    "welcome": "content"
+}
