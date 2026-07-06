@@ -26,7 +26,7 @@
             "data": {
                 "name": "Station X (Kinopub)",
                 "version": "1.1.1",
-                "parameter": "redirect:https://cdnservices.link/msx/start.json"
+                "parameter": "content:http://cdnservices.link/msx/start.json"
             }
         },
         {
@@ -36,7 +36,7 @@
             "data": {
                 "name": "XSMART R",
                 "version": "1.0.3",
-                "parameter": "redirect:http://daycamp.cc/msx/start.json"
+                "parameter": "content:http://daycamp.cc/msx/menu.json"
             }
         }
     ]
