@@ -1,0 +1,3 @@
+#!/bin/sh
+# Assemble and run the MSX TV hub container (http://tv.lan for the LG TV)
+exec docker compose -f "$HOME/.local/share/msx-hub/compose.yaml" up -d --remove-orphans "$@"
