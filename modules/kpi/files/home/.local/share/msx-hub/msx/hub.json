@@ -22,7 +22,7 @@
         {
             "icon": "live-tv",
             "title": "XSMART (app.xsmart.tv)",
-            "action": "content:http://app.xsmart.tv/msx/menu.json"
+            "action": "menu:http://tv.lan/msx/xsmart/menu.json"
         },
         {
             "icon": "rocket-launch",
