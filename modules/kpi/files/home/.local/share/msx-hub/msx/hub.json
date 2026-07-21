@@ -20,6 +20,11 @@
             "action": "content:http://daycamp.cc/msx/menu.json"
         },
         {
+            "icon": "live-tv",
+            "title": "XSMART (app.xsmart.tv)",
+            "action": "content:http://app.xsmart.tv/msx/menu.json"
+        },
+        {
             "icon": "rocket-launch",
             "title": "Boot into Kinopub",
             "action": "start",
