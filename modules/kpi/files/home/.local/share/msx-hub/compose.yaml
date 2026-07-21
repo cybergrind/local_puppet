@@ -1,7 +1,10 @@
 ---
 # MSX TV hub: serves Media Station X start/hub JSON for the LG TV.
 # Routed by the host traefik via labels; reachable as http://tv.lan
-# (MikroTik static DNS tv.lan -> this machine). Run via `msx-hub`.
+# (MikroTik static DNS tv.lan -> this machine).
+# NOTE: the container is deployed on host `lzz` (access via `ssh lzz`); run this
+# compose there, e.g. `ssh lzz msx-hub` or `ssh lzz docker compose ...`.
+# External content endpoints must also enable CORS — MSX players load content via XHR.
 services:
   msx-hub:
     image: nginx:alpine
@@ -9,6 +12,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./msx:/usr/share/nginx/html/msx:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     labels:
       traefik.enable: "true"
       traefik.http.routers.msx.rule: Host(`tv.lan`)
