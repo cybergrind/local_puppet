@@ -22,7 +22,7 @@ define kpi::home::rfile ($user, $source) {
   }
 }
 
-class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
+class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
   include kpi::os
 
   if $kpi::os::is_arch {
@@ -186,6 +186,24 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi'){
         environment => ["XDG_RUNTIME_DIR=/run/user/${user_uid}"],
         provider    => shell,
         unless      => '/usr/bin/tmux -L wk has-session -t wk 2>/dev/null',
+      }
+
+      if $msx_hub {
+        exec { 'msx-hub-service enable':
+          user        => $user,
+          command     => '/bin/systemctl --user enable msx-hub',
+          environment => ["XDG_RUNTIME_DIR=/run/user/${user_uid}"],
+          provider    => shell,
+          creates     => "${home}/.config/systemd/user/default.target.wants/msx-hub.service",
+          require     => File[$home],
+        }
+        -> exec { 'msx-hub-service start':
+          user        => $user,
+          command     => '/bin/systemctl --user start msx-hub',
+          environment => ["XDG_RUNTIME_DIR=/run/user/${user_uid}"],
+          provider    => shell,
+          unless      => '/usr/bin/docker ps --format {{.Names}} | /usr/bin/grep -qx msx-hub',
+        }
       }
     }
   }

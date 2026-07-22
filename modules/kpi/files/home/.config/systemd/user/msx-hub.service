@@ -1,0 +1,15 @@
+[Unit]
+Description=MSX TV hub container
+After=docker.service
+After=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment="HOME=%h"
+ExecStart=%h/.local/bin/msx-hub
+ExecStop=/usr/bin/docker compose -f %h/.local/share/msx-hub/compose.yaml down
+ExecReload=/usr/bin/docker compose -f %h/.local/share/msx-hub/compose.yaml up -d --remove-orphans
+
+[Install]
+WantedBy=default.target

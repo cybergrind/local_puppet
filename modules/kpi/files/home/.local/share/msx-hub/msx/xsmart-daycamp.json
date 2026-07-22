@@ -1,0 +1,31 @@
+{
+    "type": "pages",
+    "restore": true,
+    "cache": false,
+    "pages": [{
+        "items": [
+            {
+                "id": "description",
+                "type": "space",
+                "layout": "4,0,8,5",
+                "text": ""
+            },
+            {
+                "type": "control",
+                "layout": "0,0,4,1",
+                "icon": "msx-white:live-tv",
+                "label": "XSMART",
+                "action": "link:http://daycamp.cc/msx/index.html?platform=other",
+                "selection": {
+                    "important": true,
+                    "action": "update:content:description",
+                    "data": {
+                        "text": [
+                            "{txt:msx-white: XSMART} — legacy XSMART web app"
+                        ]
+                    }
+                }
+            }
+        ]
+    }]
+}

@@ -44,8 +44,11 @@ node 'yy' {
 
 node 'zz' {
   $hiDPI = true
+  $msx_hub = true
   include kpi::base_devel
-  class {'kpi::home': }
+  class {'kpi::home':
+    msx_hub => true,
+  }
 }
 
 node 'cybergrinds-macbook-pro.local' {

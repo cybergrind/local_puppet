@@ -9,7 +9,7 @@ services:
   msx-hub:
     image: nginx:alpine
     container_name: msx-hub
-    restart: unless-stopped
+    restart: always
     volumes:
       - ./msx:/usr/share/nginx/html/msx:ro
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
