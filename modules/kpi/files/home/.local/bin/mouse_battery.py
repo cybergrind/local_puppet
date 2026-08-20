@@ -2,20 +2,29 @@
 # /// script
 # requires-python = ">=3.13"
 # ///
-"""Print the current Logitech mouse battery percentage from sysfs."""
+"""Print the current Logitech mouse battery percentage via solaar.
 
+Queries the device directly over HID++ instead of reading
+/sys/class/power_supply, where the kernel hid-logitech-hidpp driver
+caches stale/bogus values while the mouse is charging.
+"""
+
+import re
+import subprocess
 import sys
-from pathlib import Path
-
-
-POWER_SUPPLY = Path('/sys/class/power_supply')
 
 
 def get_mouse_battery() -> int | None:
-    for p in POWER_SUPPLY.glob('hidpp_battery_*'):
-        capacity_file = p / 'capacity'
-        if capacity_file.exists():
-            return int(capacity_file.read_text().strip())
+    try:
+        proc = subprocess.run(['solaar', 'show'], capture_output=True, text=True, timeout=30)
+    except OSError, subprocess.TimeoutExpired:
+        return None
+    kind = None
+    for line in proc.stdout.splitlines():
+        if m := re.match(r'\s*Kind\s*:\s*(\w+)', line):
+            kind = m.group(1)
+        elif (m := re.search(r'Battery: (\d+)%', line)) and kind == 'mouse':
+            return int(m.group(1))
     return None
 
 
