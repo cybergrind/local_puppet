@@ -262,7 +262,6 @@ spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CUR
 spawn-at-startup "xwayland-satellite"
 spawn-at-startup "copyq" "--start-server"
 spawn-sh-at-startup "/home/kpi/.local/bin/monitor_clipboard_copyq.sh &"
-spawn-sh-at-startup "~/.local/bin/satty_wrapper.py --daemon"
 spawn-sh-at-startup "~/.local/bin/niri_outputs_watcher.py"
 // spawn-at-startup "flameshot"
 
@@ -343,7 +342,7 @@ window-rule {
 }
 
 window-rule {
-    match app-id=r#"^com\.gabm\.satty(\.daemon)?$"#
+    match app-id=r#"^com\.gabm\.satty$"#
     open-floating true
     min-width 2520
     min-height 1400
@@ -351,7 +350,7 @@ window-rule {
 }
 
 // Satty's secondary dialogs (e.g. "Choose Annotation Size") use app-id "satty",
-// distinct from the main canvas's "com.gabm.satty[.daemon]". Float without size constraints.
+// distinct from the main canvas's "com.gabm.satty". Float without size constraints.
 window-rule {
     match app-id=r#"^satty$"#
     open-floating true
@@ -433,8 +432,8 @@ binds {
     /////////////////////
 
 // niri_outputs.py: SCREENSHOTS START
-    Pause       { spawn-sh "grim -o DP-5 - | ~/.local/bin/satty_wrapper.py"; }
-    Shift+Pause { spawn-sh "grim -o eDP-1 - | ~/.local/bin/satty_wrapper.py"; }
+    Pause       { spawn-sh "grim -o DP-5 - | satty --initial-tool=crop --filename -"; }
+    Shift+Pause { spawn-sh "grim -o eDP-1 - | satty --initial-tool=crop --filename -"; }
 // niri_outputs.py: SCREENSHOTS END
     // Pause { spawn-sh "flameshot gui"; }
 

@@ -209,8 +209,8 @@ def render_workspaces(pairs: list[tuple[str, str]]) -> str:
 
 def render_screenshots(primary: str, secondary: str) -> str:
     return (
-        f'    Pause       {{ spawn-sh "grim -o {primary} - | ~/.local/bin/satty_wrapper.py"; }}\n'
-        f'    Shift+Pause {{ spawn-sh "grim -o {secondary} - | ~/.local/bin/satty_wrapper.py"; }}\n'
+        f'    Pause       {{ spawn-sh "grim -o {primary} - | satty --initial-tool=crop --filename -"; }}\n'
+        f'    Shift+Pause {{ spawn-sh "grim -o {secondary} - | satty --initial-tool=crop --filename -"; }}\n'
     )
 
 
