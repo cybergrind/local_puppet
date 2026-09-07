@@ -9,9 +9,16 @@
 
 Distance is computed from your preferred DERP region's coordinates (geoip would
 report the active exit node's location, the DERP relay choice is unaffected).
-Latency per node is estimated from one `tailscale netcheck`: your measured RTT
-to the DERP region nearest to that node. Mullvad nodes do not answer direct
-pings unless selected, so this is the best cheap signal available.
+Latency per node is estimated as your RTT to the DERP region nearest to that
+node, measured with STUN probes to every DERP region. Mullvad nodes do not
+answer direct pings unless selected, so this is the best cheap signal available;
+the selected exit node is pinged at its real endpoint instead.
+
+All probes are sent over the LAN uplink: the interface behind the main routing
+table's default gateway (e.g. 192.168.88.1), not the system default route. With
+an exit node active the system route is table 52 -> tailscale0, and probing
+through the tunnel would measure the exit node's vantage point, not yours.
+Use --gateway to pick the uplink when several default routes exist.
 
 Keys: enter=set exit node, x=clear, s=use suggested, a=all nodes/per-city,
 d/l=sort by distance/latency, /=filter, r=refresh, q=quit.
@@ -20,11 +27,17 @@ Run with --dump for a plain-text listing instead of the TUI.
 
 from __future__ import annotations
 
+import argparse
 import asyncio
+import contextlib
 import json
 import math
+import os
 import re
-import sys
+import socket
+import struct
+import time
+import zlib
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -34,6 +47,9 @@ from textual.widgets import DataTable, Footer, Input
 
 
 SUGGEST_RE = re.compile(r'Suggested exit node: (\S+?)\.?\s')
+PING_RE = re.compile(r'= [\d.]+/([\d.]+)/')
+STUN_COOKIE = 0x2112A442
+STUN_PORT = 3478
 
 
 @dataclass
@@ -47,8 +63,22 @@ class Node:
     priority: int
     online: bool
     is_exit: bool
+    endpoint: str | None  # public IP of the WireGuard endpoint, known only while the node is in use
     distance: float | None = None
     est_ms: float | None = None
+
+
+@dataclass
+class Region:
+    lat: float
+    lon: float
+    stun: tuple[str, int] | None  # IPv4 STUN server of one node in the region
+
+
+@dataclass
+class Uplink:
+    dev: str
+    gateway: str
 
 
 async def tailscale(*args: str) -> tuple[int, str, str]:
@@ -82,23 +112,63 @@ def parse_nodes(status: dict) -> list[Node]:
                 priority=loc.get('Priority', 0),
                 online=peer.get('Online', False),
                 is_exit=peer.get('ExitNode', False),
+                endpoint=peer['CurAddr'].rsplit(':', 1)[0] if peer.get('CurAddr') else None,
             )
         )
     return nodes
 
 
-async def load_nodes() -> tuple[list[Node], dict[int, tuple[float, float]]]:
-    """Returns exit-node peers with distances filled in, and the DERP region coordinate map."""
+def parse_regions(derp: dict) -> dict[int, Region]:
+    regions = {}
+    for rid, region in (derp.get('Regions') or {}).items():
+        stun = None
+        for node in region.get('Nodes') or []:
+            if node.get('IPv4') and node.get('STUNPort', 0) != -1:
+                stun = (node['IPv4'], node.get('STUNPort') or STUN_PORT)
+                break
+        regions[int(rid)] = Region(region['Latitude'], region['Longitude'], stun)
+    return regions
+
+
+async def lan_uplink(gateway: str | None = None) -> Uplink | None:
+    """Interface + gateway of the main table's default route, i.e. the physical uplink tailscale's table 52 hides.
+
+    With several default routes the lowest metric wins unless `gateway` pins one. None on non-Linux or offline hosts.
+    """
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            'ip',
+            '-j',
+            'route',
+            'show',
+            'table',
+            'main',
+            'default',
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.DEVNULL,
+        )
+    except FileNotFoundError:
+        return None
+    out, _ = await proc.communicate()
+    routes = [r for r in json.loads(out or b'[]') if r.get('gateway') and gateway in (None, r['gateway'])]
+    if not routes:
+        return None
+    best = min(routes, key=lambda r: r.get('metric', 0))
+    return Uplink(best['dev'], best['gateway'])
+
+
+async def load_nodes() -> tuple[list[Node], dict[int, Region]]:
+    """Returns exit-node peers with distances filled in, and the DERP region map."""
     (_, status_out, _), (_, derp_out, _) = await asyncio.gather(
         tailscale('status', '--json'), tailscale('debug', 'derp-map')
     )
     status = json.loads(status_out)
-    regions: dict[int, tuple[float, float]] = {}
+    regions: dict[int, Region] = {}
     my_pos = None
     try:
         derp = json.loads(derp_out)
+        regions = parse_regions(derp)
         for rid, region in (derp.get('Regions') or {}).items():
-            regions[int(rid)] = (region['Latitude'], region['Longitude'])
             if region.get('RegionCode') == status.get('Self', {}).get('Relay'):
                 my_pos = regions[int(rid)]
     except json.JSONDecodeError, KeyError:
@@ -108,22 +178,121 @@ async def load_nodes() -> tuple[list[Node], dict[int, tuple[float, float]]]:
     if my_pos:
         for node in nodes:
             if node.lat is not None:
-                node.distance = haversine(my_pos[0], my_pos[1], node.lat, node.lon)
+                node.distance = haversine(my_pos.lat, my_pos.lon, node.lat, node.lon)
     return nodes, regions
 
 
-async def estimate_latencies(nodes: list[Node], regions: dict[int, tuple[float, float]]) -> None:
-    """One netcheck: RTT to the DERP region nearest to each node is its latency estimate."""
-    code, out, _ = await tailscale('netcheck', '--format=json')
-    if code != 0:
-        return
-    latency_ms = {int(rid): ns / 1e6 for rid, ns in (json.loads(out).get('RegionLatency') or {}).items()}
-    measured = {rid: pos for rid, pos in regions.items() if rid in latency_ms}
+def bound_udp_socket(uplink: Uplink | None) -> socket.socket:
+    """UDP socket that leaves via the LAN uplink regardless of the exit node's default route.
+
+    SO_BINDTODEVICE needs no privileges since Linux 5.7; the oif constraint makes the kernel skip table 52's
+    `default dev tailscale0` and fall through to the main table's gateway.
+    """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    if uplink and hasattr(socket, 'SO_BINDTODEVICE'):
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BINDTODEVICE, uplink.dev.encode())
+    sock.setblocking(False)
+    return sock
+
+
+def stun_request() -> tuple[bytes, bytes]:
+    """Binding request in the dialect Tailscale DERP servers accept: SOFTWARE 'tailnode' + trailing FINGERPRINT."""
+    txid = os.urandom(12)
+    body = struct.pack('!HH', 0x8022, 8) + b'tailnode'
+    msg = struct.pack('!HHI', 0x0001, len(body) + 8, STUN_COOKIE) + txid + body
+    return txid, msg + struct.pack('!HHI', 0x8028, 4, zlib.crc32(msg) ^ 0x5354554E)
+
+
+class StunProbe(asyncio.DatagramProtocol):
+    def __init__(self) -> None:
+        self.sent: dict[bytes, float] = {}
+        self.rtt: dict[bytes, float] = {}
+        self.pending: set[bytes] = set()  # this round's unanswered probes
+        self.round_done = asyncio.Event()
+
+    def datagram_received(self, data: bytes, _addr: tuple) -> None:
+        txid = data[8:20]
+        if txid in self.sent and txid not in self.rtt:
+            self.rtt[txid] = (time.perf_counter() - self.sent[txid]) * 1000
+        self.pending.discard(txid)
+        if not self.pending:
+            self.round_done.set()
+
+
+async def stun_latencies(
+    regions: dict[int, Region], uplink: Uplink | None, rounds: int = 3, round_wait: float = 1.0
+) -> dict[int, float]:
+    """Best RTT (ms) per DERP region, probing every region in parallel over the LAN uplink."""
+    targets = {rid: region.stun for rid, region in regions.items() if region.stun}
+    if not targets:
+        return {}
+    loop = asyncio.get_running_loop()
+    transport, probe = await loop.create_datagram_endpoint(StunProbe, sock=bound_udp_socket(uplink))
+    owner: dict[bytes, int] = {}
+    try:
+        for round_no in range(rounds):
+            if round_no:  # regions silent in the first round stay silent, don't let them stall every round
+                answered = {owner[txid] for txid in probe.rtt}
+                targets = {rid: target for rid, target in targets.items() if rid in answered}
+            probe.round_done.clear()
+            probe.pending.clear()
+            for rid, target in targets.items():
+                txid, req = stun_request()
+                owner[txid] = rid
+                probe.pending.add(txid)
+                probe.sent[txid] = time.perf_counter()
+                transport.sendto(req, target)
+            with contextlib.suppress(TimeoutError):
+                await asyncio.wait_for(probe.round_done.wait(), round_wait)
+    finally:
+        transport.close()
+    best: dict[int, float] = {}
+    for txid, ms in probe.rtt.items():
+        best[owner[txid]] = min(best.get(owner[txid], ms), ms)
+    return best
+
+
+async def ping_via(host: str, uplink: Uplink | None) -> float | None:
+    """Average ICMP RTT to `host` over the LAN uplink, or None if unreachable / no ping binary."""
+    iface = ['-I', uplink.dev] if uplink else []
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            'ping',
+            '-n',
+            '-q',
+            '-c',
+            '3',
+            '-i',
+            '0.2',
+            '-W',
+            '1',
+            *iface,
+            host,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.DEVNULL,
+        )
+    except FileNotFoundError:
+        return None
+    out, _ = await proc.communicate()
+    match = PING_RE.search(out.decode())
+    return float(match.group(1)) if match else None
+
+
+async def estimate_latencies(nodes: list[Node], regions: dict[int, Region], uplink: Uplink | None) -> None:
+    """RTT to the DERP region nearest to each node is its estimate; the active exit node gets a real ping."""
+    exit_node = next((n for n in nodes if n.is_exit and n.endpoint), None)
+    latency_ms, exit_ms = await asyncio.gather(
+        stun_latencies(regions, uplink),
+        ping_via(exit_node.endpoint, uplink) if exit_node else asyncio.sleep(0, None),
+    )
+    measured = {rid: regions[rid] for rid in latency_ms}
     for node in nodes:
         if node.lat is None or not measured:
             continue
-        nearest = min(measured, key=lambda rid: haversine(node.lat, node.lon, *measured[rid]))
+        nearest = min(measured, key=lambda rid: haversine(node.lat, node.lon, measured[rid].lat, measured[rid].lon))
         node.est_ms = latency_ms[nearest]
+    if exit_node and exit_ms is not None:
+        exit_node.est_ms = exit_ms
 
 
 def collapse_by_city(nodes: list[Node]) -> list[Node]:
@@ -160,10 +329,12 @@ class ExitNodePicker(App):
         Binding('escape', 'focus_table', show=False),
     ]
 
-    def __init__(self) -> None:
+    def __init__(self, gateway: str | None = None) -> None:
         super().__init__()
+        self.gateway = gateway
+        self.uplink: Uplink | None = None
         self.nodes: list[Node] = []
-        self.regions: dict[int, tuple[float, float]] = {}
+        self.regions: dict[int, Region] = {}
         self.suggested: str | None = None
         self.show_all = False
         self.sort_by = 'distance'
@@ -182,12 +353,15 @@ class ExitNodePicker(App):
 
     async def load(self) -> None:
         self.sub_title = 'loading…'
-        self.nodes, self.regions = await load_nodes()
+        (self.nodes, self.regions), self.uplink = await asyncio.gather(load_nodes(), lan_uplink(self.gateway))
         self.repopulate()
-        self.sub_title = f'{len(self.nodes)} nodes · measuring latency…'
-        await asyncio.gather(self.fetch_suggestion(), estimate_latencies(self.nodes, self.regions))
+        self.sub_title = f'{len(self.nodes)} nodes · measuring latency via {self.uplink_label()}…'
+        await asyncio.gather(self.fetch_suggestion(), estimate_latencies(self.nodes, self.regions, self.uplink))
         self.repopulate()
         self.update_subtitle()
+
+    def uplink_label(self) -> str:
+        return f'{self.uplink.gateway} ({self.uplink.dev})' if self.uplink else 'system route'
 
     async def fetch_suggestion(self) -> None:
         _, out, _ = await tailscale('exit-node', 'suggest')
@@ -195,8 +369,12 @@ class ExitNodePicker(App):
             self.suggested = match.group(1)
 
     def update_subtitle(self) -> None:
-        current = next((n.name for n in self.nodes if n.is_exit), None)
-        self.sub_title = f'exit node: {current}' if current else 'no exit node'
+        current = next((n for n in self.nodes if n.is_exit), None)
+        if not current:
+            self.sub_title = 'no exit node'
+            return
+        ping = f' · {current.est_ms:.0f} ms to {current.endpoint}' if current.endpoint and current.est_ms else ''
+        self.sub_title = f'exit node: {current.name}{ping} · via {self.uplink_label()}'
 
     def visible_nodes(self) -> list[Node]:
         nodes = self.nodes if self.show_all else collapse_by_city(self.nodes)
@@ -276,17 +454,23 @@ class ExitNodePicker(App):
         self.query_one(DataTable).focus()
 
 
-async def dump() -> None:
-    nodes, regions = await load_nodes()
-    await estimate_latencies(nodes, regions)
+async def dump(gateway: str | None) -> None:
+    (nodes, regions), uplink = await asyncio.gather(load_nodes(), lan_uplink(gateway))
+    print(f'probing via {f"{uplink.gateway} ({uplink.dev})" if uplink else "system route"}')
+    await estimate_latencies(nodes, regions, uplink)
     for node in sort_nodes(collapse_by_city(nodes), 'distance'):
         distance = f'{node.distance:7.0f}' if node.distance is not None else '      ?'
         est = f'{node.est_ms:5.0f}' if node.est_ms is not None else '    ?'
-        print(f'{distance} km {est} ms  {node.country or "—":<16} {node.city or "—":<16} {node.name}')
+        mark = '*' if node.is_exit else ' '
+        print(f'{mark}{distance} km {est} ms  {node.country or "—":<16} {node.city or "—":<16} {node.name}')
 
 
 if __name__ == '__main__':
-    if '--dump' in sys.argv:
-        asyncio.run(dump())
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument('--dump', action='store_true', help='plain-text listing instead of the TUI')
+    parser.add_argument('--gateway', metavar='IP', help='send probes via this main-table default gateway')
+    args = parser.parse_args()
+    if args.dump:
+        asyncio.run(dump(args.gateway))
     else:
-        ExitNodePicker().run()
+        ExitNodePicker(args.gateway).run()
