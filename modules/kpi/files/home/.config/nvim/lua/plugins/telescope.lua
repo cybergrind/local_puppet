@@ -10,6 +10,24 @@ local function open_file_browser()
 	})
 end
 
+local function project_root()
+	return vim.fs.root(0, { '.git', '.projectile', '.hg' }) or vim.uv.cwd()
+end
+
+-- Equivalent of projectile-find-file: recursive fuzzy find from the project root.
+local function project_find_file()
+	require('telescope.builtin').find_files({
+		cwd = project_root(),
+		hidden = true,
+		find_command = { 'rg', '--files', '--hidden', '--glob', '!.git/*' },
+	})
+end
+
+-- Equivalent of projectile grep (<leader>ps / <leader>pg): live grep from the project root.
+local function project_live_grep()
+	require('telescope.builtin').live_grep({ cwd = project_root() })
+end
+
 return {
 	{
 		'nvim-telescope/telescope.nvim',
@@ -28,6 +46,16 @@ return {
 				'<C-x><C-f>',
 				open_file_browser,
 				desc = 'File browser (C-x C-f style)',
+			},
+			{
+				'<leader>pf',
+				project_find_file,
+				desc = 'Project find file (projectile-find-file)',
+			},
+			{
+				'<leader>ps',
+				project_live_grep,
+				desc = 'Project grep (projectile-grep)',
 			},
 		},
 		config = function()
