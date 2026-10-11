@@ -5,15 +5,14 @@
   },
   "includeCoAuthoredBy": false,
   "permissions": {
+    "allow": [
+      "mcp__codegraph__*"
+    ],
     "deny": [
       "Bash(ocli release)",
       "Bash(ocli release *)"
-    ],
-    "allow": [
-      "mcp__codegraph__*"
     ]
   },
-  "model": "claude-fable-5-1[1m]",
   "hooks": {
     "PreToolUse": [],
     "UserPromptSubmit": [
@@ -46,6 +45,14 @@
   },
   "language": "English",
   "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    },
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    }
+  },
   "tui": "fullscreen",
   "voice": {
     "enabled": false,
@@ -53,6 +60,7 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "vim",
+  "switchModelsOnFlag": false,
   "skipAutoPermissionPrompt": true,
   "voiceEnabled": false
 }

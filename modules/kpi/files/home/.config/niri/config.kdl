@@ -236,8 +236,7 @@ debug { render-drm-device "/dev/dri/by-path/pci-0000:01:00.0-render"; }
 // on which external monitor(s) are currently connected. Edit defaults here;
 // the script will overwrite them on next run.
 // niri_outputs.py: OUTPUTS START
-output "HDMI-A-1" { position x=0 y=0; }
-output "DP-5" { position x=2560 y=0; }
+output "DP-5" { mode "2560x1440"; scale 1.0; }
 // niri_outputs.py: OUTPUTS END
 
 // niri_outputs.py: WORKSPACES START
@@ -258,7 +257,7 @@ workspace "10" { open-on-output "eDP-1"; }
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
 
-spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start graphical-session.target && systemctl --user try-restart glimpse-shell.service glimpse-lock.service glimpse-wallpaper.service"
+spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start graphical-session.target && systemctl --user try-restart glimpse-shell.service glimpse-idle.service glimpse-lock.service glimpse-wallpaper.service"
 spawn-at-startup "xwayland-satellite"
 spawn-at-startup "copyq" "--start-server"
 spawn-sh-at-startup "/home/kpi/.local/bin/monitor_clipboard_copyq.sh &"
@@ -581,3 +580,6 @@ binds {
     // Power off monitors
     Mod+Shift+R allow-when-locked=true { spawn-sh "niri msg action power-off-monitors && sleep 0.4 && niri msg action power-on-monitors"; }
 }
+
+// D2R hotkeys, last so that they win. Written by `make serve` (inventory_tracking/input/compositor.py); edits are overwritten.
+include optional=true "d2r-hotkeys.kdl"
