@@ -348,7 +348,7 @@ define kpi::home::hyprland($user){
 define kpi::home::glimpse ($user) {
   $uid = $user_uid
   $env = ["XDG_RUNTIME_DIR=/run/user/${uid}"]
-  $services = ['glimpse-shell', 'glimpse-idle', 'glimpse-lock', 'glimpse-wallpaper']
+  $services = ['glimpse-shell', 'glimpse-lock', 'glimpse-wallpaper']
 
   # Secret calendar sidecars live in ~/.keys/glimpse/calendars (never committed);
   # expose them to glimpse via a symlink the committed config.toml references.
