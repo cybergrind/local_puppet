@@ -96,6 +96,23 @@ class kpi::home (
     kpi::home_repo {"${user}-fzf": user=>$user, dir=>'.fzf', repo=>'junegunn/fzf'}
     kpi::home_symlinks {"${user}-symlinks": user=>$user}
 
+    # ~/Yandex.Disk is synced by Syncthing (and, while moving off it, by the
+    # Yandex.Disk client on Linux). .stignore is per machine, never synced.
+    file { "${home}/Yandex.Disk":
+      ensure => directory,
+      owner  => $user,
+    }
+    -> file { "${home}/Yandex.Disk/.stignore":
+      ensure  => file,
+      owner   => $user,
+      content => @(STIGNORE),
+        // managed by puppet (kpi::home): Yandex.Disk client metadata, macOS clutter
+        /.sync
+        /.localized
+        (?d).DS_Store
+        | STIGNORE
+    }
+
     exec { 'uv tool install dot-tools':
       creates  => "${home}/.local/bin/release.py",
       provider => shell,

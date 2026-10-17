@@ -111,14 +111,6 @@ class kpi::darwin ($user, $home_dir) {
     notify => Exec['restart Finder'],
   }
 
-  # The macOS Yandex.Disk client syncs into ~/Yandex.Disk.localized; facts and
-  # kpi::home::shared_link expect the Linux path.
-  file { "${home_dir}/Yandex.Disk":
-    ensure => link,
-    owner  => $user,
-    target => "${home_dir}/Yandex.Disk.localized",
-  }
-
   # brew's docker CLI doesn't look in /opt/homebrew for its compose/buildx plugins.
   file { ["${home_dir}/.docker", "${home_dir}/.docker/cli-plugins"]:
     ensure => directory,
