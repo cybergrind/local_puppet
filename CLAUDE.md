@@ -59,7 +59,8 @@ Only one Puppet module, `kpi`. Classes worth knowing before editing:
 
 - `pyproject.toml` targets Python 3.14, ruff line-length 120, single quotes, py314, imports sorted with `kpi`'s internal modules.
 - `uv sync` installs dev deps (ruff, pyrefly, pre-commit, pytest).
-- Pre-commit (`.pre-commit-config.yaml`) runs ruff + ruff-format + `uv run pyrefly check` on Python files, plus a battery of `pre-commit-hooks` checks. The `files:` filter restricts most checks to `modules/kpi/files/home/.local/` to avoid scanning the entire dotfile tree.
+- Pre-commit (`.pre-commit-config.yaml`, not installed by default: `uvx pre-commit install`) runs ruff + ruff-format + `uv run pyrefly check` on Python files, a battery of `pre-commit-hooks` checks on the whole repo, and `test/check` (hook `puppet-check`) when manifests, data, templates, facts or fixtures change. On a machine without puppet/bash (Windows): `SKIP=puppet-check git commit`.
+- Known conflict: ruff targets py314 and writes `except A, B:`, which pre-commit's `check-ast` / `debug-statements` (CPython 3.12) can't parse (`.local/bin/mouse_battery.py`). `facts.d/*.py` are pinned to py39 in ruff because facter runs them with the OS python3.
 
 ## Checking manifests without applying them
 
@@ -68,6 +69,8 @@ Only one Puppet module, `kpi`. Classes worth knowing before editing:
 - `test/check --diff [REF]` also prints a unified diff of each node's catalog against `REF` (default `HEAD`). Use it to confirm a refactor is a no-op, or that a change only touches the OS it's meant to. Recursively deployed dotfiles don't show up there (they're expanded at apply time), only `File[$home]`'s `source` list.
 - `test/check zz ww` limits it to those fixtures. A fixture's basename is the node name matched against `hosts.pp`; it only needs the facts the manifests read (`os`, `identity`, `processors`, `<user>_*`, `sshj_fact`).
 - `test/compile_catalog.rb` does the actual compile through the Puppet Ruby API; it needs the stdlib/vcsrepo modules `./run` installs.
+
+GitHub Actions (`.github/workflows/check.yml`) runs `test/check` on every push and PR, with the puppet gem and the same stdlib/vcsrepo versions as locally (`KPI_MODULEPATH` points `test/check` at them).
 
 The real end-to-end test is still `./run` on a target machine.
 

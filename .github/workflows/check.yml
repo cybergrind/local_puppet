@@ -1,0 +1,29 @@
+# Compile every node's catalog (test/check) on each push, so a change made on
+# one OS can't silently break the others. Nothing is applied.
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  catalogs:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # Puppet 8 runs on Ruby 3.2; versions match what ./run uses locally
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+
+      - name: Install puppet and the modules ./run installs
+        run: |
+          gem install --no-document puppet -v 8.10.0
+          modules="$RUNNER_TEMP/modules"
+          mkdir -p "$modules"
+          puppet module install --target-dir "$modules" puppetlabs-stdlib --version 9.7.0
+          puppet module install --target-dir "$modules" puppetlabs-vcsrepo --version 7.0.0
+          echo "KPI_MODULEPATH=$modules" >> "$GITHUB_ENV"
+
+      - run: test/check

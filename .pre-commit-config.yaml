@@ -1,9 +1,8 @@
 # See https://pre-commit.com for more information
 # See https://pre-commit.com/hooks.html for more hooks
 
-exclude: ".git|.venv"
+exclude: "^(\\.git|\\.venv)/"
 default_stages: [pre-commit]
-files: "modules/kpi/files/home/.local/|."
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -35,6 +34,14 @@ repos:
 
   - repo: local
     hooks:
+      # compiles every node's catalog; needs puppet + bash (skip on Windows
+      # with SKIP=puppet-check)
+      - id: puppet-check
+        name: puppet catalogs (test/check)
+        entry: test/check
+        language: system
+        pass_filenames: false
+        files: "^(manifests/|test/|modules/kpi/(manifests|data|templates|facts\\.d)/|modules/kpi/hiera\\.yaml$)"
       - id: pyrefly-check
         name: pyrefly-check
         entry: uv run pyrefly check

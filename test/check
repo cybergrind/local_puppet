@@ -6,7 +6,8 @@
 #   test/check --diff [REF] also diff each catalog against REF (default HEAD)
 #   test/check zz ww        only these fixtures
 #
-# Needs puppet plus the stdlib/vcsrepo modules that ./run installs.
+# Needs puppet plus the stdlib/vcsrepo modules that ./run installs; set
+# KPI_MODULEPATH to look for those somewhere else (CI does).
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -36,7 +37,9 @@ if [[ ${#NODES[@]} -eq 0 ]]; then
 fi
 
 # Same system modulepath as ./run
-if [[ $OSTYPE == 'darwin'* ]]; then
+if [[ -n ${KPI_MODULEPATH:-} ]]; then
+    MODULEPATH=$KPI_MODULEPATH
+elif [[ $OSTYPE == 'darwin'* ]]; then
     MODULEPATH="$HOME/.puppetlabs/etc/code/modules"
 else
     MODULEPATH='/etc/puppetlabs/code/modules'
