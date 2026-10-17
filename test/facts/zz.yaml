@@ -1,0 +1,8 @@
+# Arch box with msx_hub, $node_hostname (tailscale_priv) and an sshj spec.
+os: {family: Archlinux, name: Archlinux}
+identity: {user: root, uid: 0}
+processors: {count: 16}
+sshj_fact: 'zz-check'
+kpi_id_rsa: 'True'
+kpi_keys: 'True'
+kpi_yad: 'True'

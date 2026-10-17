@@ -1,4 +1,5 @@
-class kpi::base_devel () {
+# Dev toolchain list: kpi::base_devel::pkgs in data/os/<family>.yaml.
+class kpi::base_devel (Array[String] $pkgs = []) {
   include kpi::os
   include kpi::packages
   include kpi::packages::system
@@ -7,23 +8,9 @@ class kpi::base_devel () {
 
   # $python2 = [ 'python2', 'python2-numpy', 'ipython2', 'python2-virtualenv' ]
   # kpi::install { $python2: }
+  kpi::install { $pkgs: }
 
-  # $scala = [ 'jdk', 'scala', 'scala-docs', 'sbt', 'java-jline' ]
-  # kpi::install { $scala: }
-  case $kpi::os::family {
-    'Archlinux': {
-      $other = [ 'go', 'nodejs', 'npm', 'yarn', 'jdk']
-      kpi::install { $other: }
-
-      $editors = ['emacs-nox', 'vim', 'emacs-python-mode']
-      kpi::install { $editors: }
-
-      $tools = ['git', 'docker', 'docker-buildx', 'docker-compose']
-      kpi::install { $tools: }
-      file {"/root": ensure => directory}
-
-    }
-    'Darwin': {
-    }
+  if $kpi::os::is_arch {
+    file {"/root": ensure => directory}
   }
 }

@@ -43,11 +43,14 @@ if [ ! -f $SUB ]; then
     ${PUPPET_INSTALL} puppetlabs-stdlib
     ${PUPPET_INSTALL} puppetlabs-vcsrepo
 
-    if [[ $OSTYPE == 'darwin'* ]]; then
-        ${PUPPET_INSTALL} thekevjames-homebrew --version 1.9.1
-    fi
-
     touch $SUB
+fi
+
+# macFUSE (needed by encfs) is a .pkg cask that asks for sudo; puppet execs run
+# without a tty and can't prompt, so install it here interactively once.
+if [[ $OSTYPE == 'darwin'* && ! -d /Library/Filesystems/macfuse.fs ]]; then
+    echo install macfuse
+    /opt/homebrew/bin/brew install --cask macfuse
 fi
 
 if [[ -f ~/.keys/env ]]; then

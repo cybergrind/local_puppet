@@ -1,0 +1,11 @@
+{
+  "Profiles": [
+    {
+      "Name": "kpi",
+      "Guid": "kpi-puppet-default",
+      "Dynamic Profile Parent Name": "Default",
+      "Option Key Sends": 2,
+      "Right Option Key Sends": 0
+    }
+  ]
+}

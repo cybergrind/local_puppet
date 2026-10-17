@@ -1,34 +1,35 @@
+# Idempotency is checked against brew itself (`brew list` / `brew tap`), so it
+# works for formulae without a same-named binary (py3cairo, nvm, aliases like gpg).
+# A fully qualified 'owner/tap/formula' name declares its tap automatically.
 define kpi::install::macos ($bin=undef, $tap=false, $cask=false) {
-  info("Install ${name}")
-  if $cask {
-    $command = "/opt/homebrew/bin/brew install --cask ${name}"
-  } elsif $tap {
-    $command = "/opt/homebrew/bin/brew tap ${name}"
+  $brew = '/opt/homebrew/bin/brew'
+
+  if $tap {
+    $command = "${brew} tap ${name}"
+    $unless  = "${brew} tap | /usr/bin/grep -qix '${name}'"
+  } elsif $cask {
+    $command = "${brew} install --cask ${name}"
+    $unless  = "${brew} list --cask ${name}"
   } else {
-    $command = "/opt/homebrew/bin/brew install ${name}"
+    $command = "${brew} install ${name}"
+    $unless  = "${brew} list --formula ${name}"
   }
 
-  case $bin {
-    undef: {
-      exec {$name:
-        creates => "/opt/homebrew/bin/${name}",
-        command => $command,
-        environment => ["HOME=/Users/kpi"],
-      }
-    }
-    'noinstall': {}
-    'skip': {
-      exec {$name:
-        command => $command,
-      }
-    }
-    default: {
-      exec {$name:
-        #unless => "/usr/bin/whereis -q ${bin}",
-        environment => ["HOME=/Users/kpi"],
-        creates => $bin,
-        command => $command,
-      }
+  if !$tap and $name =~ /^([^\/]+\/[^\/]+)\/[^\/]+$/ {
+    $tap_name = $1
+    ensure_resource('kpi::install::macos', $tap_name, { tap => true })
+    $requires = [Kpi::Install::Macos[$tap_name]]
+  } else {
+    $requires = []
+  }
+
+  unless $bin == 'noinstall' {
+    exec { "brew ${name}":
+      command     => $command,
+      unless      => $unless,
+      timeout     => 1800,
+      environment => ["HOME=/Users/${facts['identity']['user']}", 'HOMEBREW_NO_AUTO_UPDATE=1'],
+      require     => $requires,
     }
   }
 }

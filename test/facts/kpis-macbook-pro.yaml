@@ -1,0 +1,7 @@
+# macOS: brew, kpi::darwin. Puppet runs as the user here, not root.
+os: {family: Darwin, name: Darwin}
+identity: {user: kpi, uid: 501}
+processors: {count: 12}
+kpi_id_rsa: 'False'
+kpi_keys: 'False'
+kpi_yad: 'False'

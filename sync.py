@@ -4,6 +4,7 @@ import hashlib
 import logging
 import os
 import shutil
+import sys
 from pathlib import Path
 
 
@@ -12,6 +13,9 @@ log = logging.getLogger('sync')
 
 target_dir = Path('~').expanduser().absolute()
 source_dir = Path('modules/kpi/files/home/').absolute()
+# per-OS overlays deployed on top of home/ by kpi::home
+overlay_name = 'osx_home' if sys.platform == 'darwin' else 'linux_home'
+overlay_dir = Path('modules/kpi/files', overlay_name).absolute()
 
 if os.name == 'nt':
     appdata = Path(os.environ.get('APPDATA', target_dir / 'AppData' / 'Roaming'))
@@ -64,7 +68,7 @@ def resolve_target(relative: Path) -> Path:
     return target_dir / relative
 
 
-def check_for_sync_posix():
+def check_for_sync_posix(source_dir: Path):
     """
     Iterates over target_dir files and check if source_dir
     files have more recent changes.
@@ -113,7 +117,8 @@ def main():
     if os.name == 'nt':
         check_for_sync_windows()
     else:
-        check_for_sync_posix()
+        check_for_sync_posix(source_dir)
+        check_for_sync_posix(overlay_dir)
 
 
 if __name__ == '__main__':

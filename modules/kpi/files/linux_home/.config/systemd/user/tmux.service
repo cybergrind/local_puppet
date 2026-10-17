@@ -5,7 +5,7 @@ Documentation=man:tmux(1)
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/bin/tmux -L wk -f /home/kpi/.config/tmux/tmux2.conf new-session -d -s wk
+ExecStart=/usr/bin/tmux -L wk -f %h/.config/tmux/tmux2.conf new-session -d -s wk
 
 [Install]
 WantedBy=default.target

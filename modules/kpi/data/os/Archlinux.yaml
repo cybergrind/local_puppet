@@ -1,0 +1,167 @@
+---
+kpi::base_devel::pkgs:
+  - go
+  - nodejs
+  - npm
+  - yarn
+  - jdk
+  # editors
+  - emacs-nox
+  - vim
+  - emacs-python-mode
+  # tools
+  - git
+  - docker
+  - docker-buildx
+  - docker-compose
+
+kpi::packages::linux::pkgs_nox:
+  - zsh
+  - gnome-keyring
+  - libgnome-keyring
+  - kwallet
+  - kwallet-pam
+  - encfs
+  - iotop
+  - atop
+  - inetutils
+  - strace
+  - netctl
+  - dialog
+  - wpa_supplicant
+  - alsa-firmware
+  - alsa-plugins
+  - alsa-tools
+  - alsa-utils
+  - net-tools
+  - openbsd-netcat
+  - bwm-ng
+  - ipset
+  - unzip
+  - p7zip
+  - powertop
+  - ctags
+  - vim-plug-git
+  - networkmanager-openvpn
+  - networkmanager
+  - libxcrypt-compat
+  - libselinux
+  - firejail
+  - asp
+  - man-db
+  - man-pages
+  - playerctl
+  - spotify-player
+
+kpi::packages::linux::pkgs:
+  - ttf-droid
+  - ttf-ms-fonts
+  - ttf-bitstream-vera
+  - ttf-droid-sans-mono-slashed-powerline-git
+  - ttf-fira-code
+  - woff-fira-code
+  - woff2-fira-code
+  - ttf-liberation
+  - ttf-ubuntu-font-family
+  - ttf-liberation-mono-nerd
+  - noto-fonts-emoji
+  - otf-openmoji
+  - ttf-joypixels
+  - ttf-twemoji-color
+  - xorg-server
+  - xf86-input-synaptics
+  - xf86-input-evdev
+  - xorg-xrdb
+  - xorg-xev
+  # GPU drivers (AMD iGPU + 32-bit for Steam/games)
+  - mesa
+  - lib32-mesa
+  - vulkan-radeon
+  - lib32-vulkan-radeon
+  - libva-mesa-driver
+  - xterm
+  - xorg-xrandr
+  - arandr
+  - xorg-xmodmap
+  - pkgfile
+  - kitty
+  - awesome
+  - vicious
+  - virtualbox
+  - mupdf
+  - xpdf
+  - feh
+  - chafa
+  - qbittorrent
+  - google-chrome
+  - yandex-disk
+  - tfswitch-bin
+  # X related
+  - xsel
+  - flameshot
+  - copyq
+  - network-manager-applet
+  - freerdp
+  - yq
+  - pcmanfm
+  - aws-cli
+  - slock
+  - xorg-xinput
+  # sound
+  - helvum
+
+kpi::packages::optional::pkgs:
+  - lm_sensors
+  - lshw
+  - hdparm
+  - tk
+  - pavucontrol
+  - pipewire-pulse
+  - pasystray
+  - xscreensaver
+  - inotify-tools
+  # development
+  - python-virtualenv
+  - whois
+  - bind-tools  # dig
+  - python-pip
+  - flake8
+  - python-uv
+  - postgresql-libs
+
+kpi::packages::hidpi::pkgs:
+  - xpra
+
+# systemctl --user enable --now hyprpolkitagent.service
+kpi::packages::hyprland::pkgs:
+  - hyprland
+  - rofi-wayland
+  - rofi-calc
+  - waybar
+  - uwsm
+  - wl-clipboard
+  - hyprpolkitagent
+  - slurp
+  - grim
+  - hypridle
+  - hyprlock
+  - xdg-desktop-portal-hyprland
+  - xdg-desktop-portal-gtk
+  - gamescope
+
+kpi::packages::niri::pkgs:
+  - niri
+  - xwayland-satellite
+  - satty
+  - xdg-desktop-portal-gnome
+  - xdg-desktop-portal-wlr
+
+kpi::packages::sway::pkgs:
+  - sway
+  - swaylock
+  - wl-clipboard
+  - xdg-desktop-portal
+  - xdg-desktop-portal-gnome
+  - grim
+  - slurp
+  - spectacle

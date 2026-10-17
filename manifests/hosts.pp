@@ -67,6 +67,22 @@ node 'cybergrinds-macbook-pro.tailnet.ts.net' {
   }
 }
 
+node 'kpis-macbook-pro' {
+  include kpi::base_devel
+  class {'kpi::home':
+    user => 'kpi',
+    home_dir => '/Users/kpi'
+  }
+}
+
+node 'kpis-macbook-pro.tailnet.ts.net' {
+  include kpi::base_devel
+  class {'kpi::home':
+    user => 'kpi',
+    home_dir => '/Users/kpi'
+  }
+}
+
 node 'ww' {
   # Windows host - lightweight config with editor setups
   $skip_user = true

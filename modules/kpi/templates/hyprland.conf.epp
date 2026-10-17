@@ -71,7 +71,7 @@ exec-once = waybar &
 # exec-once = /home/kpi/.local/bin/flameshot_wrapper.sh &
 exec-once = copyq --start-server &
 # for some reason setEnv inside of script isn't working
-# script in `modules/kpi/files/home/.config/copyq/wayland.ini`
+# script in `modules/kpi/files/linux_home/.config/copyq/wayland.ini`
 exec-once = /home/kpi/.local/bin/monitor_clipboard_copyq.sh &
 exec-once = dunst &
 #exec-once = swayidle timeout 30 'hyprctl dispatcher dpms off && swaylock'

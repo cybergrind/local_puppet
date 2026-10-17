@@ -4,9 +4,13 @@ from glob import glob
 from os.path import exists, join
 
 
-for d in glob('/home/*'):
-    user = d.replace('/home/', '')
+# macOS keeps homes in /Users and runs puppet as the user itself, so only the
+# homes we are allowed to switch into are probed.
+for d in glob('/home/*') + glob('/Users/*'):
+    user = os.path.basename(d)
     stat = os.stat(d)
+    if os.getuid() != 0 and stat.st_uid != os.getuid():
+        continue
     if os.fork():
         continue
     os.setgid(stat.st_gid)

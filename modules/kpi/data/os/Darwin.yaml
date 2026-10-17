@@ -1,0 +1,40 @@
+---
+# macOS side of the Linux dev toolchain (go, node, emacs-nox, docker, ...).
+# colima is the docker daemon (a Linux VM): `colima start`, or
+# `brew services start colima` to keep it running.
+kpi::base_devel::pkgs:
+  - go
+  - node
+  - yarn
+  - emacs
+  - docker
+  - docker-buildx
+  - docker-compose
+  - colima
+
+kpi::packages::macos::pkgs:
+  - pinentry-mac
+  - gpg
+  - cmake
+  # - emacs-plus
+  - nvim
+  - vim
+  - uv
+  - htop
+  - tree
+  - py3cairo
+  - xsel
+  - kubectx
+  - findutils
+  - coreutils
+  - gnu-sed
+  - grep
+
+kpi::packages::macos::casks:
+  # fonts matching the Linux ttf-* set
+  - font-fira-code
+  - font-liberation
+  - font-liberation-nerd-font
+  - font-droid-sans-mono-nerd-font
+  # tiling WM, the niri counterpart; config in osx_home/.aerospace.toml
+  - nikitabobko/tap/aerospace

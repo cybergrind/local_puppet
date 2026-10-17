@@ -1,0 +1,28 @@
+---
+# Tools with the same package name in brew and pacman/AUR (Linux + macOS).
+# OS-specific names go into os/<family>.yaml.
+kpi::packages::common::pkgs:
+  - zsh-completions
+  - tmux
+  - btop
+  - pv
+  - pwgen
+  - rsync
+  - pigz
+  - mtr
+  - nmap
+  - xh
+  - jq
+  - fzf
+  - fd
+  - eza
+  - bat
+  - ripgrep
+  - the_silver_searcher
+  - direnv
+  - nvm
+  - kubectl
+  - helm
+  - helmfile
+  - k9s
+  - ruff

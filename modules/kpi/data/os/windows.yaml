@@ -1,0 +1,8 @@
+---
+kpi::packages::windows::pkgs:
+  # Essential tools for Windows
+  - git
+  - 7zip
+  # Optional development tools, uncomment if needed:
+  # - nodejs
+  # - python

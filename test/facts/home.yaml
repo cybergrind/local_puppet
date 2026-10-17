@@ -1,0 +1,7 @@
+# Arch desktop: the default Linux path (packages, systemd units, hyprland/niri).
+os: {family: Archlinux, name: Archlinux}
+identity: {user: root, uid: 0}
+processors: {count: 8}
+kpi_id_rsa: 'True'
+kpi_keys: 'True'
+kpi_yad: 'True'

@@ -1,0 +1,7 @@
+# Arch laptop with $hiDPI = true (Xresources, kpi::packages::hidpi).
+os: {family: Archlinux, name: Archlinux}
+identity: {user: root, uid: 0}
+processors: {count: 4}
+kpi_id_rsa: 'False'
+kpi_keys: 'False'
+kpi_yad: 'False'

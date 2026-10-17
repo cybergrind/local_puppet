@@ -1,0 +1,12 @@
+---
+# Module data: package lists per OS family. The class parameters
+# (kpi::packages::*::pkgs, kpi::base_devel::pkgs, ...) are bound automatically.
+version: 5
+defaults:
+  datadir: data
+  data_hash: yaml_data
+hierarchy:
+  - name: 'OS family'
+    path: 'os/%{facts.os.family}.yaml'
+  - name: 'Common'
+    path: 'common.yaml'

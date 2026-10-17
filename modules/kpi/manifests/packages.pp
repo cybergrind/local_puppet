@@ -7,7 +7,6 @@ class kpi::packages::system() {
   }
 }
 
-
 class kpi::packages::system::linux () {
   $system = [ 'sudo', 'openssh', 'base-devel', 'go' ]
   package { $system:
@@ -65,67 +64,31 @@ class kpi::packages::system::linux () {
   include kpi::system
 }
 
-# systemctl --user enable --now hyprpolkitagent.service
-
-class kpi::packages::hyprland () {
-  $pkgs = [
-    'hyprland', 'rofi-wayland', 'rofi-calc',
-    'waybar',
-    'uwsm',
-    'wl-clipboard',
-    'hyprpolkitagent',
-    'slurp', 'grim',
-    'hypridle', 'hyprlock',
-    'xdg-desktop-portal-hyprland',
-    'xdg-desktop-portal-gtk',
-    'gamescope',
-  ]
+class kpi::packages::hyprland (Array[String] $pkgs) {
   kpi::install { $pkgs: }
 }
-class kpi::packages::niri () {
-  $pkgs = [
-    'niri', 'xwayland-satellite',
-    'satty',
-    'xdg-desktop-portal-gnome',
-    'xdg-desktop-portal-wlr',
-  ]
+
+class kpi::packages::niri (Array[String] $pkgs) {
   kpi::install { $pkgs: }
 }
 
 class kpi::packages::glimpse () {
   kpi::install { 'glimpse-desktop-bin': }
 }
-class kpi::packages::sway () {
-  $pkgs_sway = [
-    'sway', 'swaylock',
-    'wl-clipboard',
-    'xdg-desktop-portal',
-    'xdg-desktop-portal-gnome',
-    'grim', 'slurp',
-    'spectacle',
-  ]
-  kpi::install { $pkgs_sway: } 
+class kpi::packages::sway (Array[String] $pkgs) {
+  kpi::install { $pkgs: }
 }
 
-class kpi::packages::windows () {
-  # Essential tools for Windows
-  $essential = [
-    'git',
-    '7zip',
-  ]
-  kpi::install { $essential: }
-
-  # Optional development tools
-  $dev_tools = [
-    'nodejs',
-    'python',
-  ]
-  # Uncomment if needed:
-  # kpi::install { $dev_tools: }
+class kpi::packages::windows (Array[String] $pkgs) {
+  kpi::install { $pkgs: }
 }
 
 class kpi::packages () {
   include kpi::os
+  unless $kpi::os::is_windows {
+    class {'kpi::packages::common':}
+  }
+
   if $kpi::os::is_arch {
     class {'kpi::packages::linux':}
     # class {'kpi::packages::sway':}
@@ -139,141 +102,41 @@ class kpi::packages () {
   }
 }
 
-class kpi::packages::macos () {
-  kpi::install::macos{'gromgit/fuse':
-    tap => true,
-    bin => '/opt/homebrew/bin/encfs',
-  }
-  kpi::install {'git': bin => 'noinstall'}
-  kpi::install {'findutils':
-    bin => '/opt/homebrew/opt/findutils'
-  }
-  kpi::install {'encfs-mac':
-    bin => '/opt/homebrew/bin/encfs'
-  }
-
-  $pkgs_nox = [
-    'pinentry-mac',
-    'gpg',
-    'tmux', 'cmake',
-    # 'emacs-plus',
-    'kubectl', 'nvim',
-    'vim', 'ag', 'direnv', 'fd', 'nvm',
-    'htop', 'tree', 'npm',
-    'py3cairo', 'gtk+2',
-    'xsel', 'kubectx'
-  ]
-  kpi::install { $pkgs_nox: }
-
-  $pkgs_cask = [
-    # 'nikitabobko/tap/aerospace',
-  ]
-
-  kpi::install::macos { $pkgs_cask: cask => true }
-
+# Package lists for this and the per-OS classes below live in module data:
+# data/common.yaml (same name in brew and pacman/AUR) and data/os/<family>.yaml.
+class kpi::packages::common (Array[String] $pkgs) {
+  kpi::install { $pkgs: }
 }
 
-class kpi::packages::linux () {
-  $pkgs_nox = [
-    'zsh', 'zsh-completions',
-    'gnome-keyring', 'libgnome-keyring', 'kwallet', 'kwallet-pam',
-    'tmux', 'encfs', 'iotop', 'btop', 'atop',
-    'inetutils',
-    'pv', 'pwgen', 'rsync', 'strace',
-    'netctl', 'dialog', 'wpa_supplicant',
-    'alsa-firmware', 'alsa-plugins', 'alsa-tools', 'alsa-utils',
-    'net-tools', 'mtr', 'nmap', 'openbsd-netcat', 'bwm-ng', 'ipset',
-    'unzip', 'pigz', 'fzf', 'p7zip',
-    'powertop',
-    'kubectl',
-    'ctags', 'vim-plug-git',
-    'networkmanager-openvpn', 'networkmanager',
-    'libxcrypt-compat', 'libselinux', 'firejail',
-    'asp', 'man-db', 'man-pages',
-    # alternatives
-    'the_silver_searcher', 'fd', 'xh',
-    'eza', 'bat', 'ripgrep',
-    'playerctl', 'spotify-player',
-  ]
+class kpi::packages::macos (Array[String] $pkgs, Array[String] $casks) {
+  kpi::install {'git': bin => 'noinstall'}  # ships with Xcode CLT
+
+  # encfs needs macFUSE; the cask runs a sudo'ed .pkg installer, which can't
+  # prompt from inside puppet, so ./run installs it interactively beforehand.
+  kpi::install {'macfuse': cask => true}
+  -> kpi::install {'gromgit/fuse/encfs-mac': }
+
+  kpi::install { $pkgs: }
+  kpi::install { $casks: cask => true }
+}
+
+class kpi::packages::linux (Array[String] $pkgs_nox, Array[String] $pkgs) {
   kpi::install { $pkgs_nox:
     require => [Class[kpi::packages::system]],
   }
 
-  $pkgs = [
-    'ttf-droid', 'ttf-ms-fonts', 'ttf-bitstream-vera',
-    'ttf-droid-sans-mono-slashed-powerline-git',
-    'ttf-fira-code', 'woff-fira-code', 'woff2-fira-code',
-    'ttf-liberation', 'ttf-ubuntu-font-family',
-    'ttf-liberation-mono-nerd', 'noto-fonts-emoji',
-    'otf-openmoji', 'ttf-joypixels', 'ttf-twemoji-color',
-    'xorg-server', 'xf86-input-synaptics', 'xf86-input-evdev',
-    'xorg-xrdb', 'xorg-xev',
-    # GPU drivers (AMD iGPU + 32-bit for Steam/games)
-    'mesa', 'lib32-mesa',
-    'vulkan-radeon', 'lib32-vulkan-radeon',
-    'libva-mesa-driver',
-    'xterm', 'xorg-xrandr', 'arandr', 'xorg-xmodmap',
-    'pkgfile', 'kitty',
-    'awesome', 'vicious',
-    'virtualbox',
-    'mupdf', 'xpdf', 'feh', 'chafa',
-    'qbittorrent',
-    'google-chrome',
-    'yandex-disk', 'helm',
-    'tfswitch-bin',
-    # X related
-    'xsel', 'flameshot', 'copyq',
-    'network-manager-applet',
-    'freerdp', 'jq', 'yq',
-    'pcmanfm', 'k9s',
-    'ruff', 'aws-cli',
-    'slock', 'xorg-xinput',
-    # sound
-    'helvum',
-  ]
-
-  kpi::install { $pkgs:
-    require => [Class[kpi::packages::system]],
-  }
-
-  kpi::install { 'helmfile':
-    require => [Class[kpi::packages::system]],
-  }
-}
-
-class kpi::packages::optional () {
-  include kpi::os
-  case $kpi::os::family {
-    'Archlinux': {
-      $pkgs = [
-        'direnv',
-        'lm_sensors', 'lshw', 'hdparm', 'tk',
-        'pavucontrol', 'pipewire-pulse', 'pasystray',
-        'xscreensaver',
-        'inotify-tools',
-        # development
-        'python-virtualenv', 'whois', 'bind-tools', # dig
-        'python-pip', 'flake8', 'python-uv',
-        'postgresql-libs',
-        'nvm',
-      ]
-    }
-    'Darwin': {
-      $pkgs = []
-    }
-  }
-
-
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
   }
 }
 
+class kpi::packages::optional (Array[String] $pkgs = []) {
+  kpi::install { $pkgs:
+    require => [Class[kpi::packages::system]],
+  }
+}
 
-class kpi::packages::hidpi () {
-  $pkgs = [
-    'xpra',
-  ]
+class kpi::packages::hidpi (Array[String] $pkgs) {
   kpi::install { $pkgs:
     require => [Class[kpi::packages::system]],
   }

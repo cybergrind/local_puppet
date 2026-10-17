@@ -1,0 +1,4 @@
+# Windows host (chocolatey, AppData editor configs).
+os: {family: windows, name: windows}
+identity: {user: kpi}
+processors: {count: 8}

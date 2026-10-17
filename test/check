@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# Compile the catalog of every node in test/facts/ without applying anything,
+# so manifests for all OSes can be checked from any machine.
+#
+#   test/check              compile all fixtures, fail on any error
+#   test/check --diff [REF] also diff each catalog against REF (default HEAD)
+#   test/check zz ww        only these fixtures
+#
+# Needs puppet plus the stdlib/vcsrepo modules that ./run installs.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+REPO=$(pwd)
+
+DIFF_REF=''
+NODES=()
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --diff)
+            DIFF_REF=HEAD
+            if [[ $# -gt 1 && $2 != -* && ! -f test/facts/$2.yaml ]]; then
+                DIFF_REF=$2
+                shift
+            fi
+            ;;
+        *)
+            NODES+=("$1")
+            ;;
+    esac
+    shift
+done
+if [[ ${#NODES[@]} -eq 0 ]]; then
+    for f in test/facts/*.yaml; do
+        NODES+=("$(basename "$f" .yaml)")
+    done
+fi
+
+# Same system modulepath as ./run
+if [[ $OSTYPE == 'darwin'* ]]; then
+    MODULEPATH="$HOME/.puppetlabs/etc/code/modules"
+else
+    MODULEPATH='/etc/puppetlabs/code/modules'
+fi
+
+# AIO packages bundle their own ruby; distro packages (Arch) use the system one
+RUBY=/opt/puppetlabs/puppet/bin/ruby
+[[ -x $RUBY ]] || RUBY=ruby
+
+WORK=$(mktemp -d)
+trap 'rm -rf "$WORK"' EXIT
+
+# compile <repo_dir> <node> -> catalog listing on stdout, repo path normalised
+compile() {
+    "$RUBY" "$REPO/test/compile_catalog.rb" "$1" "$REPO/test/facts/$2.yaml" "$MODULEPATH" "$WORK/vardir" \
+        | sed "s#$1#REPO#g"
+}
+
+if [[ -n $DIFF_REF ]]; then
+    mkdir "$WORK/base"
+    git archive "$DIFF_REF" | tar -x -C "$WORK/base"
+fi
+
+failed=0
+
+# Syntax of everything, including classes no fixture node declares
+if puppet parser validate manifests/*.pp modules/kpi/manifests/*.pp \
+        && puppet epp validate modules/kpi/templates/*.epp; then
+    echo "ok   syntax"
+else
+    echo "FAIL syntax"
+    failed=1
+fi
+
+for node in "${NODES[@]}"; do
+    if ! compile "$REPO" "$node" > "$WORK/$node.txt" 2> "$WORK/$node.err"; then
+        echo "FAIL $node"
+        grep -v '^\s*from ' "$WORK/$node.err" | sed 's/^/    /'
+        failed=1
+        continue
+    fi
+    echo "ok   $node ($(grep -c '^[A-Z]' "$WORK/$node.txt") resources)"
+
+    if [[ -n $DIFF_REF ]]; then
+        # facts and this compiler always come from the worktree, so both sides match
+        if compile "$WORK/base" "$node" > "$WORK/$node.base.txt" 2>/dev/null; then
+            diff -u --label "$DIFF_REF:$node" --label "worktree:$node" \
+                "$WORK/$node.base.txt" "$WORK/$node.txt" | sed 's/^/    /' || true
+        else
+            echo "    ($node does not compile at $DIFF_REF, no diff)"
+        fi
+    fi
+done
+
+exit $failed

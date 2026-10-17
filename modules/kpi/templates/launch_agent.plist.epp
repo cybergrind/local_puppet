@@ -1,0 +1,35 @@
+<%- |
+  String                $label,
+  Array[String]         $program_arguments,
+  Hash[String, String]  $environment,
+  Boolean               $abandon_process_group,
+| -%>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string><%= $label %></string>
+  <key>ProgramArguments</key>
+  <array>
+<% $program_arguments.each |$arg| { -%>
+    <string><%= stdlib::xml_encode($arg) %></string>
+<% } -%>
+  </array>
+<% unless $environment.empty { -%>
+  <key>EnvironmentVariables</key>
+  <dict>
+<% $environment.each |$key, $value| { -%>
+    <key><%= stdlib::xml_encode($key) %></key>
+    <string><%= stdlib::xml_encode($value) %></string>
+<% } -%>
+  </dict>
+<% } -%>
+<% if $abandon_process_group { -%>
+  <key>AbandonProcessGroup</key>
+  <true/>
+<% } -%>
+  <key>RunAtLoad</key>
+  <true/>
+</dict>
+</plist>

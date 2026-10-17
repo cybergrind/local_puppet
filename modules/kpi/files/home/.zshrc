@@ -9,13 +9,13 @@ if [[ $TERM == "dumb" ]]; then
     return
 fi
 
-# ITERM fix
-if [ ! -z "$Apple_PubSub_Socket_Render" ]; then
-    declare -x PATH="/opt/local/bin:/opt/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-fi
-
 if [[ $OSTYPE == "darwin"* ]]; then
-    declare -x PATH=$PATH:/opt/homebrew/bin:/opt/puppetlabs/bin
+    # brew before the system dirs, and the GNU userland before BSD's, like on Linux
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    for gnu in coreutils findutils gnu-sed grep; do
+        declare -x PATH="$HOMEBREW_PREFIX/opt/$gnu/libexec/gnubin:$PATH"
+    done
+    declare -x PATH="$PATH:/opt/puppetlabs/bin"
 fi
 
 if [[ -f ~/.keys/env ]]; then
@@ -438,6 +438,10 @@ function load_nvm {
         source /usr/share/nvm/nvm.sh
         source /usr/share/nvm/bash_completion
         source /usr/share/nvm/install-nvm-exec
+    elif [ -f "$HOMEBREW_PREFIX/opt/nvm/nvm.sh" ]; then
+        [ -z "$NVM_DIR" ] && export NVM_DIR="$HOME/.nvm"
+        source "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+        source "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
     fi
 }
 
@@ -479,7 +483,7 @@ if (( $+commands[heroku] )); then
     HEROKU_AC_ZSH_SETUP_PATH=/home/kpi/.cache/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH || eval "$(heroku autocomplete:script zsh)"
 fi
 
-CUSTOM_CONFIG="$HOME/.config/$(hostname).sh"
+CUSTOM_CONFIG="$HOME/.config/${HOST%%.*}.sh"
 if [ -f "$CUSTOM_CONFIG" ]; then
     source "$CUSTOM_CONFIG"
 else

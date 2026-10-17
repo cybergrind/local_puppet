@@ -50,6 +50,14 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
 
   $home = $kpi::home::home_dir
 
+  # home/ is shared; linux_home/ and osx_home/ are per-OS overlays merged on top
+  # of it (sourceselect => all; home/ wins on clashes).
+  if $kpi::os::is_darwin {
+    $home_sources = ['puppet:///modules/kpi/home', 'puppet:///modules/kpi/osx_home']
+  } else {
+    $home_sources = ['puppet:///modules/kpi/home', 'puppet:///modules/kpi/linux_home']
+  }
+
   if $kpi::os::is_windows {
     # On Windows, deploy config files to AppData and user home
     file { "${home}/.config":
@@ -84,7 +92,8 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
       file { $home:
         ensure             => directory,
         recurse            => remote,
-        source             => 'puppet:///modules/kpi/home',
+        source             => $home_sources,
+        sourceselect       => all,
         source_permissions => 'use',
         ignore             => ['__pycache__', '*.pyc'],
         owner              => $user,
@@ -94,7 +103,8 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
       file { $home:
         ensure             => directory,
         recurse            => remote,
-        source             => 'puppet:///modules/kpi/home',
+        source             => $home_sources,
+        sourceselect       => all,
         source_permissions => 'use',
         ignore             => ['__pycache__', '*.pyc'],
         owner              => $user,
@@ -103,19 +113,6 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
       }
     }
   }
-  # ## additional directory for macos
-  # if $facts['os']['family'] == 'Darwin' {
-  #   file { "${home}/.config":
-  #   ensure             => directory,
-  #   recurse            => remote,
-  #   source             => 'puppet:///modules/kpi/osx_home',
-  #   source_permissions => 'use',
-  #   owner              => $user,
-  #   # group => $user,
-  #   require            => [ File[$home] ],
-  #   }
-  # }
-
   # exec { '/bin/sbt gen-ensime exit':
   #   unless => "/bin/test -e ${home}/.sbt/0.13/plugins/target",
   #   user => $user,
@@ -150,6 +147,13 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
     if $kpi::os::is_arch and $node_hostname != undef {
       File[$home] -> class { 'kpi::tailscale_priv':
         user_key_path => "${home}/.keys/.ts-auth.key",
+      }
+    }
+
+    if $kpi::os::is_darwin {
+      File[$home] -> class { 'kpi::darwin':
+        user     => $user,
+        home_dir => $home,
       }
     }
 
@@ -408,7 +412,7 @@ define kpi::home::shared_link() {
 
 define kpi::home::keys_links () {
   $user = $name
-  $home = "/home/${user}"
+  $home = $kpi::home::home_dir
 
   $files = ['id_rsa', 'id_rsa.pub',
             'id_ed25519', 'id_ed25519.pub',
