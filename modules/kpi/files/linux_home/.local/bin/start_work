@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Mount ~/.keys from the encfs-encrypted ~/Yandex.Disk/wk_ssh2 (kept current by
+# Syncthing and, for now, the Yandex.Disk client) and load the ssh keys into the
+# agent. The macOS variant lives in osx_home/.local/bin.
+set -e
+
+if mountpoint -q "$HOME/.keys"; then
+    echo "~/.keys is already mounted"
+else
+    encfs "$HOME/Yandex.Disk/wk_ssh2" "$HOME/.keys"
+fi
+yandex-disk start
+ssh-add

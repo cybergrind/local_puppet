@@ -98,9 +98,17 @@ class kpi::home (
 
     # ~/Yandex.Disk is synced by Syncthing (and, while moving off it, by the
     # Yandex.Disk client on Linux). .stignore is per machine, never synced.
+    # Machine-specific patterns go into .stignore-local, which is never in git
+    # or synced; puppet only creates it empty.
     file { "${home}/Yandex.Disk":
       ensure => directory,
       owner  => $user,
+    }
+    -> file { "${home}/Yandex.Disk/.stignore-local":
+      ensure  => file,
+      owner   => $user,
+      replace => false,
+      content => '',
     }
     -> file { "${home}/Yandex.Disk/.stignore":
       ensure  => file,
@@ -110,6 +118,8 @@ class kpi::home (
         /.sync
         /.localized
         (?d).DS_Store
+        /.stignore-local
+        #include .stignore-local
         | STIGNORE
     }
 
@@ -186,8 +196,10 @@ define kpi::home::shared_link() {
   $i = split($name, ':')
   $user = $i[0]
   $path = $i[1]
+  # an existing file wins (e.g. a machine's own ~/start_work)
   kpi::home_link {"${user}:${path}":
     target  =>"Yandex.Disk/home/${path}",
+    replace => false,
     require => [File["${kpi::home::home_dir}/.ssh"]],
   }
 }

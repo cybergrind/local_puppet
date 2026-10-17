@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Mount ~/.keys from the Syncthing copy of Yandex.Disk (encfs-encrypted
+# wk_ssh2) and load the ssh keys into the agent. macFUSE on this Mac only has
+# the FSKit backend, hence the extra mount option after `--`.
+set -e
+
+if /sbin/mount | grep -q " on $HOME/.keys "; then
+    echo "~/.keys is already mounted"
+else
+    encfs "$HOME/Yandex.Disk/wk_ssh2" "$HOME/.keys" -- -o backend=fskit
+fi
+ssh-add
