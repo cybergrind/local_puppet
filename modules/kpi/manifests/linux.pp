@@ -51,6 +51,17 @@ class kpi::linux ($user, $home_dir) {
     unless      => '/usr/bin/tmux -L wk has-session -t wk 2>/dev/null',
   }
 
+  # Syncthing (data/common.yaml); the Arch package ships the user unit, and
+  # linger (above) keeps it running without a login session.
+  exec { 'syncthing-service enable':
+    user        => $user,
+    command     => '/bin/systemctl --user enable --now syncthing.service',
+    environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
+    provider    => shell,
+    unless      => '/bin/systemctl --user is-enabled --quiet syncthing.service && /bin/systemctl --user is-active --quiet syncthing.service',
+    require     => [Kpi::Install['syncthing'], Exec['enable-linger']],
+  }
+
   if $kpi::home::msx_hub {
     exec { 'msx-hub-service enable':
       user        => $user,

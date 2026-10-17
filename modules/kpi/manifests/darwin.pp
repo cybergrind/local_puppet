@@ -67,6 +67,16 @@ class kpi::darwin ($user, $home_dir) {
     abandon_process_group => true,
   }
 
+  # Syncthing (data/common.yaml), the counterpart of its systemd user unit on
+  # Linux; launchd restarts it if it exits. GUI on http://127.0.0.1:8384.
+  kpi::darwin::launch_agent { 'com.kpi.syncthing':
+    program_arguments => [
+      '/opt/homebrew/bin/syncthing', 'serve', '--no-browser', '--no-restart',
+      "--log-file=${home_dir}/Library/Logs/syncthing.log",
+    ],
+    keep_alive        => true,
+  }
+
   # Fast key repeat; press-and-hold pops up the accent menu instead of repeating
   # (breaks hjkl in vim). Both apply from the next login.
   kpi::darwin::default { 'key repeat':
@@ -175,6 +185,7 @@ define kpi::darwin::launch_agent (
   Array[String] $program_arguments,
   Hash[String, String] $environment = {},
   Boolean $abandon_process_group = false,
+  Boolean $keep_alive = false,
 ) {
   $user = $kpi::darwin::user
   $uid = $facts['identity']['uid']
@@ -189,6 +200,7 @@ define kpi::darwin::launch_agent (
       program_arguments     => $program_arguments,
       environment           => $environment,
       abandon_process_group => $abandon_process_group,
+      keep_alive            => $keep_alive,
     }),
     require => File[$kpi::darwin::agents_dir],
   }

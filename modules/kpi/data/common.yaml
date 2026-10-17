@@ -26,3 +26,4 @@ kpi::packages::common::pkgs:
   - helmfile
   - k9s
   - ruff
+  - syncthing  # started by kpi::linux / kpi::darwin
