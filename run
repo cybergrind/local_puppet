@@ -77,6 +77,18 @@ ${PUPPET_APPLY} \
     manifests/hosts.pp $@
 { set +x; } 2>/dev/null
 
+# Root-only macOS setup (kpi::darwin::system: Touch ID sudo, Spotlight off).
+# Puppet runs as the user here, so escalate only when something there is out of
+# date. Needs pam_reattach, which the apply above installs.
+if [[ $OSTYPE == 'darwin'* && -f /opt/homebrew/lib/pam/pam_reattach.so ]]; then
+    if ! grep -q pam_tid /etc/pam.d/sudo_local 2>/dev/null || ! mdutil -s / | grep -q 'Indexing disabled'; then
+        echo apply root-only macOS settings
+        sudo /opt/puppetlabs/bin/puppet apply -v \
+            --modulepath "$(pwd)/modules${PUPPET_MODULES}" \
+            -e 'include kpi::darwin::system'
+    fi
+fi
+
 if [[ $OSTYPE != darwin* ]] && command -v niri_outputs.py >/dev/null 2>&1; then
     niri_pid=$(pgrep -x niri | head -1)
     if [[ -n $niri_pid ]]; then

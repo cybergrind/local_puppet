@@ -23,14 +23,15 @@ kpi::packages::macos::pkgs:
   - htop
   - tree
   - py3cairo
-  - xsel
   - kubectx
+  - pam-reattach  # Touch ID sudo inside tmux, see kpi::darwin::system
   - findutils
   - coreutils
   - gnu-sed
   - grep
 
 kpi::packages::macos::casks:
+  - kitty  # same terminal and kitty.conf as on Linux
   # fonts matching the Linux ttf-* set
   - font-fira-code
   - font-liberation

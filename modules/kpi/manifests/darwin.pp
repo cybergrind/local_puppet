@@ -1,21 +1,56 @@
 # macOS-only user session setup. Declared from kpi::home, the macOS counterpart
 # of the Arch-only systemd/hyprland/glimpse block there. Puppet runs as the
-# user on macOS (no sudo), so everything here lives in the user's domain.
+# user on macOS (no sudo), so everything here lives in the user's domain; the
+# few root-only bits are in kpi::darwin::system, which ./run applies via sudo.
 class kpi::darwin ($user, $home_dir) {
   $agents_dir = "${home_dir}/Library/LaunchAgents"
+  $uid = $facts['identity']['uid']
 
   file { $agents_dir:
     ensure => directory,
     owner  => $user,
   }
 
-  # Caps Lock -> Left Control for every keyboard, same as ctrl:nocaps on Linux.
-  # hidutil mappings don't survive a reboot, so a LaunchAgent re-applies them.
-  kpi::darwin::launch_agent { 'com.kpi.capslock-ctrl':
+  # Keyboard remaps for every keyboard; hidutil mappings don't survive a reboot,
+  # so a LaunchAgent re-applies them at login.
+  #  - Caps Lock -> Left Control, same as ctrl:nocaps on Linux
+  #  - Right Command -> F18, bound below to "next input source" (Right Alt's
+  #    grp:toggle on Linux)
+  kpi::darwin::launch_agent { 'com.kpi.keyboard':
     program_arguments => [
       '/usr/bin/hidutil', 'property', '--set',
-      '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x7000000E0}]}',
+      join([
+        '{"UserKeyMapping":[',
+        '{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x7000000E0},',
+        '{"HIDKeyboardModifierMappingSrc":0x7000000E7,"HIDKeyboardModifierMappingDst":0x70000006D}',
+        ']}',
+      ]),
     ],
+  }
+
+  # Replaced by com.kpi.keyboard; drop once every Mac has run this.
+  exec { 'launchctl remove com.kpi.capslock-ctrl':
+    command => "/bin/launchctl bootout gui/${uid}/com.kpi.capslock-ctrl",
+    onlyif  => "/bin/launchctl print gui/${uid}/com.kpi.capslock-ctrl",
+  }
+  -> file { "${agents_dir}/com.kpi.capslock-ctrl.plist":
+    ensure => absent,
+  }
+
+  # F18 (key code 79, function-key flag 0x800000) = "Select next source in
+  # Input menu", symbolic hotkey 61. activateSettings applies it without a logout.
+  exec { 'input source hotkey F18':
+    command  => join([
+      "/usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 61",
+      "'{ enabled = 1; value = { parameters = (65535, 79, 8388608); type = standard; }; }'",
+      '&& /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u',
+    ], ' '),
+    unless   => join([
+      '/usr/bin/defaults export com.apple.symbolichotkeys -',
+      '| /usr/bin/plutil -extract AppleSymbolicHotKeys.61.value.parameters.1 raw -o - -',
+      '| /usr/bin/grep -qx 79',
+    ], ' '),
+    provider => shell,
   }
 
   # Outer tmux server, the macOS counterpart of tmux.service on Linux. tmux
@@ -44,6 +79,28 @@ class kpi::darwin ($user, $home_dir) {
     domain => 'NSGlobalDomain', key => 'ApplePressAndHoldEnabled', value => false,
   }
 
+  # No "smart" typing: curly quotes, em dashes and autocorrect mangle code and
+  # shell commands typed outside the terminal.
+  ['NSAutomaticQuoteSubstitutionEnabled', 'NSAutomaticDashSubstitutionEnabled',
+    'NSAutomaticSpellingCorrectionEnabled'].each |String $key| {
+    kpi::darwin::default { "no ${key}":
+      domain => 'NSGlobalDomain', key => $key, value => false,
+    }
+  }
+
+  # Finder shows every extension and dotfile; it only rereads these on restart.
+  kpi::darwin::default { 'show all extensions':
+    domain => 'NSGlobalDomain', key => 'AppleShowAllExtensions', value => true,
+  }
+  ~> exec { 'restart Finder':
+    command     => '/usr/bin/killall Finder',
+    refreshonly => true,
+  }
+  kpi::darwin::default { 'show hidden files':
+    domain => 'com.apple.finder', key => 'AppleShowAllFiles', value => true,
+    notify => Exec['restart Finder'],
+  }
+
   # The macOS Yandex.Disk client syncs into ~/Yandex.Disk.localized; facts and
   # kpi::home::shared_link expect the Linux path.
   file { "${home_dir}/Yandex.Disk":
@@ -64,29 +121,31 @@ class kpi::darwin ($user, $home_dir) {
       target => "/opt/homebrew/opt/${plugin}/bin/${plugin}",
     }
   }
-
-  class { 'kpi::darwin::iterm': }
 }
 
-# Dynamic profile inheriting from the stock "Default" profile; it only flips
-# Left Option to Esc+ so tmux sees M-<key> (outer tmux binds M-0..M-9).
-# Right Option stays Normal for typing accented/special characters.
-class kpi::darwin::iterm () {
-  $user = $kpi::darwin::user
-  $profiles_dir = "${kpi::darwin::home_dir}/Library/Application Support/iTerm2/DynamicProfiles"
-  $guid = 'kpi-puppet-default'
+# Root-only macOS setup. Not part of any node: ./run applies it with
+# `sudo puppet apply -e 'include kpi::darwin::system'` when it's out of date.
+class kpi::darwin::system () {
+  # Touch ID for sudo, also inside tmux (pam_reattach reconnects the session to
+  # the GUI). sudo_local is included by /etc/pam.d/sudo and survives OS updates.
+  # If pam_reattach.so goes missing sudo can't initialise PAM at all, so keep
+  # pam-reattach in data/os/Darwin.yaml while this line references it.
+  file { '/etc/pam.d/sudo_local':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'wheel',
+    mode    => '0444',
+    content => @(PAM),
+      # managed by puppet (kpi::darwin::system)
+      auth       optional       /opt/homebrew/lib/pam/pam_reattach.so ignore_ssh
+      auth       sufficient     pam_tid.so
+      | PAM
+  }
 
-  file { $profiles_dir:
-    ensure => directory,
-    owner  => $user,
-  }
-  -> file { "${profiles_dir}/kpi.json":
-    ensure => file,
-    owner  => $user,
-    source => 'puppet:///modules/kpi/darwin/iterm2-profile.json',
-  }
-  -> kpi::darwin::default { 'iterm default profile':
-    domain => 'com.googlecode.iterm2', key => 'Default Bookmark Guid', value => $guid,
+  # No Spotlight indexing on any volume.
+  exec { 'disable spotlight':
+    command => '/usr/bin/mdutil -a -i off',
+    unless  => "/usr/bin/mdutil -s / | /usr/bin/grep -q 'Indexing disabled'",
   }
 }
 
