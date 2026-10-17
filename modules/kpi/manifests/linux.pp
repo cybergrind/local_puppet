@@ -3,7 +3,6 @@
 # per-host knobs (sshj, node_hostname, msx_hub, hidpi, uid) live on kpi::home.
 class kpi::linux ($user, $home_dir) {
   $home = $home_dir
-  $uid = $kpi::home::uid
 
   if $kpi::home::sshj and $kpi::home::sshj_spec != undef {
     File[$home] -> kpi::linux::sshj {"${user}-sshj":
@@ -35,48 +34,22 @@ class kpi::linux ($user, $home_dir) {
     unless   => "/bin/loginctl show-user ${user} | /bin/grep -q Linger=yes",
   }
 
-  exec { 'tmux-service enable':
-    user        => $user,
-    command     => '/bin/systemctl --user enable tmux',
-    environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-    provider    => shell,
-    creates     => "${home}/.config/systemd/user/default.target.wants/tmux.service",
-    require     => File[$home],
-  }
-  -> exec { 'tmux-service start':
-    user        => $user,
-    command     => '/bin/systemctl --user start tmux',
-    environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-    provider    => shell,
-    unless      => '/usr/bin/tmux -L wk has-session -t wk 2>/dev/null',
+  # outer wk tmux server; the unit file comes from linux_home/.config/systemd/user
+  kpi::linux::user_service { 'tmux.service':
+    user    => $user,
+    require => File[$home],
   }
 
-  # Syncthing (data/common.yaml); the Arch package ships the user unit, and
-  # linger (above) keeps it running without a login session.
-  exec { 'syncthing-service enable':
-    user        => $user,
-    command     => '/bin/systemctl --user enable --now syncthing.service',
-    environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-    provider    => shell,
-    unless      => '/bin/systemctl --user is-enabled --quiet syncthing.service && /bin/systemctl --user is-active --quiet syncthing.service',
-    require     => [Kpi::Install['syncthing'], Exec['enable-linger']],
+  # Syncthing (data/common.yaml); the Arch package ships the user unit
+  kpi::linux::user_service { 'syncthing.service':
+    user    => $user,
+    require => Kpi::Install['syncthing'],
   }
 
   if $kpi::home::msx_hub {
-    exec { 'msx-hub-service enable':
-      user        => $user,
-      command     => '/bin/systemctl --user enable msx-hub',
-      environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-      provider    => shell,
-      creates     => "${home}/.config/systemd/user/default.target.wants/msx-hub.service",
-      require     => File[$home],
-    }
-    -> exec { 'msx-hub-service start':
-      user        => $user,
-      command     => '/bin/systemctl --user start msx-hub',
-      environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-      provider    => shell,
-      unless      => '/usr/bin/docker ps --format {{.Names}} | /usr/bin/grep -qx msx-hub',
+    kpi::linux::user_service { 'msx-hub.service':
+      user    => $user,
+      require => File[$home],
     }
   }
 
@@ -106,8 +79,6 @@ class kpi::linux ($user, $home_dir) {
 }
 
 define kpi::linux::sshj($user){
-  $uid = $kpi::home::uid
-
   file { "${kpi::home::home_dir}/.local/share/systemd/":
     ensure => directory,
     recurse => true,
@@ -127,23 +98,8 @@ define kpi::linux::sshj($user){
       sshj_spec => $kpi::home::sshj_spec
     })
   }
-  -> exec { 'sshj enable':
+  -> kpi::linux::user_service { 'sshj.service':
     user => $user,
-    command => "/bin/systemctl --user enable sshj",
-    environment => [
-      "XDG_RUNTIME_DIR=/run/user/${uid}"
-    ],
-    provider => shell,
-    creates => "${kpi::home::home_dir}/.config/systemd/user/default.target.wants/sshj.service"
-  }
-  -> exec { 'sshj start':
-    user => $user,
-    environment => [
-      "XDG_RUNTIME_DIR=/run/user/${uid}"
-    ],
-    command => "/bin/systemctl --user start sshj",
-    creates => "/sys/fs/cgroup/user.slice/user-${uid}.slice/user@${uid}.service/app.slice/sshj.service/",
-    provider => shell,
   }
 }
 
@@ -198,8 +154,6 @@ define kpi::linux::hyprland($user){
 }
 
 define kpi::linux::glimpse ($user) {
-  $uid = $kpi::home::uid
-  $env = ["XDG_RUNTIME_DIR=/run/user/${uid}"]
   $services = ['glimpse-shell', 'glimpse-lock', 'glimpse-wallpaper']
 
   # Secret calendar sidecars live in ~/.keys/glimpse/calendars (never committed);
@@ -209,14 +163,51 @@ define kpi::linux::glimpse ($user) {
     require => File["${kpi::home::home_dir}"],
   }
 
+  # enabled only: they start with the graphical session, not from puppet
   $services.each |String $svc| {
-    exec { "${svc} enable":
+    kpi::linux::user_service { "${svc}.service":
+      user    => $user,
+      ensure  => 'unmanaged',
+      require => Kpi::Install['glimpse-desktop-bin'],
+    }
+  }
+}
+
+# A unit of $user's systemd --user manager: the user-level counterpart of the
+# `service` type, which only talks to the system manager. Runs systemctl as the
+# user with their XDG_RUNTIME_DIR; linger keeps that manager up without a login.
+#   enable  enable the unit (`systemctl --user enable`)
+#   ensure  'running' starts it if inactive; 'unmanaged' leaves its state alone
+#           (not undef: undef means "use the default" for a parameter)
+define kpi::linux::user_service (
+  String $user,
+  String $unit = $title,
+  Boolean $enable = true,
+  Enum['running', 'unmanaged'] $ensure = 'running',
+) {
+  $systemctl = '/bin/systemctl --user'
+  $env = ["XDG_RUNTIME_DIR=/run/user/${kpi::home::uid}"]
+
+  if $enable {
+    exec { "${user} enable ${unit}":
+      command     => "${systemctl} enable ${unit}",
+      unless      => "${systemctl} is-enabled --quiet ${unit}",
       user        => $user,
-      command     => "/bin/systemctl --user enable ${svc}.service",
       environment => $env,
       provider    => shell,
-      unless      => "/bin/systemctl --user is-enabled ${svc}.service",
-      require     => Kpi::Install['glimpse-desktop-bin'],
+      require     => Exec['enable-linger'],
+      before      => $ensure ? { 'running' => Exec["${user} start ${unit}"], default => [] },
+    }
+  }
+
+  if $ensure == 'running' {
+    exec { "${user} start ${unit}":
+      command     => "${systemctl} start ${unit}",
+      unless      => "${systemctl} is-active --quiet ${unit}",
+      user        => $user,
+      environment => $env,
+      provider    => shell,
+      require     => Exec['enable-linger'],
     }
   }
 }
