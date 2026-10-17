@@ -1,0 +1,8 @@
+# Arch box; xx/yy set $node_hostname (tailscale_priv, sshj unit host, hyprland tweaks).
+os: {family: Archlinux, name: Archlinux}
+identity: {user: root, uid: 0}
+processors: {count: 8}
+sshj_fact: 'xx-check'
+kpi_id_rsa: 'True'
+kpi_keys: 'True'
+kpi_yad: 'False'

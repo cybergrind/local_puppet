@@ -1,4 +1,4 @@
-# Arch box with msx_hub, $node_hostname (tailscale_priv) and an sshj spec.
+# Arch box with msx_hub, hiDPI and an sshj spec.
 os: {family: Archlinux, name: Archlinux}
 identity: {user: root, uid: 0}
 processors: {count: 16}

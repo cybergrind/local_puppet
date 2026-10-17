@@ -1,0 +1,8 @@
+# WSL (Arch): full Linux setup, but never sshj even when the fact is set.
+os: {family: Archlinux, name: Archlinux}
+identity: {user: root, uid: 0}
+processors: {count: 8}
+sshj_fact: 'wsl-check'
+kpi_id_rsa: 'False'
+kpi_keys: 'False'
+kpi_yad: 'False'
