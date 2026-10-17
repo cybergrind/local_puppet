@@ -60,8 +60,12 @@ if [[ $OSTYPE == 'darwin'* && ! -d /Library/Filesystems/macfuse.fs ]]; then
     /opt/homebrew/bin/brew install --cask macfuse
 fi
 
-if [[ -f ~/.keys/env ]]; then
-    source ~/.keys/common_env
+# On macOS ~/.keys is a FUSE mount that hangs every stat once it dies, so only
+# look inside while it's actually mounted.
+if [[ $OSTYPE != darwin* ]] || /sbin/mount | grep -q " on $HOME/.keys "; then
+    if [[ -f ~/.keys/env ]]; then
+        source ~/.keys/common_env
+    fi
 fi
 
 sshj_fact="${FACTER_SSHJ_FACT:-}"

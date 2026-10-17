@@ -18,7 +18,13 @@ if [[ $OSTYPE == "darwin"* ]]; then
     declare -x PATH="$PATH:/opt/puppetlabs/bin"
 fi
 
-if [[ -f ~/.keys/env ]]; then
+# On macOS ~/.keys is a FUSE mount (sshfs/encfs); when it dies, any stat on it
+# blocks forever, so only look inside while it's in the mount table.
+function _kpi_keys_ok {
+    [[ $OSTYPE != darwin* ]] || [[ "$(/sbin/mount)" == *" on $HOME/.keys "* ]]
+}
+
+if _kpi_keys_ok && [[ -f ~/.keys/env ]]; then
     source ~/.keys/common_env
 fi
 
@@ -373,7 +379,7 @@ function aws_setup {
     if [[ $AWS_READY == 1 ]]; then
         return 0
     fi
-    if [[ -f ~/.keys/env ]]; then
+    if _kpi_keys_ok && [[ -f ~/.keys/env ]]; then
         source ~/.keys/env
     else
         echo 'There is no env files'
