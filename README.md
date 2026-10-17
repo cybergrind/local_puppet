@@ -61,7 +61,7 @@ puppet module list
 
 ### WSL
 ```bash
-./run-wsl
+./run        # ./run-wsl still works, it just calls ./run
 ```
 
 ### Force Update

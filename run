@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Linux (incl. WSL) and macOS runner; Windows has run.ps1.
+
+cd "$(dirname "$0")" || exit 1
 
 PULL='.pull'
 SUB='.submodules'
@@ -6,21 +9,22 @@ SUB='.submodules'
 case $1 in
     clean)
         echo pull and update submodules
-        rm $PULL $SUB
+        rm -f $PULL $SUB
+        shift
         ;;
     *)
         ;;
 esac
 
 
-find $DUMP_DIR -name $PULL -mtime +1 -delete
+find . -maxdepth 1 -name $PULL -mtime +1 -delete
 if [ ! -f $PULL ]; then
     echo pull latest changes
     git pull
     touch $PULL
 fi
 
-find $DUMP_DIR -name $SUB -mtime +7 -delete
+find . -maxdepth 1 -name $SUB -mtime +7 -delete
 
 PUPPET_MODULES=''
 
@@ -33,6 +37,9 @@ else
     if [ -e /bin/sudo ]; then
         PUPPET_INSTALL='sudo puppet module install'
         PUPPET_APPLY='sudo puppet apply -v'
+    else
+        PUPPET_INSTALL='puppet module install'
+        PUPPET_APPLY='puppet apply -v'
     fi
 fi
 

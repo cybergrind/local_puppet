@@ -9,7 +9,7 @@ A personal masterless-Puppet setup that provisions dev environments across Arch 
 ## Running
 
 - Linux / macOS: `./run` (add `clean` to force `git pull` and re-install dependency modules)
-- WSL: `./run-wsl`
+- WSL: `./run` (`./run-wsl` is a thin wrapper around it)
 - Windows: `.\run.ps1` (PowerShell)
 
 All three wrappers do the same dance: conditional `git pull`, conditional `puppet module install` of `puppetlabs-stdlib` / `puppetlabs-vcsrepo` (+ `puppetlabs-chocolatey` on Windows; macOS installs go through `brew` execs, no module), then `puppet apply --modulepath ./modules[:system_modules] manifests/hosts.pp`.

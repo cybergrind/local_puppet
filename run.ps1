@@ -64,8 +64,9 @@ if ($subNeeded) {
 
 # Detect Puppet installation paths
 $puppetModules = ""
-if (Test-Path "C:/Users/kpi/.puppetlabs/etc/code/modules") {
-    $puppetModules = ";C:/Users/kpi/.puppetlabs/etc/code/modules"
+$userModules = Join-Path $env:USERPROFILE ".puppetlabs/etc/code/modules"
+if (Test-Path $userModules) {
+    $puppetModules = ";$userModules"
 }
 
 # Source environment variables if available
