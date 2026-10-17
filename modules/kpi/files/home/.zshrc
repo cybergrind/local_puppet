@@ -251,8 +251,8 @@ alias gln='set -o noglob'
 alias gly='set +o noglob'
 
 alias e='emacsclient --alternate-editor="" -nw -c "$@"'
-alias ccd=/home/kpi/devel/tipsi/tipsi_util/scripts/compose-cmd.sh
-alias tdev=/home/kpi/devel/tipsi/tipsi_util/helpers/init_dev.py
+alias ccd=$HOME/devel/tipsi/tipsi_util/scripts/compose-cmd.sh
+alias tdev=$HOME/devel/tipsi/tipsi_util/helpers/init_dev.py
 
 # kubernetes
 alias kp='k get po -A -o wide'
@@ -480,7 +480,7 @@ if [ -d "$HOME/.cargo/bin/" ]; then
 fi
 
 if (( $+commands[heroku] )); then
-    HEROKU_AC_ZSH_SETUP_PATH=/home/kpi/.cache/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH || eval "$(heroku autocomplete:script zsh)"
+    HEROKU_AC_ZSH_SETUP_PATH=$HOME/.cache/heroku/autocomplete/zsh_setup && test -f $HEROKU_AC_ZSH_SETUP_PATH && source $HEROKU_AC_ZSH_SETUP_PATH || eval "$(heroku autocomplete:script zsh)"
 fi
 
 CUSTOM_CONFIG="$HOME/.config/${HOST%%.*}.sh"

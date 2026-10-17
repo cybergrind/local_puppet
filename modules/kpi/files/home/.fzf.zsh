@@ -1,7 +1,8 @@
 # Setup fzf
 # ---------
-if [[ ! "$PATH" == */home/kpi/.fzf/bin* ]]; then
-  PATH="${PATH:+${PATH}:}/home/kpi/.fzf/bin"
+if [[ ! "$PATH" == *$HOME/.fzf/bin* ]]; then
+  PATH="${PATH:+${PATH}:}$HOME/.fzf/bin"
 fi
 
-source <(fzf --zsh)
+# .zshrc already loads fzf when it's on PATH; only fall back to ~/.fzf/bin here
+(( $+functions[fzf-history-widget] )) || source <(fzf --zsh)
