@@ -88,12 +88,6 @@ class kpi::home (
       require            => $skip_user ? { true => [], default => [User[$user]] },
     }
   }
-  # exec { '/bin/sbt gen-ensime exit':
-  #   unless => "/bin/test -e ${home}/.sbt/0.13/plugins/target",
-  #   user => $user,
-  #   timeout => 1800,
-  #   require => [ File[$home] ],
-  # }
 
   # Linux/macOS specific operations
   unless $kpi::os::is_windows {

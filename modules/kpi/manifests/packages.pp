@@ -75,10 +75,6 @@ class kpi::packages::niri (Array[String] $pkgs) {
 class kpi::packages::glimpse () {
   kpi::install { 'glimpse-desktop-bin': }
 }
-class kpi::packages::sway (Array[String] $pkgs) {
-  kpi::install { $pkgs: }
-}
-
 class kpi::packages::windows (Array[String] $pkgs) {
   kpi::install { $pkgs: }
 }
@@ -91,7 +87,6 @@ class kpi::packages () {
 
   if $kpi::os::is_arch {
     class {'kpi::packages::linux':}
-    # class {'kpi::packages::sway':}
     class {'kpi::packages::hyprland':}
     class {'kpi::packages::niri':}
     class {'kpi::packages::glimpse':}

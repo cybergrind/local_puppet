@@ -85,8 +85,7 @@ kpi::packages::linux::pkgs:
   - xorg-xmodmap
   - pkgfile
   - kitty
-  - awesome
-  - vicious
+  - awesome  # X fallback session (.xinitrc), default config
   - virtualbox
   - mupdf
   - xpdf
@@ -155,13 +154,3 @@ kpi::packages::niri::pkgs:
   - satty
   - xdg-desktop-portal-gnome
   - xdg-desktop-portal-wlr
-
-kpi::packages::sway::pkgs:
-  - sway
-  - swaylock
-  - wl-clipboard
-  - xdg-desktop-portal
-  - xdg-desktop-portal-gnome
-  - grim
-  - slurp
-  - spectacle
