@@ -1,27 +1,3 @@
-class kpi::home::repos {
-}
-
-
-define kpi::home::rdir ($user) {
-  exec { $name:
-    creates => $user,
-    user    => $user,
-    command => "/bin/mkdir -p ${name}"
-  } -> file { $name: }
-}
-
-define kpi::home::rfile ($user, $source) {
-  $dname = dirname($name)
-  kpi::home::rfile { 'dname':
-    user => $user
-  }
-  file { $name:
-    source  => $source,
-    owner   => $user,
-    require => Rfile[dname],
-  }
-}
-
 # Per-host settings come from Hiera (data/nodes/<hostname>.yaml, then
 # data/os/<family>.yaml), not from node-scope variables.
 #   skip_user     the OS owns the account (Windows), don't manage the user
@@ -43,16 +19,10 @@ class kpi::home (
 ) {
   include kpi::os
 
-  if $kpi::os::is_arch {
-    $managehome = true
-    $groups = [ 'wheel', 'audio', 'docker' ]
-  } elsif $kpi::os::is_windows {
-    # Windows users are managed by the OS
-    $managehome = false
-    $groups = []
-  } else {
-    $managehome = false
-    $groups = []
+  $managehome = $kpi::os::is_arch
+  $groups = $kpi::os::is_arch ? {
+    true    => [ 'wheel', 'audio', 'docker' ],
+    default => [],
   }
 
   unless $skip_user {
@@ -106,29 +76,16 @@ class kpi::home (
     }
   } else {
     # Linux/macOS
-    if $skip_user {
-      file { $home:
-        ensure             => directory,
-        recurse            => remote,
-        source             => $home_sources,
-        sourceselect       => all,
-        source_permissions => 'use',
-        ignore             => ['__pycache__', '*.pyc'],
-        owner              => $user,
-        # group => $user,
-      }
-    } else {
-      file { $home:
-        ensure             => directory,
-        recurse            => remote,
-        source             => $home_sources,
-        sourceselect       => all,
-        source_permissions => 'use',
-        ignore             => ['__pycache__', '*.pyc'],
-        owner              => $user,
-        # group => $user,
-        require            => [ User[$user] ],
-      }
+    file { $home:
+      ensure             => directory,
+      recurse            => remote,
+      source             => $home_sources,
+      sourceselect       => all,
+      source_permissions => 'use',
+      ignore             => ['__pycache__', '*.pyc'],
+      owner              => $user,
+      # group => $user,
+      require            => $skip_user ? { true => [], default => [User[$user]] },
     }
   }
   # exec { '/bin/sbt gen-ensime exit':
@@ -156,18 +113,6 @@ class kpi::home (
       user => $user,
     }
 
-    if $kpi::os::is_arch and $sshj and $sshj_spec != undef {
-      File[$home] -> kpi::home::sshj {"${user}-sshj":
-        user => $user,
-      }
-    }
-
-    if $kpi::os::is_arch and $node_hostname != undef {
-      File[$home] -> class { 'kpi::tailscale_priv':
-        user_key_path => "${home}/.keys/.ts-auth.key",
-      }
-    }
-
     if $kpi::os::is_darwin {
       File[$home] -> class { 'kpi::darwin':
         user     => $user,
@@ -176,88 +121,13 @@ class kpi::home (
     }
 
     if $kpi::os::is_arch {
-      File[$home] -> kpi::home::hyprland {"${user}-hyprland":
-        user => $user,
-      }
-
-      File[$home] -> kpi::home::glimpse {"${user}-glimpse":
-        user => $user,
-      }
-
-      File[$home] -> kpi::home::disable_localsearch {"${user}-localsearch":
-        user => $user,
-      }
-
-      exec { 'enable-linger':
-        command  => "/bin/loginctl enable-linger ${user}",
-        provider => shell,
-        unless   => "/bin/loginctl show-user ${user} | /bin/grep -q Linger=yes",
-      }
-
-      exec { 'tmux-service enable':
-        user        => $user,
-        command     => '/bin/systemctl --user enable tmux',
-        environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-        provider    => shell,
-        creates     => "${home}/.config/systemd/user/default.target.wants/tmux.service",
-        require     => File[$home],
-      }
-      -> exec { 'tmux-service start':
-        user        => $user,
-        command     => '/bin/systemctl --user start tmux',
-        environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-        provider    => shell,
-        unless      => '/usr/bin/tmux -L wk has-session -t wk 2>/dev/null',
-      }
-
-      if $msx_hub {
-        exec { 'msx-hub-service enable':
-          user        => $user,
-          command     => '/bin/systemctl --user enable msx-hub',
-          environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-          provider    => shell,
-          creates     => "${home}/.config/systemd/user/default.target.wants/msx-hub.service",
-          require     => File[$home],
-        }
-        -> exec { 'msx-hub-service start':
-          user        => $user,
-          command     => '/bin/systemctl --user start msx-hub',
-          environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-          provider    => shell,
-          unless      => '/usr/bin/docker ps --format {{.Names}} | /usr/bin/grep -qx msx-hub',
-        }
+      class { 'kpi::linux':
+        user     => $user,
+        home_dir => $home,
       }
     }
   }
 
-  unless $kpi::os::is_windows {
-    if $kpi::os::is_arch and $hidpi {
-      kpi::home::hi_dpi {"${user}-hidpi":
-        user => $user,
-      }
-    }
-
-    # if $facts['os']['family'] == 'ArchLinux' and $user == 'kpi' {
-    #   # helm env
-    #   exec { "install helm diff":
-    #     command => "helm plugin install https://github.com/databus23/helm-diff",
-    #     creates => "${home}/.local/share/helm/plugins/helm-diff/bin/diff",
-    #     require => Kpi::Install['helm'],
-    #     user => $user,
-    #     provider => shell,
-    #     cwd => $home,
-    #   }
-    # }
-
-
-    if $kpi::os::is_arch {
-      file { "${kpi::home::home_dir}/.config/chrome-flags.conf":
-        ensure  => file,
-        content => epp('kpi/chromium-flags.conf.epp', {}),
-        owner => $user
-      }
-    }
-  }
 }
 
 define kpi::home::tmux_setup($user){
@@ -275,124 +145,7 @@ define kpi::home::tmux_setup($user){
   }
 }
 
-define kpi::home::sshj($user){
-  $uid = $kpi::home::uid
-
-  file { "${kpi::home::home_dir}/.local/share/systemd/":
-    ensure => directory,
-    recurse => true,
-    owner  => $user,
-    mode   => '0700',
-  }
-  -> file { "${kpi::home::home_dir}/.local/share/systemd/user/":
-    ensure => directory,
-    recurse => true,
-    owner  => $user,
-    mode   => '0700',
-  }
-  -> file { "${kpi::home::home_dir}/.local/share/systemd/user/sshj.service":
-    ensure  => file,
-    content => epp('kpi/sshj.epp', {
-      host => $kpi::home::node_hostname,
-      sshj_spec => $kpi::home::sshj_spec
-    })
-  }
-  -> exec { 'sshj enable':
-    user => $user,
-    command => "/bin/systemctl --user enable sshj",
-    environment => [
-      "XDG_RUNTIME_DIR=/run/user/${uid}"
-    ],
-    provider => shell,
-    creates => "${kpi::home::home_dir}/.config/systemd/user/default.target.wants/sshj.service"
-  }
-  -> exec { 'sshj start':
-    user => $user,
-    environment => [
-      "XDG_RUNTIME_DIR=/run/user/${uid}"
-    ],
-    command => "/bin/systemctl --user start sshj",
-    creates => "/sys/fs/cgroup/user.slice/user-${uid}.slice/user@${uid}.service/app.slice/sshj.service/",
-    provider => shell,
-  }
-}
-
-# localsearch (the renamed tracker-miners) is a hard dependency of nautilus, which
-# is pulled in by xdg-desktop-portal-gnome -> niri. We keep the portal but kill the
-# filesystem indexer: every localsearch D-Bus service delegates through
-# SystemdService=localsearch-*.service, so masking the user units blocks both the
-# XDG autostart and on-demand D-Bus activation.
-define kpi::home::disable_localsearch($user){
-  $uid = $kpi::home::uid
-  $units = ['localsearch-3.service', 'localsearch-control-3.service', 'localsearch-writeback-3.service']
-
-  file { "${kpi::home::home_dir}/.config/systemd/user":
-    ensure => directory,
-    owner  => $user,
-  }
-
-  $units.each |String $unit| {
-    file { "${kpi::home::home_dir}/.config/systemd/user/${unit}":
-      ensure  => link,
-      target  => '/dev/null',
-      owner   => $user,
-      require => File["${kpi::home::home_dir}/.config/systemd/user"],
-      notify  => Exec['localsearch daemon-reload'],
-    }
-  }
-
-  exec { 'localsearch daemon-reload':
-    user        => $user,
-    command     => '/bin/systemctl --user daemon-reload',
-    environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-    provider    => shell,
-    refreshonly => true,
-  }
-  # Stop any indexer already running this session (stop still works on a masked unit).
-  -> exec { 'localsearch stop':
-    user        => $user,
-    command     => "/bin/systemctl --user stop ${join($units, ' ')}",
-    environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
-    provider    => shell,
-    onlyif      => '/bin/systemctl --user is-active --quiet localsearch-3.service',
-  }
-}
-
-define kpi::home::hyprland($user){
-  file { "${kpi::home::home_dir}/.config/hypr/hyprland.conf":
-    ensure  => file,
-    content => epp('kpi/hyprland.conf', {}),
-    owner => $user,
-    require => File["${kpi::home::home_dir}"]
-  }
-}
-
-define kpi::home::glimpse ($user) {
-  $uid = $kpi::home::uid
-  $env = ["XDG_RUNTIME_DIR=/run/user/${uid}"]
-  $services = ['glimpse-shell', 'glimpse-lock', 'glimpse-wallpaper']
-
-  # Secret calendar sidecars live in ~/.keys/glimpse/calendars (never committed);
-  # expose them to glimpse via a symlink the committed config.toml references.
-  kpi::home_link { "${user}:.config/glimpse/calendars":
-    target  => '.keys/glimpse/calendars',
-    require => File["${kpi::home::home_dir}"],
-  }
-
-  $services.each |String $svc| {
-    exec { "${svc} enable":
-      user        => $user,
-      command     => "/bin/systemctl --user enable ${svc}.service",
-      environment => $env,
-      provider    => shell,
-      unless      => "/bin/systemctl --user is-enabled ${svc}.service",
-      require     => Kpi::Install['glimpse-desktop-bin'],
-    }
-  }
-}
-
 define kpi::home_symlinks($user){
-  $id_rsa = str2bool($facts["${user}_id_rsa"])
   $keys = str2bool($facts["${user}_keys"])
   $yad = str2bool($facts["${user}_yad"])
 
@@ -457,16 +210,6 @@ define kpi::home::keys_links () {
     target => ".keys/perfect_label/pl-eks",
     require => [File["${home}/.kube"]]
   }
-}
-
-define kpi::home::hi_dpi ($user) {
-  file { "${kpi::home::home_dir}/.Xresources":
-    ensure  => file,
-    content => epp('kpi/.Xresources.epp', {}),
-    owner => $user
-  }
-
-  class {'kpi::packages::hidpi':}
 }
 
 define kpi::home::keys_ssh_link () {
