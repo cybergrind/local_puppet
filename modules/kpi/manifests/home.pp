@@ -455,18 +455,20 @@ define kpi::home::keys_ssh_link () {
   $i = split($name, ':')
   $user = $i[0]
   $path = $i[1]
-  kpi::home_link {"${user}:${path}": target=>".keys/${path}", mode=>'0600'}
+  # never clobber a real key that already sits in ~/.ssh (e.g. on macOS)
+  kpi::home_link {"${user}:${path}": target=>".keys/${path}", mode=>'0600', replace=>false}
 }
 
-define kpi::home_link ($target, $mode='0755'){
+define kpi::home_link ($target, $mode='0755', $replace=true){
   $i = split($name, ':')
   $user = $i[0]
   $src = $i[1]
   file { "${kpi::home::home_dir}/${src}":
-    ensure => link,
-    owner  => $user,
-    mode   => $mode,
-    target =>"${kpi::home::home_dir}/${target}",
+    ensure  => link,
+    owner   => $user,
+    mode    => $mode,
+    replace => $replace,
+    target  =>"${kpi::home::home_dir}/${target}",
   }
 }
 
