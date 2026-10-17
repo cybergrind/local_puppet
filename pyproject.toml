@@ -17,6 +17,8 @@ dev = ['ruff', 'pre-commit>=4.5.1', 'uv>=0.11.1', 'pyrefly', 'pytest']
 line-length = 120
 target-version = 'py314'
 indent-width = 4
+# facter runs these with the OS python3 (3.9 on macOS)
+per-file-target-version = { 'modules/kpi/facts.d/*.py' = 'py39' }
 exclude = ['.venv', '.git']
 
 [tool.ruff.format]

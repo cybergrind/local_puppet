@@ -5,3 +5,5 @@ processors: {count: 12}
 kpi_id_rsa: 'False'
 kpi_keys: 'False'
 kpi_yad: 'False'
+kpi_packages: [tmux, fzf, encfs-mac, macfuse]
+kpi_brew_taps: [gromgit/fuse]

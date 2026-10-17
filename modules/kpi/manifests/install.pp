@@ -1,7 +1,9 @@
-# Idempotency is checked against brew itself (`brew list` / `brew tap`), so it
-# works for formulae without a same-named binary (py3cairo, nvm, aliases like gpg).
+# Packages already in the kpi_packages / kpi_brew_taps facts (facts.d/
+# installed_packages.py) get no exec at all. Anything else is checked against
+# brew itself (`brew list` / `brew tap`), which also covers aliases like gpg.
 # A fully qualified 'owner/tap/formula' name declares its tap automatically.
 define kpi::install::macos ($bin=undef, $tap=false, $cask=false) {
+  include kpi::repos
   $brew = '/opt/homebrew/bin/brew'
 
   if $tap {
@@ -23,29 +25,39 @@ define kpi::install::macos ($bin=undef, $tap=false, $cask=false) {
     $requires = []
   }
 
-  unless $bin == 'noinstall' {
+  # brew lists formulae/casks by short name and taps in lowercase
+  $installed = $tap ? {
+    true    => downcase($name) in $facts['kpi_brew_taps'].lest || { [] },
+    default => $name.split('/')[-1] in $facts['kpi_packages'].lest || { [] },
+  }
+
+  unless $bin == 'noinstall' or $installed {
     exec { "brew ${name}":
       command     => $command,
       unless      => $unless,
       timeout     => 1800,
       environment => ["HOME=/Users/${facts['identity']['user']}", 'HOMEBREW_NO_AUTO_UPDATE=1'],
-      require     => $requires,
+      require     => [Class['kpi::repos']] + $requires,
     }
   }
 }
 
+# Packages already in the kpi_packages fact (pacman -Qq, facts.d/
+# installed_packages.py) get no exec at all.
 define kpi::install::linux () {
   include kpi::repos
   include kpi::packages::system
 
-  exec { $name:
-    unless => "/usr/bin/yay -Qk ${name}",
-    user => 'yay',
-    cwd => "/tmp",
-    timeout => 1800,
-    command => "/usr/bin/yay -S --noconfirm ${name}",
-    require => [ Class[kpi::packages::system] ],
-    environment => ['HOME=/home/yay'],
+  unless $name in $facts['kpi_packages'].lest || { [] } {
+    exec { $name:
+      unless => "/usr/bin/pacman -Qq ${name}",
+      user => 'yay',
+      cwd => "/tmp",
+      timeout => 1800,
+      command => "/usr/bin/yay -S --noconfirm ${name}",
+      require => [ Class[kpi::packages::system] ],
+      environment => ['HOME=/home/yay'],
+    }
   }
 }
 

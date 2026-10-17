@@ -5,3 +5,5 @@ processors: {count: 8}
 kpi_id_rsa: 'True'
 kpi_keys: 'True'
 kpi_yad: 'True'
+# a few already-installed packages: kpi::install must skip their execs
+kpi_packages: [zsh, tmux, fzf, git, networkmanager]

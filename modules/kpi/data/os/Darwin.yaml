@@ -14,10 +14,10 @@ kpi::base_devel::pkgs:
 
 kpi::packages::macos::pkgs:
   - pinentry-mac
-  - gpg
+  - gnupg
   - cmake
   # - emacs-plus
-  - nvim
+  - neovim
   - vim
   - uv
   - htop
