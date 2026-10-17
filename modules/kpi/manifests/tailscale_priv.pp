@@ -5,7 +5,7 @@ class kpi::tailscale_priv (
   String $user          = 'kpi',
   String $user_key_path = "${kpi::home::home_dir}/.keys/.ts-auth.key",
   String $auth_key_path = '/root/.keys/.ts-auth.key',
-  String $hostname      = "${node_hostname}-priv",
+  String $hostname      = "${kpi::home::node_hostname}-priv",
   Integer $port         = 41642,
   String $socks5_addr   = 'localhost:1055',
 ) {

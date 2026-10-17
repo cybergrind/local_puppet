@@ -18,11 +18,13 @@ The conditionals are driven by sentinel files in the repo root: `.pull` (refresh
 
 The `run` script (Linux/macOS) also calls `niri_outputs.py` post-apply if `niri` is running — that's a downstream tool installed by the manifests, not part of this repo.
 
-## Hostname → node mapping
+## Hosts and per-host settings
 
-`manifests/hosts.pp` is the entry manifest. Adding a new machine = adding a `node 'hostname' { ... }` block there. WSL is distinguished from Windows by setting `hostnamectl set-hostname ww-wsl` (see README).
+`manifests/hosts.pp` is a single `node default` that includes `kpi::base_devel` and `kpi::home` on every machine. Everything that differs per host is Hiera data bound to class parameters (mostly `kpi::home::*`): `modules/kpi/data/nodes/<networking.hostname>.yaml` → `data/os/<os.family>.yaml` → `data/common.yaml`. The short hostname is used, so a Mac matches whether it's `.local` or a tailnet FQDN.
 
-`$skip_user = true` is used on hosts (e.g. `ww`/Windows) where the OS already manages the user account — this gates whether `kpi::home` creates the user resource.
+- A new machine needs no change unless it differs from its OS defaults; then add `data/nodes/<host>.yaml` (and a `test/facts/<host>.yaml` fixture).
+- Knobs (see the header of `kpi::home`): `skip_user` (OS owns the account; set for Windows), `hidpi`, `node_hostname` (enables `tailscale_priv`, names the sshj tunnel), `msx_hub`, `sshj` (false on Windows/WSL), `sshj_spec`, `uid`, `home_dir` (per-OS default).
+- WSL is told apart from Windows by `os.family` plus its `ww-wsl` hostname (`hostnamectl set-hostname ww-wsl`, see README).
 
 ## Module layout (`modules/kpi/`)
 
@@ -46,7 +48,7 @@ Only one Puppet module, `kpi`. Classes worth knowing before editing:
 
 `modules/kpi/facts.d/user_data.py` is an external fact script that probes each `/home/*` and `/Users/*` user (only the invoking user's home when not root) for presence of `~/.ssh/id_rsa`, `~/.keys/ready`, `~/Yandex.Disk/wk_ssh2` and emits `<user>_<key>=True/False` facts.
 
-`FACTER_SSHJ_FACT` (preferred) / `FACTER_SSHJ_SPEC` are env vars the `run` script forwards into the puppet apply. They feed the `$sshj_spec` variable in `hosts.pp`, which controls whether `kpi::home::sshj` deploys ssh-jail-style key config. On a fresh node before `~/.keys/` is mounted, you'll need to pass this manually: `FACTER_SSHJ_FACT=something ./run`.
+`FACTER_SSHJ_FACT` (preferred) / `FACTER_SSHJ_SPEC` are env vars the `run` script forwards into the puppet apply. They're the default of `kpi::home::sshj_spec`, which (with `kpi::home::sshj`) controls whether `kpi::home::sshj` deploys the ssh tunnel unit. On a fresh node before `~/.keys/` is mounted, you'll need to pass this manually: `FACTER_SSHJ_FACT=something ./run`.
 
 ## sync.py — reverse direction
 

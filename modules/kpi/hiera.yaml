@@ -1,11 +1,14 @@
 ---
-# Module data: package lists per OS family. The class parameters
-# (kpi::packages::*::pkgs, kpi::base_devel::pkgs, ...) are bound automatically.
+# Module data, bound to class parameters automatically: per-host settings
+# (kpi::home::*), then per-OS defaults and package lists, then shared lists.
+# A host with no nodes/ file simply gets its OS defaults.
 version: 5
 defaults:
   datadir: data
   data_hash: yaml_data
 hierarchy:
+  - name: 'Per host'
+    path: 'nodes/%{facts.networking.hostname}.yaml'
   - name: 'OS family'
     path: 'os/%{facts.os.family}.yaml'
   - name: 'Common'

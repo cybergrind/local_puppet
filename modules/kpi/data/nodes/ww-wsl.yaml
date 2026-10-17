@@ -1,0 +1,3 @@
+---
+# WSL: full Linux setup, but no sshj tunnel
+kpi::home::sshj: false

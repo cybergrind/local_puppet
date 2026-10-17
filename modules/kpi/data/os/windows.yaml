@@ -1,4 +1,9 @@
 ---
+# the OS owns the account; sshj is a systemd unit
+kpi::home::home_dir: 'C:/Users/kpi'
+kpi::home::skip_user: true
+kpi::home::sshj: false
+
 kpi::packages::windows::pkgs:
   # Essential tools for Windows
   - git

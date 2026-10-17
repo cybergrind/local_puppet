@@ -1,4 +1,6 @@
 ---
+kpi::home::home_dir: '/Users/%{facts.identity.user}'
+
 # macOS side of the Linux dev toolchain (go, node, emacs-nox, docker, ...).
 # colima is the docker daemon (a Linux VM): `colima start`, or
 # `brew services start colima` to keep it running.

@@ -1,0 +1,3 @@
+---
+# tailscale_priv, the sshj unit's host name, xx tweaks in hyprland.conf
+kpi::home::node_hostname: 'xx'

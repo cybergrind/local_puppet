@@ -22,7 +22,25 @@ define kpi::home::rfile ($user, $source) {
   }
 }
 
-class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
+# Per-host settings come from Hiera (data/nodes/<hostname>.yaml, then
+# data/os/<family>.yaml), not from node-scope variables.
+#   skip_user     the OS owns the account (Windows), don't manage the user
+#   hidpi         Xresources + kpi::packages::hidpi
+#   node_hostname enables tailscale_priv; host name for the sshj tunnel
+#   sshj          false to never run the sshj tunnel, even with an sshj spec
+#   sshj_spec     defaults to the sshj_fact / sshj_spec facts (FACTER_SSHJ_*)
+#   uid           the user's uid, for XDG_RUNTIME_DIR of systemd --user
+class kpi::home (
+  String $user = 'kpi',
+  String $home_dir = '/home/kpi',
+  Boolean $msx_hub = false,
+  Boolean $skip_user = false,
+  Boolean $hidpi = false,
+  Optional[String[1]] $node_hostname = undef,
+  Boolean $sshj = true,
+  Optional[String[1]] $sshj_spec = [$facts['sshj_fact'], $facts['sshj_spec']].filter |$s| { $s =~ String[1] }[0],
+  Integer $uid = 1000,
+) {
   include kpi::os
 
   if $kpi::os::is_arch {
@@ -138,7 +156,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
       user => $user,
     }
 
-    if $kpi::os::is_arch and $sshj_spec != undef {
+    if $kpi::os::is_arch and $sshj and $sshj_spec != undef {
       File[$home] -> kpi::home::sshj {"${user}-sshj":
         user => $user,
       }
@@ -179,7 +197,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
       exec { 'tmux-service enable':
         user        => $user,
         command     => '/bin/systemctl --user enable tmux',
-        environment => ["XDG_RUNTIME_DIR=/run/user/${user_uid}"],
+        environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
         provider    => shell,
         creates     => "${home}/.config/systemd/user/default.target.wants/tmux.service",
         require     => File[$home],
@@ -187,7 +205,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
       -> exec { 'tmux-service start':
         user        => $user,
         command     => '/bin/systemctl --user start tmux',
-        environment => ["XDG_RUNTIME_DIR=/run/user/${user_uid}"],
+        environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
         provider    => shell,
         unless      => '/usr/bin/tmux -L wk has-session -t wk 2>/dev/null',
       }
@@ -196,7 +214,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
         exec { 'msx-hub-service enable':
           user        => $user,
           command     => '/bin/systemctl --user enable msx-hub',
-          environment => ["XDG_RUNTIME_DIR=/run/user/${user_uid}"],
+          environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
           provider    => shell,
           creates     => "${home}/.config/systemd/user/default.target.wants/msx-hub.service",
           require     => File[$home],
@@ -204,7 +222,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
         -> exec { 'msx-hub-service start':
           user        => $user,
           command     => '/bin/systemctl --user start msx-hub',
-          environment => ["XDG_RUNTIME_DIR=/run/user/${user_uid}"],
+          environment => ["XDG_RUNTIME_DIR=/run/user/${uid}"],
           provider    => shell,
           unless      => '/usr/bin/docker ps --format {{.Names}} | /usr/bin/grep -qx msx-hub',
         }
@@ -213,7 +231,7 @@ class kpi::home ($user = 'kpi', $home_dir = '/home/kpi', $msx_hub = false){
   }
 
   unless $kpi::os::is_windows {
-    if $kpi::os::is_arch and $hiDPI {
+    if $kpi::os::is_arch and $hidpi {
       kpi::home::hi_dpi {"${user}-hidpi":
         user => $user,
       }
@@ -258,7 +276,7 @@ define kpi::home::tmux_setup($user){
 }
 
 define kpi::home::sshj($user){
-  $uid = $user_uid
+  $uid = $kpi::home::uid
 
   file { "${kpi::home::home_dir}/.local/share/systemd/":
     ensure => directory,
@@ -275,8 +293,8 @@ define kpi::home::sshj($user){
   -> file { "${kpi::home::home_dir}/.local/share/systemd/user/sshj.service":
     ensure  => file,
     content => epp('kpi/sshj.epp', {
-      host => $node_hostname,
-      sshj_spec => $sshj_spec
+      host => $kpi::home::node_hostname,
+      sshj_spec => $kpi::home::sshj_spec
     })
   }
   -> exec { 'sshj enable':
@@ -305,7 +323,7 @@ define kpi::home::sshj($user){
 # SystemdService=localsearch-*.service, so masking the user units blocks both the
 # XDG autostart and on-demand D-Bus activation.
 define kpi::home::disable_localsearch($user){
-  $uid = $user_uid
+  $uid = $kpi::home::uid
   $units = ['localsearch-3.service', 'localsearch-control-3.service', 'localsearch-writeback-3.service']
 
   file { "${kpi::home::home_dir}/.config/systemd/user":
@@ -350,7 +368,7 @@ define kpi::home::hyprland($user){
 }
 
 define kpi::home::glimpse ($user) {
-  $uid = $user_uid
+  $uid = $kpi::home::uid
   $env = ["XDG_RUNTIME_DIR=/run/user/${uid}"]
   $services = ['glimpse-shell', 'glimpse-lock', 'glimpse-wallpaper']
 
