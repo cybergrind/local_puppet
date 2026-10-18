@@ -2,10 +2,10 @@
 """Commit the staged changes with a one-line message written by claude.
 
 The message follows the style of the repo's recent subjects. It is shown first
-and committed only after a y. Extra arguments go to git commit, e.g. `gcai -n`
-skips the hooks.
+and committed only after a y.
 """
 
+import argparse
 import os
 import subprocess
 import sys
@@ -14,7 +14,7 @@ import sys
 PROMPT = """Write a one-line git commit message for this staged diff.
 Match the style of these recent commit subjects:
 {subjects}
-Reply with the message only: one line, no quotes, no prefix, no trailing period."""
+Reply with the message only: one line, no semicolons, no quotes, no prefix, no trailing period."""
 
 
 def git(*args, check=True):
@@ -53,7 +53,20 @@ def ask(question):
     return key.lower() == 'y'
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description=__doc__.split('\n\n')[0],
+        epilog='Any other arguments are passed on to git commit.',
+    )
+    parser.add_argument('-n', '--no-verify', action='store_true', help='skip the commit hooks (git commit -n)')
+    return parser.parse_known_args()
+
+
 def main():
+    args, commit_args = parse_args()
+    if args.no_verify:
+        commit_args.insert(0, '--no-verify')
+
     try:
         diff = git('diff', '--cached')
     except subprocess.CalledProcessError as e:
@@ -77,7 +90,7 @@ def main():
         sys.exit('claude returned no message')
     print(msg)
     if ask('commit with this message? [y/N]'):
-        os.execvp('git', ['git', 'commit', *sys.argv[1:], '-m', msg])
+        os.execvp('git', ['git', 'commit', *commit_args, '-m', msg])
 
 
 if __name__ == '__main__':
