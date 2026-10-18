@@ -2,7 +2,7 @@
 # distro-managed work tailscaled. Each daemon needs its own state, socket, TUN
 # and UDP port so they don't collide.
 class kpi::tailscale_priv (
-  String $user          = 'kpi',
+  String $user          = $kpi::home::user,
   String $user_key_path = "${kpi::home::home_dir}/.keys/.ts-auth.key",
   String $auth_key_path = '/root/.keys/.ts-auth.key',
   String $hostname      = "${kpi::home::node_hostname}-priv",
@@ -15,6 +15,8 @@ class kpi::tailscale_priv (
   $unit             = '/etc/systemd/system/tailscaled-priv.service'
   $ensure_up_script = '/usr/local/sbin/tailscale-priv-ensure-up'
 
+  # the unit is one systemd line per setting, however long
+  # lint:ignore:140chars
   $unit_content = @("UNIT"/L)
     [Unit]
     Description=Tailscale node agent (private tailnet)
@@ -57,6 +59,7 @@ class kpi::tailscale_priv (
     [Install]
     WantedBy=multi-user.target
     | UNIT
+  # lint:endignore
 
   file { $ensure_up_script:
     ensure => file,
@@ -137,7 +140,11 @@ class kpi::tailscale_priv (
   # below will fire on a fresh host.
   exec { 'tailscale-priv mark-authed':
     command  => "/usr/bin/touch ${auth_sentinel}",
-    onlyif   => "for i in 1 2 3 4 5 6 7 8 9 10; do /usr/bin/tailscale --socket=${socket} ip -4 >/dev/null 2>&1 && exit 0; sleep 1; done; exit 1",
+    onlyif   => join([
+        'for i in 1 2 3 4 5 6 7 8 9 10; do',
+        "/usr/bin/tailscale --socket=${socket} ip -4 >/dev/null 2>&1 && exit 0; sleep 1;",
+        'done; exit 1',
+    ], ' '),
     unless   => "/usr/bin/test -f ${auth_sentinel}",
     provider => shell,
     require  => Exec['tailscaled-priv enable+start'],
@@ -148,7 +155,10 @@ class kpi::tailscale_priv (
   # the historical record via the sentinel bump v2 → v3, which forces `set`
   # to re-fire on hosts that had the old flags applied).
   exec { 'tailscale-priv up':
-    command  => "/usr/bin/tailscale --socket=${socket} up --auth-key=\"$(cat ${auth_key_path})\" --hostname=${hostname} --accept-dns=false --ssh && /usr/bin/touch ${auth_sentinel}",
+    command  => join([
+        "/usr/bin/tailscale --socket=${socket} up --auth-key=\"$(cat ${auth_key_path})\"",
+        "--hostname=${hostname} --accept-dns=false --ssh && /usr/bin/touch ${auth_sentinel}",
+    ], ' '),
     creates  => $auth_sentinel,
     provider => shell,
     require  => [Exec['tailscale-priv mark-authed'], Exec['tailscale-priv stage-auth-key']],

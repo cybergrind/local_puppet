@@ -1,4 +1,12 @@
 ---
+# pacman packages yay is built with (kpi::packages::system::linux); keep openssh,
+# sshd's service needs it
+kpi::packages::system::linux::pkgs:
+  - sudo
+  - openssh
+  - base-devel
+  - go
+
 kpi::base_devel::pkgs:
   - go
   - nodejs

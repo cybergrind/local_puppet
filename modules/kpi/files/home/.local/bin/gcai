@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+"""Commit the staged changes with a one-line message written by claude.
+
+The message follows the style of the repo's recent subjects. It is shown first
+and committed only after a y. Extra arguments go to git commit, e.g. `gcai -n`
+skips the hooks.
+"""
+
+import os
+import subprocess
+import sys
+
+
+PROMPT = """Write a one-line git commit message for this staged diff.
+Match the style of these recent commit subjects:
+{subjects}
+Reply with the message only: one line, no quotes, no prefix, no trailing period."""
+
+
+def git(*args, check=True):
+    return subprocess.run(['git', *args], capture_output=True, text=True, check=check).stdout
+
+
+def first_line(reply):
+    """The first non-empty line, without blanks, quotes or a trailing period around it."""
+    lines = [line for line in reply.splitlines() if line.strip()]
+    if not lines:
+        return ''
+    msg = lines[0].lstrip(' \t\'"`')
+    while msg and msg[-1] in ' \t\'"`.':
+        msg = msg[:-1]
+    return msg
+
+
+def ask(question):
+    """y/N with a single key press on a terminal, a line otherwise."""
+    if not sys.stdin.isatty():
+        print(question, end=' ', flush=True)
+        return sys.stdin.readline().strip().lower() == 'y'
+    import termios
+    import tty
+
+    fd = sys.stdin.fileno()
+    old = termios.tcgetattr(fd)
+    try:
+        # cbreak before the prompt, so a key typed right away isn't held for Enter
+        tty.setcbreak(fd)
+        print(question, end=' ', flush=True)
+        key = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old)
+    print(key)
+    return key.lower() == 'y'
+
+
+def main():
+    try:
+        diff = git('diff', '--cached')
+    except subprocess.CalledProcessError as e:
+        sys.exit(e.stderr.strip())
+    if not diff.strip():
+        sys.exit('nothing staged')
+
+    # empty in a repo without commits yet
+    subjects = git('log', '-15', '--format=%s', check=False)
+    try:
+        reply = subprocess.run(
+            ['claude', '-p', PROMPT.format(subjects=subjects)], input=diff, capture_output=True, text=True
+        )
+    except FileNotFoundError:
+        sys.exit('claude is not on PATH')
+    if reply.returncode != 0:
+        sys.exit(reply.stderr.strip() or f'claude exited with {reply.returncode}')
+
+    msg = first_line(reply.stdout)
+    if not msg:
+        sys.exit('claude returned no message')
+    print(msg)
+    if ask('commit with this message? [y/N]'):
+        os.execvp('git', ['git', 'commit', *sys.argv[1:], '-m', msg])
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except KeyboardInterrupt:
+        print()
+        sys.exit(130)

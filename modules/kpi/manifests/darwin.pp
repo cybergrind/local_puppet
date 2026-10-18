@@ -2,7 +2,7 @@
 # of the Arch-only systemd/hyprland/glimpse block there. Puppet runs as the
 # user on macOS (no sudo), so everything here lives in the user's domain; the
 # few root-only bits are in kpi::darwin::system, which ./run applies via sudo.
-class kpi::darwin ($user, $home_dir) {
+class kpi::darwin (String $user, String $home_dir) {
   $agents_dir = "${home_dir}/Library/LaunchAgents"
   $uid = $facts['identity']['uid']
 
@@ -41,7 +41,7 @@ class kpi::darwin ($user, $home_dir) {
   # Input menu", symbolic hotkey 61. activateSettings applies it without a logout.
   exec { 'input source hotkey F18':
     command  => join([
-      "/usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 61",
+      '/usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 61',
       "'{ enabled = 1; value = { parameters = (65535, 79, 8388608); type = standard; }; }'",
       '&& /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u',
     ], ' '),
@@ -80,13 +80,19 @@ class kpi::darwin ($user, $home_dir) {
   # Fast key repeat; press-and-hold pops up the accent menu instead of repeating
   # (breaks hjkl in vim). Both apply from the next login.
   kpi::darwin::default { 'key repeat':
-    domain => 'NSGlobalDomain', key => 'KeyRepeat', value => 2,
+    domain => 'NSGlobalDomain',
+    key    => 'KeyRepeat',
+    value  => 2,
   }
   kpi::darwin::default { 'initial key repeat':
-    domain => 'NSGlobalDomain', key => 'InitialKeyRepeat', value => 15,
+    domain => 'NSGlobalDomain',
+    key    => 'InitialKeyRepeat',
+    value  => 15,
   }
   kpi::darwin::default { 'press and hold':
-    domain => 'NSGlobalDomain', key => 'ApplePressAndHoldEnabled', value => false,
+    domain => 'NSGlobalDomain',
+    key    => 'ApplePressAndHoldEnabled',
+    value  => false,
   }
 
   # No "smart" typing: curly quotes, em dashes and autocorrect mangle code and
@@ -94,20 +100,26 @@ class kpi::darwin ($user, $home_dir) {
   ['NSAutomaticQuoteSubstitutionEnabled', 'NSAutomaticDashSubstitutionEnabled',
     'NSAutomaticSpellingCorrectionEnabled'].each |String $key| {
     kpi::darwin::default { "no ${key}":
-      domain => 'NSGlobalDomain', key => $key, value => false,
+      domain => 'NSGlobalDomain',
+      key    => $key,
+      value  => false,
     }
   }
 
   # Finder shows every extension and dotfile; it only rereads these on restart.
   kpi::darwin::default { 'show all extensions':
-    domain => 'NSGlobalDomain', key => 'AppleShowAllExtensions', value => true,
+    domain => 'NSGlobalDomain',
+    key    => 'AppleShowAllExtensions',
+    value  => true,
   }
   ~> exec { 'restart Finder':
     command     => '/usr/bin/killall Finder',
     refreshonly => true,
   }
   kpi::darwin::default { 'show hidden files':
-    domain => 'com.apple.finder', key => 'AppleShowAllFiles', value => true,
+    domain => 'com.apple.finder',
+    key    => 'AppleShowAllFiles',
+    value  => true,
     notify => Exec['restart Finder'],
   }
 
@@ -122,87 +134,5 @@ class kpi::darwin ($user, $home_dir) {
       owner  => $user,
       target => "/opt/homebrew/opt/${plugin}/bin/${plugin}",
     }
-  }
-}
-
-# Root-only macOS setup. Not part of any node: ./run applies it with
-# `sudo puppet apply -e 'include kpi::darwin::system'` when it's out of date.
-class kpi::darwin::system () {
-  # Touch ID for sudo, also inside tmux (pam_reattach reconnects the session to
-  # the GUI). sudo_local is included by /etc/pam.d/sudo and survives OS updates.
-  # If pam_reattach.so goes missing sudo can't initialise PAM at all, so keep
-  # pam-reattach in data/os/Darwin.yaml while this line references it.
-  file { '/etc/pam.d/sudo_local':
-    ensure  => file,
-    owner   => 'root',
-    group   => 'wheel',
-    mode    => '0444',
-    content => @(PAM),
-      # managed by puppet (kpi::darwin::system)
-      auth       optional       /opt/homebrew/lib/pam/pam_reattach.so ignore_ssh
-      auth       sufficient     pam_tid.so
-      | PAM
-  }
-
-  # No Spotlight indexing on any volume.
-  exec { 'disable spotlight':
-    command => '/usr/bin/mdutil -a -i off',
-    unless  => "/usr/bin/mdutil -s / | /usr/bin/grep -q 'Indexing disabled'",
-  }
-}
-
-# One `defaults write`, skipped when `defaults read` already returns the value.
-define kpi::darwin::default (String $domain, String $key, Variant[Boolean, Integer, String] $value) {
-  $type = $value ? {
-    Boolean => 'bool',
-    Integer => 'int',
-    default => 'string',
-  }
-  # `defaults read` prints booleans as 1/0
-  $expected = $value ? {
-    true    => '1',
-    false   => '0',
-    default => String($value),
-  }
-
-  exec { "defaults ${domain} ${key}":
-    command  => "/usr/bin/defaults write ${domain} '${key}' -${type} '${value}'",
-    unless   => "/bin/test \"$(/usr/bin/defaults read ${domain} '${key}' 2>/dev/null)\" = '${expected}'",
-    provider => shell,
-  }
-}
-
-# A per-user LaunchAgent: renders the plist and (re)loads it into the gui domain.
-define kpi::darwin::launch_agent (
-  Array[String] $program_arguments,
-  Hash[String, String] $environment = {},
-  Boolean $abandon_process_group = false,
-  Boolean $keep_alive = false,
-) {
-  $user = $kpi::darwin::user
-  $uid = $facts['identity']['uid']
-  $plist = "${kpi::darwin::agents_dir}/${name}.plist"
-
-  file { $plist:
-    ensure  => file,
-    owner   => $user,
-    mode    => '0644',
-    content => epp('kpi/launch_agent.plist.epp', {
-      label                 => $name,
-      program_arguments     => $program_arguments,
-      environment           => $environment,
-      abandon_process_group => $abandon_process_group,
-      keep_alive            => $keep_alive,
-    }),
-    require => File[$kpi::darwin::agents_dir],
-  }
-  ~> exec { "launchctl reload ${name}":
-    command     => "/bin/launchctl bootout gui/${uid}/${name}; sleep 1; /bin/launchctl bootstrap gui/${uid} '${plist}'",
-    provider    => shell,
-    refreshonly => true,
-  }
-  -> exec { "launchctl load ${name}":
-    command => "/bin/launchctl bootstrap gui/${uid} '${plist}'",
-    unless  => "/bin/launchctl print gui/${uid}/${name}",
   }
 }

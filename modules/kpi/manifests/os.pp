@@ -1,3 +1,4 @@
+# The OS switches every cross-platform manifest reads instead of $facts['os'].
 class kpi::os {
   $family     = $facts['os']['family']
   $os_name    = $facts['os']['name']

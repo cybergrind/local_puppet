@@ -7,7 +7,8 @@
 #   test/check zz ww        only these fixtures
 #
 # Needs puppet plus the stdlib/vcsrepo modules that ./run installs; set
-# KPI_MODULEPATH to look for those somewhere else (CI does).
+# KPI_MODULEPATH to look for those somewhere else (CI does). puppet-lint
+# (pinned below) is installed into test/.gems on first use.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -47,7 +48,12 @@ fi
 
 # AIO packages bundle their own ruby; distro packages (Arch) use the system one
 RUBY=/opt/puppetlabs/puppet/bin/ruby
-[[ -x $RUBY ]] || RUBY=ruby
+GEM=/opt/puppetlabs/puppet/bin/gem
+[[ -x $RUBY ]] || { RUBY=ruby; GEM=gem; }
+
+LINT_VERSION=5.1.1
+GEMS="$REPO/test/.gems"
+MANIFESTS=(manifests/*.pp $(find modules/kpi/manifests -name '*.pp' | sort))
 
 WORK=$(mktemp -d)
 trap 'rm -rf "$WORK"' EXIT
@@ -66,11 +72,26 @@ fi
 failed=0
 
 # Syntax of everything, including classes no fixture node declares
-if puppet parser validate manifests/*.pp modules/kpi/manifests/*.pp \
+if puppet parser validate "${MANIFESTS[@]}" \
         && puppet epp validate modules/kpi/templates/*.epp; then
     echo "ok   syntax"
 else
     echo "FAIL syntax"
+    failed=1
+fi
+
+# Style (.puppet-lint.rc); skipped, not failed, when puppet-lint can't be
+# installed (offline). CI always has it.
+if [[ ! -d $GEMS/gems/puppet-lint-$LINT_VERSION ]]; then
+    "$GEM" install --silent --no-document --install-dir "$GEMS" puppet-lint -v "$LINT_VERSION" >/dev/null 2>&1 || true
+fi
+if [[ ! -d $GEMS/gems/puppet-lint-$LINT_VERSION ]]; then
+    echo "skip lint (could not install puppet-lint $LINT_VERSION)"
+elif GEM_HOME="$GEMS" GEM_PATH="$GEMS" "$RUBY" "$GEMS/bin/puppet-lint" "${MANIFESTS[@]}" > "$WORK/lint.txt"; then
+    echo "ok   lint"
+else
+    echo "FAIL lint"
+    sed 's/^/    /' "$WORK/lint.txt"
     failed=1
 fi
 

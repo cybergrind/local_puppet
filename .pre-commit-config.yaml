@@ -34,14 +34,14 @@ repos:
 
   - repo: local
     hooks:
-      # compiles every node's catalog; needs puppet + bash (skip on Windows
+      # lints and compiles every node's catalog; needs puppet + bash (skip on Windows
       # with SKIP=puppet-check)
       - id: puppet-check
-        name: puppet catalogs (test/check)
+        name: puppet lint + catalogs (test/check)
         entry: test/check
         language: system
         pass_filenames: false
-        files: "^(manifests/|test/|modules/kpi/(manifests|data|templates|facts\\.d)/|modules/kpi/hiera\\.yaml$)"
+        files: "^(manifests/|test/|modules/kpi/(manifests|data|templates|facts\\.d)/|modules/kpi/hiera\\.yaml$|\\.puppet-lint\\.rc$)"
       - id: pyrefly-check
         name: pyrefly-check
         entry: uv run pyrefly check

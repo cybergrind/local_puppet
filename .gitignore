@@ -4,3 +4,4 @@
 /.submodules
 /.git
 __pycache__
+/test/.gems

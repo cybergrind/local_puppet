@@ -26,6 +26,7 @@ for d in glob('/home/*') + glob('/Users/*'):
         continue
     os.setgid(stat.st_gid)
     os.setuid(stat.st_uid)
+    print(f'{user}_uid={stat.st_uid}')
     keys_ok = keys_mounted(d)
     for k, v in {'id_rsa': '.ssh/id_rsa', 'keys': '.keys/ready', 'yad': 'Yandex.Disk/wk_ssh2'}.items():
         check_dir = join(d, v)
