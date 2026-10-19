@@ -14,7 +14,13 @@ import sys
 PROMPT = """Write a one-line git commit message for this staged diff.
 Match the style of these recent commit subjects:
 {subjects}
-Reply with the message only: one line, no semicolons, no quotes, no prefix, no trailing period."""
+
+Preferred format:
+<area>: <summary>
+
+Reply with the message only: one line, no semicolons, no quotes, no prefix, no trailing period.
+Only simple words, max 80 symbols.
+"""
 
 
 def git(*args, check=True):
