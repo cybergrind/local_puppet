@@ -23,8 +23,34 @@ Only simple words, max 80 symbols.
 """
 
 
+# the diff sent to claude is cut here, after a --stat of all of it
+MAX_DIFF = 100_000
+
+
+def git_bytes(*args, check=True):
+    return subprocess.run(['git', *args], capture_output=True, check=check).stdout
+
+
 def git(*args, check=True):
-    return subprocess.run(['git', *args], capture_output=True, text=True, check=check).stdout
+    return git_bytes(*args, check=check).decode(errors='replace')
+
+
+def staged_diff():
+    """The staged diff of text files; binary ones, by git or by not being utf-8, are only named."""
+    numstat = os.fsdecode(git_bytes('diff', '--cached', '--no-renames', '--numstat', '-z'))
+    parts, binaries = [], []
+    for entry in filter(None, numstat.split('\0')):
+        added, _, path = entry.split('\t', 2)
+        if added != '-':
+            try:
+                parts.append(git_bytes('diff', '--cached', '--', path).decode())
+                continue
+            except UnicodeDecodeError:
+                pass
+        binaries.append(path)
+    if binaries:
+        parts.append('Binary files changed:\n' + ''.join(f'  {path}\n' for path in binaries))
+    return ''.join(parts)
 
 
 def first_line(reply):
@@ -74,11 +100,13 @@ def main():
         commit_args.insert(0, '--no-verify')
 
     try:
-        diff = git('diff', '--cached')
+        diff = staged_diff()
     except subprocess.CalledProcessError as e:
-        sys.exit(e.stderr.strip())
+        sys.exit(e.stderr.decode(errors='replace').strip())
     if not diff.strip():
         sys.exit('nothing staged')
+    if len(diff) > MAX_DIFF:
+        diff = git('diff', '--cached', '--stat') + '\n' + diff[:MAX_DIFF] + '\n[diff truncated]\n'
 
     # empty in a repo without commits yet
     subjects = git('log', '-15', '--format=%s', check=False)
