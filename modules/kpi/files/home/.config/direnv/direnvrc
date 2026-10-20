@@ -1,0 +1,10 @@
+# Loaded by direnv before every .envrc.
+
+# Under $KPI_WORK_DIR uv defaults to the private index $KPI_WORK_UV_INDEX (both
+# exported from ~/.keys/common_env, credentials included); everywhere else it's
+# PyPI. Done here rather than in a .envrc there because direnv only runs the
+# nearest .envrc and the projects there have their own.
+if [[ -n $KPI_WORK_UV_INDEX && -d $KPI_WORK_DIR ]] &&
+    [[ $(pwd -P)/ == "$(cd "$KPI_WORK_DIR" && pwd -P)"/* ]]; then
+    export UV_DEFAULT_INDEX=$KPI_WORK_UV_INDEX
+fi
