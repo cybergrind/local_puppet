@@ -39,16 +39,22 @@ class kpi::darwin (String $user, String $home_dir) {
 
   # F18 (key code 79, function-key flag 0x800000) = "Select next source in
   # Input menu", symbolic hotkey 61. activateSettings applies it without a logout.
+  # The value is XML because the old-style plist syntax stores everything as
+  # strings, which the hotkey reader ignores; unless also rejects such an entry.
+  $hotkey_61 = 'AppleSymbolicHotKeys.61'
+  $hotkey_f18 = join([
+    '<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key><array>',
+    '<integer>65535</integer><integer>79</integer><integer>8388608</integer></array>',
+    '<key>type</key><string>standard</string></dict></dict>',
+  ])
   exec { 'input source hotkey F18':
     command  => join([
-      '/usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 61',
-      "'{ enabled = 1; value = { parameters = (65535, 79, 8388608); type = standard; }; }'",
+      "/usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 61 '${hotkey_f18}'",
       '&& /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u',
     ], ' '),
     unless   => join([
-      '/usr/bin/defaults export com.apple.symbolichotkeys -',
-      '| /usr/bin/plutil -extract AppleSymbolicHotKeys.61.value.parameters.1 raw -o - -',
-      '| /usr/bin/grep -qx 79',
+      'h() { /usr/bin/defaults export com.apple.symbolichotkeys - | /usr/bin/plutil -extract "$1" raw -o - -; };',
+      "test \"$(h ${hotkey_61}.enabled)\" = true && test \"$(h ${hotkey_61}.value.parameters.1)\" = 79",
     ], ' '),
     provider => shell,
   }
