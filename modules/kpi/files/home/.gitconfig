@@ -5,6 +5,7 @@
     signingkey = ~/.ssh/id_ed25519.pub
 [alias]
     d = diff HEAD
+    dft = -c diff.external=difft diff
     st = status
     ci = commit
     co = checkout

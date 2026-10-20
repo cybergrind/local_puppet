@@ -26,4 +26,7 @@ kpi::packages::common::pkgs:
   - helmfile
   - k9s
   - ruff
+  - dust
+  - duf
+  - difftastic  # git dft
   - syncthing  # started by kpi::linux / kpi::darwin

@@ -5,3 +5,4 @@
 /.git
 __pycache__
 /test/.gems
+third-party/
