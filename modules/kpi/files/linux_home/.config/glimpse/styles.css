@@ -1,0 +1,80 @@
+/* Compact 16px panel.
+ *
+ * `size = 16` in panel.toml is only a minimum: the built-in stylesheet gives
+ * every indicator a 1.5rem (24px) floor plus padding, and label pager pills
+ * 1.8rem, so the bar grows to ~33px. Crush those floors here (styles.css loads
+ * after the theme, so it has the last word). Class names follow glimpse's code:
+ * recheck them with GTK_DEBUG=interactive glimpse-panel after an upgrade.
+ */
+.panel {
+    padding: 0 0.3rem;
+}
+
+.panel separator {
+    margin: 3px 0.4rem;
+}
+
+.indicator-group {
+    min-width: 16px;
+    min-height: 16px;
+    padding: 0 3px;
+}
+
+.indicator__icon,
+.tray-strip .indicator__icon {
+    min-width: 14px;
+    min-height: 14px;
+    -gtk-icon-size: 14px;
+}
+
+.indicator--text .indicator__label {
+    min-width: 0;
+}
+
+.indicator__badge {
+    min-width: 14px;
+    min-height: 14px;
+    padding: 0 4px;
+}
+
+.tray-strip__chevron,
+.tray-strip__chevron:checked {
+    min-width: 16px;
+    min-height: 16px;
+}
+
+/* Workspace number pills, as in the 0.15 look: big numbers, almost no gap. */
+.pager {
+    --gl-pager-pill: 16px;
+    --gl-pager-gap: 0 1px;
+    padding: 0;
+}
+
+.pager--labels .pager-item__label {
+    padding: 0 3px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.pager--labels .pager-item {
+    background: alpha(currentColor, 0.15);
+    color: var(--gl-panel-fg);
+}
+
+.pager--labels .pager-item--occupied {
+    background: alpha(currentColor, 0.02);
+}
+
+.pager--labels .pager-item--here {
+    background: alpha(currentColor, 0.3);
+    color: var(--gl-accent-fg);
+}
+
+.pager--labels .pager-item:hover {
+    background: alpha(currentColor, 0.45);
+}
+
+.pager--labels .pager-item--urgent {
+    background: var(--gl-warning-text);
+    color: var(--gl-panel);
+}

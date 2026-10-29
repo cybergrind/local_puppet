@@ -13,17 +13,10 @@
       "Bash(ocli release *)"
     ]
   },
+  "model": "opus",
   "hooks": {
     "PreToolUse": [],
     "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/home/kpi/.claude/hooks/skill_router.py"
-          }
-        ]
-      },
       {
         "hooks": [
           {
@@ -47,7 +40,8 @@
   "effortLevel": "high",
   "modelSettings": {
     "claude-opus-5-5": {
-      "effortLevel": "high"
+      "effortLevel": "high",
+      "autoCompactWindow": 500000
     },
     "claude-fable-5-1": {
       "effortLevel": "high"

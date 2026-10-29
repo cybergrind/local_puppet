@@ -1,8 +1,6 @@
-theme_mode = "auto"
+#:schema /usr/share/glimpse/config.schema.json
 
 [calendar]
-poll_interval = 600
-
 # Secret iCal feed: the URL is NOT stored here. `calendars/` is a symlink to
 # ~/.keys/glimpse/calendars (deployed by kpi::home::glimpse), and personal.url
 # holds the raw provider URL outside the repo. See docs/calendar.md (sidecars).
@@ -13,47 +11,17 @@ name = "Personal"
 uri = "file:///home/kpi/.config/glimpse/calendars/personal.url"
 color = "#4285f4"
 
-[[panels]]
-position = "top"
-size = 16
-left = ["workspaces-pager", "pager"]
-center = ["weather", "notifications"]
-right = ["idle", "tray", "removable", "keyboard", "privacy", "bluetooth", "network", "brightness", "audio", "battery", "clock"]
-
-
-[applets.weather]
-city_name = "Minsk"
-
-[applets.workspaces-pager]
-extends = "pager"
-display = "workspaces"
-appearance = "numbers"
-active_workspace_label = "{name}"
-inactive_workspace_label = "{name}"
-
-[applets.notifications]
-label = "{count}"
-tooltip = "{count} notifications"
-badge_style = "none"
-popup_timeout_ms = 6500
-popup_visible_limit = 2
-popup_position = "top_right"
-popup_margin_x = 0
-popup_margin_y = 0
-popup_monitor = "HDMI-A-1"
+[notifications]
+hide-delay = 7
+max-items = 2
+monitor = "HDMI-A-1"
 
 [idle]
-enabled = true
-respect_inhibitors = true
-
-[idle.profiles.ac]
-listeners = [
-  { timeout = 300, on_idle = "loginctl lock-session" },
-  { timeout = 600, on_idle = "niri msg action power-off-monitors" },
+profiles.ac.listeners = [
+  { timeout = 300, on-idle = "loginctl lock-session" },
+  { timeout = 600, on-idle = "niri msg action power-off-monitors" },
 ]
-
-[idle.profiles.battery]
-listeners = [
-  { timeout = 300, on_idle = "loginctl lock-session" },
-  { timeout = 600, on_idle = "niri msg action power-off-monitors" },
+profiles.battery.listeners = [
+  { timeout = 300, on-idle = "loginctl lock-session" },
+  { timeout = 600, on-idle = "niri msg action power-off-monitors" },
 ]

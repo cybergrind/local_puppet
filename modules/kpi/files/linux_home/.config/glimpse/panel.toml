@@ -1,0 +1,23 @@
+#:schema /usr/share/glimpse/panel.schema.json
+
+[[panels]]
+size = 16
+left = ["workspaces-pager", "pager"]
+center = ["weather", "notifications"]
+right = ["idle", "tray", "removable", "keyboard", "privacy", "bluetooth", "network", "display", "audio", "power", "clock"]
+
+[applets.weather]
+place = { at = "location", name = "Minsk, BY" }
+
+[applets.workspaces-pager]
+extends = "pager"
+mode = "workspaces"
+shape = "labels"
+label = "{name-or-index}"
+
+[applets.notifications]
+indicator-style = "icon-counter"
+tooltip-format = "{count} notifications"
+
+[applets.clock]
+week-numbers = false

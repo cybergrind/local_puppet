@@ -208,9 +208,11 @@ def render_workspaces(pairs: list[tuple[str, str]]) -> str:
 
 
 def render_screenshots(primary: str, secondary: str) -> str:
+    # The secondary shot opens the editor as a window, which the
+    # me.aresa.Glimpse.Shot window rule moves onto DP-5.
     return (
-        f'    Pause       {{ spawn-sh "grim -o {primary} - | satty --initial-tool=crop --filename -"; }}\n'
-        f'    Shift+Pause {{ spawn-sh "grim -o {secondary} - | satty --initial-tool=crop --filename -"; }}\n'
+        f'    Pause       {{ spawn "glimpse-shot" "--screen" "{primary}" "--tool" "crop"; }}\n'
+        f'    Shift+Pause {{ spawn "glimpse-shot" "--screen" "{secondary}" "--tool" "crop" "--editor" "window"; }}\n'
     )
 
 

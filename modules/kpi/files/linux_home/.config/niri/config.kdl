@@ -257,7 +257,7 @@ workspace "10" { open-on-output "eDP-1"; }
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
 
-spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start graphical-session.target && systemctl --user try-restart glimpse-shell.service glimpse-idle.service glimpse-lock.service glimpse-wallpaper.service"
+spawn-sh-at-startup "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP XDG_SESSION_TYPE && systemctl --user start graphical-session.target"
 spawn-at-startup "xwayland-satellite"
 spawn-at-startup "copyq" "--start-server"
 spawn-sh-at-startup "/home/kpi/.local/bin/monitor_clipboard_copyq.sh &"
@@ -348,6 +348,17 @@ window-rule {
     default-floating-position x=0 y=0 relative-to="top-left"
 }
 
+// glimpse-shot's editor window (Shift+Pause shoots eDP-1 but edits on DP-5).
+// Without DP-5 connected niri opens it on the focused output.
+window-rule {
+    match app-id=r#"^me\.aresa\.Glimpse\.Shot$"#
+    open-on-output "DP-5"
+    open-floating true
+    min-width 2520
+    min-height 1400
+    default-floating-position x=0 y=0 relative-to="top-left"
+}
+
 // Satty's secondary dialogs (e.g. "Choose Annotation Size") use app-id "satty",
 // distinct from the main canvas's "com.gabm.satty". Float without size constraints.
 window-rule {
@@ -431,8 +442,8 @@ binds {
     /////////////////////
 
 // niri_outputs.py: SCREENSHOTS START
-    Pause       { spawn-sh "grim -o DP-5 - | satty --initial-tool=crop --filename -"; }
-    Shift+Pause { spawn-sh "grim -o eDP-1 - | satty --initial-tool=crop --filename -"; }
+    Pause       { spawn "glimpse-shot" "--screen" "DP-5" "--tool" "crop"; }
+    Shift+Pause { spawn "glimpse-shot" "--screen" "eDP-1" "--tool" "crop" "--editor" "window"; }
 // niri_outputs.py: SCREENSHOTS END
     // Pause { spawn-sh "flameshot gui"; }
 
