@@ -14,7 +14,7 @@ color = "#4285f4"
 [notifications]
 hide-delay = 7
 max-items = 2
-monitor = "HDMI-A-1"
+monitor = "eDP-1"
 
 [idle]
 profiles.ac.listeners = [

@@ -348,15 +348,16 @@ window-rule {
     default-floating-position x=0 y=0 relative-to="top-left"
 }
 
-// glimpse-shot's editor window (Shift+Pause shoots eDP-1 but edits on DP-5).
-// Without DP-5 connected niri opens it on the focused output.
+// Exiled Exchange 2 (PoE2 overlay): an X11 window the size of the game. It asks for
+// fullscreen, which would replace the game and ignore open-floating.
 window-rule {
-    match app-id=r#"^me\.aresa\.Glimpse\.Shot$"#
-    open-on-output "DP-5"
+    match app-id=r#"^exiled-exchange-2$"#
+    open-fullscreen false
     open-floating true
-    min-width 2520
-    min-height 1400
-    default-floating-position x=0 y=0 relative-to="top-left"
+    default-floating-position x=0 y=-18 relative-to="top-left"
+    focus-ring { off; }
+    border { off; }
+    shadow { off; }
 }
 
 // Satty's secondary dialogs (e.g. "Choose Annotation Size") use app-id "satty",
@@ -442,8 +443,8 @@ binds {
     /////////////////////
 
 // niri_outputs.py: SCREENSHOTS START
-    Pause       { spawn "glimpse-shot" "--screen" "DP-5" "--tool" "crop"; }
-    Shift+Pause { spawn "glimpse-shot" "--screen" "eDP-1" "--tool" "crop" "--editor" "window"; }
+    Pause       { spawn-sh "glimpse-shot --screen DP-5 --tool crop"; }
+    Shift+Pause { spawn-sh "glimpse-shot --screen eDP-1 --tool crop"; }
 // niri_outputs.py: SCREENSHOTS END
     // Pause { spawn-sh "flameshot gui"; }
 
