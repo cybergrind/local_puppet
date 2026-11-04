@@ -443,8 +443,8 @@ binds {
     /////////////////////
 
 // niri_outputs.py: SCREENSHOTS START
-    Pause       { spawn-sh "glimpse-shot --screen DP-5 --tool crop"; }
-    Shift+Pause { spawn-sh "glimpse-shot --screen eDP-1 --tool crop"; }
+    Pause       { spawn-sh "GSK_RENDERER=gl glimpse-shot --screen DP-5 --tool crop"; }
+    Shift+Pause { spawn-sh "GSK_RENDERER=gl glimpse-shot --screen eDP-1 --tool crop"; }
 // niri_outputs.py: SCREENSHOTS END
     // Pause { spawn-sh "flameshot gui"; }
 

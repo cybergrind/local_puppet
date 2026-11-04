@@ -208,9 +208,10 @@ def render_workspaces(pairs: list[tuple[str, str]]) -> str:
 
 
 def render_screenshots(primary: str, secondary: str) -> str:
+    # GSK_RENDERER=gl: GTK's Vulkan renderer segfaults in the NVIDIA driver when the editor opens.
     return (
-        f'    Pause       {{ spawn-sh "glimpse-shot --screen {primary} --tool crop"; }}\n'
-        f'    Shift+Pause {{ spawn-sh "glimpse-shot --screen {secondary} --tool crop"; }}\n'
+        f'    Pause       {{ spawn-sh "GSK_RENDERER=gl glimpse-shot --screen {primary} --tool crop"; }}\n'
+        f'    Shift+Pause {{ spawn-sh "GSK_RENDERER=gl glimpse-shot --screen {secondary} --tool crop"; }}\n'
     )
 
 
