@@ -56,5 +56,6 @@
   "editorMode": "vim",
   "switchModelsOnFlag": false,
   "skipAutoPermissionPrompt": true,
-  "voiceEnabled": false
+  "voiceEnabled": false,
+  "skipWorkflowUsageWarning": true
 }

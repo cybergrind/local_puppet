@@ -239,6 +239,12 @@ alias upc='uv run pre-commit run'
 alias upca='uv run pre-commit run -a'
 alias uvt='uv run pytest'
 
+# override omz git plugin's gd/gds with difftastic; checked once at startup
+if (( $+commands[difft] )); then
+    alias gd='git -c diff.external=difft diff'
+    alias gds='git -c diff.external=difft diff --staged'
+fi
+
 
 alias em='emacs -nw'
 alias tmx='new_tmux_session'
